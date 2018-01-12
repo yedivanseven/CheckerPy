@@ -109,7 +109,7 @@ out = JustMyTypes(inp, 'the ultimate object')
 Other than checking for type, `CheckerPy` also comes with validators for 
 bounds and membership of a set as well as emptiness and length of iterables.
 ```python
-from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen
+from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen, Call
 ```
 ##### 1.2.1 NonEmpty
 As the name implies, `NonEmpty` raises and logs an error if an (optionally
@@ -183,12 +183,28 @@ set of values, you simply do:
 ```python
 out = OneOf('medium', name='steak', items=('rare', 'medium', 'well done'))
 ```
-If it has not,
+If it does not,
 ```python
 out = OneOf('bloody', name='steak', items=('rare', 'medium', 'well done'))
 ```
 you get an `ItemError: Value bloody of steak with type str is not one of 
 ('rare', 'medium', 'well done')!` raised and logged.
+
+##### 1.2.5 Call
+If you want ot make sure that an (optionally named) object is callable, you
+can write:
+```python
+def inp(x):
+    return f'No, sorry, we are out of {x}'
+    
+out = Call(inp, name='silly function')
+```
+If it is not,
+```python
+out = Call('gouda')
+```
+you get a `CallableError: Object gouda of type str is not callable!` raised
+and logged.
 
 ### 2. Iterables <a name=chapter2></a>
 This sections assumes that you have already read section (1) because the
@@ -245,11 +261,15 @@ test.
 EmptyError: Tuple must not be empty!
 ...
 EmptyError: An element of the list short is empty!
+```
+```
 >>> out = AllLen([(1,), (3, 4), (5, 6)], 'short', length=2)
 ...
 LenError: Length of tuple (1,) must be 2, not 1!
 ...
 LenError: An element of the list short has the wrong length!
+```
+```
 >>> out = AllLimited([(0, 1), (3, 4), (5, 6)], 'short', lo=(1, 1))
 ...
 LimitError: Value (0, 1) lies outside the allowed interval [(1, 1), Ellipsis)!

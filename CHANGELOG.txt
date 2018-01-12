@@ -1,1 +1,5 @@
 v0.9.0, 01/12/2018 -- Initial release
+
+v0.9.1, 01/12/2018 -- Minor revision
+* Added type checkers for functions and methods
+* Added validator for callables
