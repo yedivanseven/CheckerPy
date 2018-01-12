@@ -98,6 +98,8 @@ class Typed(FunctionTypeMixin):
                     raise WrongTypeError(message) from error
             return function_to_decorate(*args, **kwargs)
 
+        typed_function.__name__, typed_function.__module__ = func_specs[1:]
+        typed_function.__doc__ = function_to_decorate.__doc__
         return typed_function
 
     @staticmethod

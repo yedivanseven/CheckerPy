@@ -102,6 +102,8 @@ class Bounded(FunctionTypeMixin):
                     raise WrongTypeError(message) from error
             return function_to_decorate(*args, **kwargs)
 
+        bounded_function.__name__, bounded_function.__module__ = func_specs[1:]
+        bounded_function.__doc__ = function_to_decorate.__doc__
         return bounded_function
 
     def arg_format_checked(self, arg_limits: ARG_LIMITS) -> ARG_LIMITS:
