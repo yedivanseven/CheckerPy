@@ -3,7 +3,9 @@
 _Provides type and value checkers both as callables and as decorators._
 
 ## Introduction
-Bli bla blo
+Values are passed through
+
+Prior work
 
 ## Documentation
 ### 1. Single Values
@@ -28,10 +30,9 @@ or a variable
 inp = 2
 out = JustInt(inp)
 ```
-If the passed-in variable of literal is not of type `int`, an error is raised
-and logged to the default logger.
-
-`WrongTypeError: Type must be int, not str like foo!`
+If the passed-in variable of literal is not of type `int`, a `WrongTypeError:
+Type must be int, not str like foo!` error is raised and logged to the default
+logger.
 
 To make the error message more instructive, you can pass a name for the
 value in question,
@@ -71,21 +72,17 @@ JustMyTypes = Just(MyFirst, MySecond, identifier='JustMyTypes')
 inp = MySecond()
 out = JustMyTypes(inp, 'the ultimate object')
 ```
-Any associations raised by the facts that type-checker names are camel-case
-(despite being instance objects, not classes) and that they start with _Just_
-are intended. Note, however, that if a value passes the type check, its type
-does not change from, for example, `int` to `JustInt` but it stays `int`.
 
 #### 1.2 Value checking
-Other than checking for type, `CheckerPy` also comes with validators for emptiness
-and length of iterables, bounds, and membership of a set.
+Other than checking for type, `CheckerPy` also comes with validators for 
+bounds and membership of a set as well as emptiness and length of iterables.
 ```python
-from checkerpy.validators.one import NonEmpty, JustLen, Limited, OneOf
+from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen
 ```
 ##### 1.2.1 NonEmpty
-As the name implies, `NonEmpty` raises and logs and error if an (optionally
+As the name implies, `NonEmpty` raises and logs an error if an (optionally
 named) iterable is empty and passes it right through if it isn't. So, in the
-case of
+case of,
 ```python
 out = NonEmpty(('foo', 'bar', 'egg'))
 ```
@@ -125,7 +122,7 @@ you will get `LenError: Length of 4 with type int cannot be determined!`
 raised and logged.
 
 ##### 1.2.3 Limited
-To check if an optionally named given value is above, below or outside given
+To check if an (optionally) named value is above, below or outside given
 bounds, you use
 ```python
 out = Limited(3, name='level of detail', lo=1, hi=5)
@@ -135,11 +132,11 @@ test. If you want to check for a lower limit only or for an upper bound only,
 just don't specify the respective other limit.
 
 If a value lies outside the specified interval or on the wrong side of a given
-bound
+bound,
 ```python
 out = Limited(-1, lo=0)
 ```
-you get `LimitError: Value -1 lies outside the allowed interval [0, None)!`
+you get `LimitError: Value -1 lies outside the allowed interval [0, Ellipsis)!`
 raised and logged. If the value in question cannot be compared to the limits
 you have specified (because it is, for example, of a wrong type),
 ```python
@@ -149,17 +146,17 @@ you get `WrongTypeError: Cannot compare type int of the level of detail with
 limits of types str and str!` raised and logged.
 
 ##### 1.2.4 OneOf
-If you want to make sure that an optionally named variable has one of a given
+If you want to make sure that an (optionally named) variable has one of a given
 set of values, you simply do:
 ```python
 out = OneOf('medium', name='steak', items=('rare', 'medium', 'well done'))
 ```
 If it has not,
-```pyhton
+```python
 out = OneOf('bloody', name='steak', items=('rare', 'medium', 'well done'))
 ```
-you get `ItemError: Value bloody of steak with type str is not one of ('rare',
-'medium', 'well done')!`
+you get an `ItemError: Value bloody of steak with type str is not one of 
+('rare', 'medium', 'well done')!` raised and logged.
 
 ### 2. Iterables
 This sections assumes that you have already read section (1) because the
@@ -200,7 +197,7 @@ be an iterable with elements to inspect!` raised and logged.
 With the exception of `OneOf`, all value checkers introduced in subsection
 (1.2) are also available for the elements of an iterable.
 ```python
-from checkerpy.validators.all import AllNonEmpty, AllLen, AllLimited
+from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen 
 ```
 They also work and are used in exactly the same way. Again, you get two errors
 raised (and logged) if an iterable does not pass the test and an `IterError`
@@ -246,9 +243,9 @@ from checkerpy.types.numpy import JustNdarray
 
 #### 3.2 Dtype checking
 Both numpy scalars and arrays have a `dtype` that you can check for. In full
-analogy to the `Just` class introduced in subsection (1.1), `Typy` provides
-a just `JustDtype` class that you can use to create dtype checkers for numpy
-arrays.
+analogy to the `Just` class introduced in subsection (1.1), `CheckerPy`
+provides a just `JustDtype` class that you can use to create dtype checkers 
+for numpy arrays.
 ```python
 from checkerpy.types.numpy import JustDtype
 
@@ -318,7 +315,7 @@ the others open. Specifying, for example,
 ```python
 out = JustShape(a, shape=[(..., 3), (2, ...)])
 ```
-checks that array _a_ either has 3 columns and an arbitrary number of rows or
+checks that array _a_ either has 3 columns and an arbitrary number of rows, or
 2 rows and an arbitrary number of columns. If it does not,
 ```python
 a = np.array([1, 2, 3])
@@ -370,7 +367,7 @@ from checkerpy.types.all import AllStr
 out = AllStr.o(NonEmpty).o(JustList)(inp, 'placeholders')
 ```
 Not only is the `name` argument piped through the whole chain, but also all
-other keyword arguments we have encountered so far are piped through in the
+other keyword arguments you have encountered so far are piped through in the
 same way. Calling, for example,
 ```python
 from checkerpy.validators.all import AllLimited
@@ -451,16 +448,16 @@ Here, the argument `name` must be equal or greater than 'aaa' (`...` is used
 to indicated the absence of a lower or upper bound) and `age` must be anywhere
 between 1 and 99 (including the interval boundaries). As with the `Typed`
 decorator introduced above in subsection (5.1), you can pass as many or as few
-limits to the decorator, both named and unnamed.
+limits to the decorator as you like, both named and unnamed.
 
 **Note**: _Limits must strictly be given as_ tuples _of length 2!_
 
 If a checked argument lies outside the specified bounds, then _two_ errors are
-raised and logged. Calling, for example, the function just defined with
+raised and logged. Calling, for example, the function just defined with,
 ```python
 show_age('Methusalem', 120)
 ```
-will get you both a `LimitError: Value 120 of Age lies outside the allowed
+will get you both a `LimitError: Value 120 of age lies outside the allowed
 interval [1, 99]!` and a `LimitError: An argument of function show_age defined
 in module __main__ is out of bounds!` raised and logged. Likewise, calling
 ```python
@@ -473,7 +470,14 @@ raised and logged.
 
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
-first argument is called either _self_ or _cls_ (static methods are obviously
-unaffected by this). If you insist of calling
+first argument is called _self_, _cls_ , or _mcs_ (static methods are
+obviously unaffected by this).
 
 #### 5.4 Limitations
+When using the decorators just introduced, be aware of the following
+limitations:
+1. The two decorators `Typed` and `Bounded` cannot be combined on the same
+function or method.
+2. `Typed` and `Bounded` should always be the _first_ decorators you apply to
+a function or method, that is, they should be at the _lowest_ position,
+directly above the function definition.
