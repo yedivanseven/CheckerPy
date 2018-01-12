@@ -1,11 +1,13 @@
 import logging as log
-from typing import Iterable
+from typing import Iterable, Union, Tuple, List, Set
 from .docstring import DOC_HEADER, DOC_BODY
 from ..one import _ITERABLES, Just
 from ...validators.one import NonEmpty
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError, IterError
+
+TYPES = Union[type, Set[type], Tuple[type, ...], List[type]]
 
 
 class All(CompositionMixin):
@@ -45,7 +47,7 @@ class All(CompositionMixin):
 
     """
 
-    def __init__(self, *types: type, identifier: str = 'All') -> None:
+    def __init__(self, *types: TYPES, identifier: str = 'All') -> None:
         self.__just = Just(*types)
         self.__types = self.__just.types
         self.__doc__ = self.__doc_string()
@@ -65,13 +67,12 @@ class All(CompositionMixin):
             message = self.__not_an_iterable_message_for(iterable)
             log.error(message)
             raise IterError(message)
-        for value in iterable:
-            try:
-                _ = self.__just(value, None)
-            except WrongTypeError as error:
-                message = self.__element_of_wrong_type_message_for(iterable)
-                log.error(message)
-                raise WrongTypeError(message) from error
+        try:
+            _ = tuple(map(self.__just, iterable))
+        except WrongTypeError as error:
+            message = self.__element_of_wrong_type_message_for(iterable)
+            log.error(message)
+            raise WrongTypeError(message) from error
         return iterable
 
     def __not_an_iterable_message_for(self, value) -> str:

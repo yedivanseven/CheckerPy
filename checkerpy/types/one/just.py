@@ -1,8 +1,10 @@
 import logging as log
-from typing import Tuple
+from typing import Tuple, Union, Set, List
 from .docstring import DOC_HEADER, DOC_BODY
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError
+
+TYPES = Union[type, Set[type], Tuple[type, ...], List[type]]
 
 
 class Just(CompositionMixin):
@@ -38,7 +40,7 @@ class Just(CompositionMixin):
 
     """
 
-    def __init__(self, *types: type, identifier: str = 'Just') -> None:
+    def __init__(self, *types: TYPES, identifier: str = 'Just') -> None:
         self._name = None
         self.__types = ()
         self.__register_types_from(types)
@@ -75,6 +77,8 @@ class Just(CompositionMixin):
     def __register_types_from(self, types: Tuple[type, ...]) -> None:
         if not types:
             raise AttributeError('Found no types to check for!')
+        type_is_iter = len(types) == 1 and type(types[0]) in (tuple, list, set)
+        types = types[0] if type_is_iter else types
         for type_ in types:
             self.__types += self.__validated(type_)
 

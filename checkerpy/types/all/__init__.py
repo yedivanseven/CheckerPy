@@ -2,12 +2,16 @@ from .all import All
 from .base import AllType, AllBool, AllInt, AllFloat, AllStr
 from .base import AllTuple, AllList, AllSet, AllDict
 from .compound import AllNum, AllIter, AllSequence
+from .typeddict import TypedDict
+from .typedtuple import TypedTuple
 
 __all__ = ['All', 'AllType', 'AllBool', 'AllInt', 'AllFloat',
            'AllStr', 'AllTuple', 'AllList', 'AllSet',
-           'AllDict', 'AllNum', 'AllIter', 'AllSequence']
+           'AllDict', 'AllNum', 'AllIter', 'AllSequence',
+           'TypedDict', 'TypedTuple']
 
 _ALL_COMPARABLES = (AllBool, AllInt, AllFloat, AllStr, AllTuple,
                     AllList, AllSet, AllNum, AllSequence)
 _ALL_ITERABLES = (AllStr, AllTuple, AllList, AllSet,
-                  AllDict, AllIter, AllSequence)
+                  AllDict, AllIter, AllSequence,
+                  TypedDict, TypedTuple)

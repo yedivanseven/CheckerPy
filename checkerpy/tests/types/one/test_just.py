@@ -63,6 +63,18 @@ class TestJustInstantiation(ut.TestCase):
         JustNum = Just(int, float)
         self.assertTupleEqual(JustNum.types, (int, float))
 
+    def test_works_with_types_given_as_set(self):
+        JustIntFloat = Just({int, float})
+        self.assertSetEqual(set(JustIntFloat.types), {int, float})
+
+    def test_works_with_types_given_as_list(self):
+        JustBoolStr = Just([bool, str])
+        self.assertTupleEqual(JustBoolStr.types, (bool, str))
+
+    def test_works_with_types_given_as_tuple(self):
+        JustListDict = Just((list, dict))
+        self.assertTupleEqual(JustListDict.types, (list, dict))
+
 
 class TestJust(ut.TestCase):
 

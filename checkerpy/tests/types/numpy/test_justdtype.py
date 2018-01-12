@@ -4,7 +4,7 @@ from ....functional import CompositionOf
 from ....exceptions import WrongTypeError, DtypeError, CallableError
 try:
     from ....types.numpy import JustDtype, JustNdarray
-    from numpy import int16, int32, float32
+    from numpy import int16, int32, float32, dtype
 except ImportError:
     no_numpy = True
 else:
@@ -69,6 +69,19 @@ class TestJustDtypeInstatiation(ut.TestCase):
     def test_attribute_dtypes_has_correct_value_with_two_valid_types(self):
         JustNpNum = JustDtype(int16, float32)
         self.assertTupleEqual(JustNpNum.dtypes, (int16, float32))
+
+    def test_works_with_types_given_as_set(self):
+        JustInt16Float32 = JustDtype({int16, float32})
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_list(self):
+        JustInt16Float32 = JustDtype([int16, float32])
+        self.assertTupleEqual(JustInt16Float32.dtypes, (int16, float32))
+
+    def test_works_with_types_given_as_tuple(self):
+        JustInt16Float32 = JustDtype((int16, float32))
+        self.assertTupleEqual(JustInt16Float32.dtypes, (int16, float32))
 
 
 @ut.skipIf(no_numpy, 'Could not import numpy!')
