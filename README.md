@@ -7,15 +7,29 @@ The purpose of this package is provide a series of type and value checkers.
 They all work in the same way:
 - A variable or literal is passed as argument to the checker.
 - If it passes the check(s), it is returned unaltered in type and value.
-- If it does _not_ pass the an informative error is raised and logged. 
+- If it does _not_ pass the checks, an informative error is raised and logged. 
+
+### Installation
+This package is available on `PyPi`. Simply type:
+```
+pip install checkerpy
+```
 
 ### Related work
 You might want to consider also:
 - [pycheck](https://pypi.python.org/pypi/pycheck/0.1)
+- [pychecked](https://github.com/a-tal/pychecked)
+- [typechecker](https://pypi.python.org/pypi/typechecker/0.1.1)
+- [typecheck3](https://pypi.python.org/pypi/typecheck3/0.1.0)
+- [enforce](https://github.com/RussBaz/enforce)
+- [pysignature](https://github.com/intelimetrica/pysignature)
+- [pytypes](https://pypi.python.org/pypi/pytypes/1.0b3)
+- [typecheck-decorator](https://github.com/prechelt/typecheck-decorator)
+- [typeguard](https://github.com/agronholm/typeguard)
 
 I apologize if I have missed your favorite package in this list.
 
-## Documentation
+## Usage
 1. [Single Values](#chapter1)
 2. [Iterables](#chapter2)
 3. [Numpy Support](#chapter3)
