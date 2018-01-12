@@ -231,25 +231,33 @@ With the exception of `OneOf`, all value checkers introduced in subsection
 ```python
 from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen 
 ```
-They also work and are used in exactly the same way.
+If, for example, you want to check a list of 2-tuples, use:
 ```python
-out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], 'short')
-out = AllLen([(1, 2), (3, 4), (5, 6)], length=2)
-out = AllLimited({2, 7, 3, 4}, name='positive ints', lo=1)
+out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], name='short')
+out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', length=2)
+out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', lo=(1, 1))
 ```
 Again, you get two errors raised (and logged) if an iterable does not pass the
 test.
 ```
->>> out = AllNonEmpty([(), (3, 4), (5, 6)], 'short')
+>>> out = AllNonEmpty([(), (3, 4), (5, 6)], name='short')
 ...
 EmptyError: Tuple must not be empty!
 ...
 EmptyError: An element of the list short is empty!
+>>> out = AllLen([(1,), (3, 4), (5, 6)], 'short', length=2)
+...
+LenError: Length of tuple (1,) must be 2, not 1!
+...
+LenError: An element of the list short has the wrong length!
+>>> out = AllLimited([(0, 1), (3, 4), (5, 6)], 'short', lo=(1, 1))
+...
+LimitError: Value (0, 1) lies outside the allowed interval [(1, 1), Ellipsis)!
+...
+LimitError: An element of the list short is out of bounds!
 ```
-will get you a
-and an `IterError`
-if you try to check something that is not an iterable. If, for example, you
-want to make sure that you get a list of 2-tuples, use:
+If you try to check something that is not an iterable, the `IterError`
+introduced in subsection (2.1) is raised and logged.
 
 ### 3. Numpy Support <a name=chapter3></a>
 You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
