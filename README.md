@@ -45,9 +45,13 @@ from checkerpy.types.one import Just
 
 JustInt = Just(int, identifier='JustInt')
 ```
-The `identifier` keyword is entirely optional. Its sole purpose is to enable
+The `identifier` keyword is entirely _optional_. Its sole purpose is to enable
 the dynamic creation of nicer docstrings. The types a type checker is checking
 for (`int` in this case) are stored in its `types` attribute.
+```python
+>>> JustInt.types
+(int, )
+```
 
 Once instantiated, the type checker can be used on a literal
 ```python
