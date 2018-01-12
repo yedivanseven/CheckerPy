@@ -9,10 +9,10 @@ Prior work
 
 ## Documentation
 1. [Single Values](#chapter1)
-2. Iterables
-3. Numpy Support
-4. Combining Validators
-5. Decorators
+2. [Iterables](#chapter2)
+3. [Numpy Support](#chapter3)
+4. [Combining Validators](#chapter4)
+5. [Decorators](#chapter5)
 -----------------------
 
 ### 1. Single Values <a name=chapter1></a>
@@ -165,7 +165,7 @@ out = OneOf('bloody', name='steak', items=('rare', 'medium', 'well done'))
 you get an `ItemError: Value bloody of steak with type str is not one of 
 ('rare', 'medium', 'well done')!` raised and logged.
 
-### 2. Iterables
+### 2. Iterables <a name=chapter2></a>
 This sections assumes that you have already read section (1) because the
 validators for iterables simply extend what has been introduced there to all
 elements of an iterable.
@@ -219,7 +219,7 @@ positive integers, use:
 out = AllLimited({2, 7, 3, 4}, name='positive ints', lo=1)
 ```
 
-### 3. Numpy Support
+### 3. Numpy Support <a name=chapter3></a>
 You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
 to import something from a _numpy_ subpackage, you'll simply get an
 `ImportError`. If, however, you do have `numpy` installed, then you have a
@@ -337,7 +337,7 @@ out = JustShape(1, shape=[(..., 3), (2, ...)])
 you also get a `ShapeError: Cannot determine shape of variable 1 with type int
 because it has no attribute shape!`
 
-### 4. Combining Validators
+### 4. Combining Validators <a name=chapter4></a>
 What if you want to check for more than one property, for example, type _and_
 value? The simples thing you could do would be to simply call the second
 validator on the results of the first.
@@ -393,7 +393,7 @@ out = AllLimited.AllStr.NonEmpty.JustList(inp, lo='aaa', hi='zzz')
 Just use tab-completion to find out which validator-methods are already set
 before you chain them using the `o()` method.
 
-### 5. Decorators
+### 5. Decorators <a name=chapter5></a>
 For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
 ```python
