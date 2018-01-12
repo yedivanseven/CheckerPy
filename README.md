@@ -3,9 +3,17 @@
 _Provides type and value checkers both as callables and as decorators._
 
 ## Introduction
-Values are passed through
+The purpose of this package is provide a series of type and value checkers.
+They all work in the same way:
+- A variable or literal is passed as argument to the checker.
+- If it passes the check(s), it is returned unaltered in type and value.
+- If it does _not_ pass the an informative error is raised and logged. 
 
-Prior work
+### Related work
+You might want to consider also:
+- [pycheck](https://pypi.python.org/pypi/pycheck/0.1)
+
+I apologize if I have missed your favorite package in this list.
 
 ## Documentation
 1. [Single Values](#chapter1)
