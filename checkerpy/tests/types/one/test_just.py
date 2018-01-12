@@ -43,6 +43,11 @@ class TestJustInstantiation(ut.TestCase):
         JustInt = Just(int)
         self.assertTrue(hasattr(JustInt, 'types'))
 
+    def test_cannot_set_attribute_types(self):
+        JustInt = Just(int)
+        with self.assertRaises(AttributeError):
+            JustInt.types = 'foo'
+
     def test_attribute_types_has_correct_value_with_one_valid_type(self):
         JustInt = Just(int)
         self.assertTupleEqual(JustInt.types, (int, ))

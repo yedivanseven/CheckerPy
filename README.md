@@ -47,7 +47,7 @@ JustInt = Just(int, identifier='JustInt')
 ```
 The `identifier` keyword is entirely _optional_. Its sole purpose is to enable
 the dynamic creation of nicer docstrings. The types a type checker is checking
-for (`int` in this case) are stored in its `types` attribute.
+for (`int` in this case) are stored in its `types` property.
 ```python
 >>> JustInt.types
 (int, )
@@ -302,7 +302,12 @@ a = np.array([1, 2, 3], dtype='uint8')
 out = JustUint8(a, name='small ints')
 ```
 Again, you don't have to do this manually because `CheckerPy` comes with
-type checkers for many of the numeric numpy dtypes predefined.
+type checkers for many of the numeric numpy dtypes predefined. The dtypes
+they check for are stored in their `dtypes` property.
+```python
+>>> JustUint8.dtypes
+(dtype('uint8'),)
+```
 
 If the numpy array or scalar to be checked does not have (one of) the required
 dtypes, the same `WrongTypeError` as introduced in subsection (1.1) is raised

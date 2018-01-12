@@ -50,6 +50,11 @@ class TestJustDtypeInstatiation(ut.TestCase):
         JustInt16 = JustDtype(int16)
         self.assertTrue(hasattr(JustInt16, 'dtypes'))
 
+    def test_cannot_set_attribute_dtypes(self):
+        JustInt16 = JustDtype(int16)
+        with self.assertRaises(AttributeError):
+            JustInt16.dtypes = 'foo'
+
     def test_attribute_dtypes_has_correct_value_with_one_valid_type(self):
         JustInt16 = JustDtype(int16)
         self.assertTupleEqual(JustInt16.dtypes, (int16, ))

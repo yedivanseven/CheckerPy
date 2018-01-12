@@ -26,6 +26,11 @@ class TestAllInstatiation(ut.TestCase):
         AllInt = All(int)
         self.assertTrue(hasattr(AllInt, 'types'))
 
+    def test_cannot_set_attribute_types(self):
+        AllInt = All(int)
+        with self.assertRaises(AttributeError):
+            AllInt.types = 'foo'
+
     def test_attribute_types_has_correct_value_with_one_valid_type(self):
         AllInt = All(int)
         self.assertTupleEqual(AllInt.types, (int, ))

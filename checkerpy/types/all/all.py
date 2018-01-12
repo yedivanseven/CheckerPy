@@ -47,12 +47,16 @@ class All(CompositionMixin):
 
     def __init__(self, *types: type, identifier: str = 'All') -> None:
         self.__just = Just(*types)
-        self.types = self.__just.types
+        self.__types = self.__just.types
         self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
         for iterable in _ITERABLES:
             setattr(self, iterable.__name__, CompositionOf(self, iterable))
         setattr(self, 'NonEmpty', CompositionOf(self, NonEmpty))
+
+    @property
+    def types(self):
+        return self.__types
 
     def __call__(self, iterable: Iterable, name=None, **kwargs) -> Iterable:
         self._name = str(name) if name is not None else ''
@@ -88,7 +92,7 @@ class All(CompositionMixin):
         return identifier
 
     def __doc_string(self) -> str:
-        types = tuple(type_.__name__ for type_ in self.types)
+        types = tuple(type_.__name__ for type_ in self.__types)
         types_string = types[0] if len(types) == 1 else f'one of {types}'
         doc_string = DOC_HEADER.format(types_string)
         doc_string += DOC_BODY

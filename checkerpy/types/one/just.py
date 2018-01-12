@@ -40,15 +40,19 @@ class Just(CompositionMixin):
 
     def __init__(self, *types: type, identifier: str = 'Just') -> None:
         self._name = None
-        self.types = ()
+        self.__types = ()
         self.__register_types_from(types)
         self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
 
+    @property
+    def types(self):
+        return self.__types
+
     def __call__(self, value, name=None, **kwargs):
         value_type = type(value)
         self._name = str(name) if name is not None else ''
-        if value_type not in self.types:
+        if value_type not in self.__types:
             message = self.__error_message_for(value, value_type.__name__)
             log.error(message)
             raise WrongTypeError(message)
@@ -56,7 +60,7 @@ class Just(CompositionMixin):
 
     def __error_message_for(self, value, value_type: str) -> str:
         name = ' of '+self._name if self._name else ''
-        types = tuple(type_.__name__ for type_ in self.types)
+        types = tuple(type_.__name__ for type_ in self.__types)
         of_type = types[0] if len(types) == 1 else f'one of {types}'
         return f'Type{name} must be {of_type}, not {value_type} like {value}!'
 
@@ -72,7 +76,7 @@ class Just(CompositionMixin):
         if not types:
             raise AttributeError('Found no types to check for!')
         for type_ in types:
-            self.types += self.__validated(type_)
+            self.__types += self.__validated(type_)
 
     def __validated(self, type_: type) -> Tuple[type]:
         if not type(type_) is type:
@@ -87,7 +91,7 @@ class Just(CompositionMixin):
         return f'Type of {name} must be type, not {type_name}!'
 
     def __doc_string(self) -> str:
-        types = tuple(type_.__name__ for type_ in self.types)
+        types = tuple(type_.__name__ for type_ in self.__types)
         types_string = types[0] if len(types) == 1 else f'one of {types}'
         doc_string = DOC_HEADER.format(types_string)
         doc_string += DOC_BODY

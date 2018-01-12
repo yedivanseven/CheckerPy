@@ -42,11 +42,15 @@ class JustDtype(CompositionMixin):
 
     def __init__(self, *types: type, identifier: str = 'JustDtype') -> None:
         self._name = None
-        self.dtypes = ()
+        self.__dtypes = ()
         self.__register_types_from(types)
         self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
         setattr(self, 'JustNdarray', CompositionOf(self, JustNdarray))
+
+    @property
+    def dtypes(self):
+        return self.__dtypes
 
     def __call__(self, value, name=None, **kwargs):
         self._name = str(name) if name is not None else ''
@@ -56,7 +60,7 @@ class JustDtype(CompositionMixin):
             message = self.__has_no_dtype_message_for(value)
             log.error(message)
             raise DtypeError(message) from error
-        if value_dtype not in self.dtypes:
+        if value_dtype not in self.__dtypes:
             message = self.__error_message_for(value)
             log.error(message)
             raise WrongTypeError(message)
@@ -71,7 +75,7 @@ class JustDtype(CompositionMixin):
     def __error_message_for(self, value) -> str:
         name = ' of '+self._name if self._name else ''
         value_type = value.dtype.name
-        dtypes = tuple(dtype_.name for dtype_ in self.dtypes)
+        dtypes = tuple(dtype_.name for dtype_ in self.__dtypes)
         of_type = dtypes[0] if len(dtypes) == 1 else f'one of {dtypes}'
         return f'Dtype{name} must be {of_type}, not {value_type} like {value}!'
 
@@ -87,7 +91,7 @@ class JustDtype(CompositionMixin):
         if not types:
             raise AttributeError('Found no types to check for!')
         for type_ in types:
-            self.dtypes += self.__dtype_from(type_)
+            self.__dtypes += self.__dtype_from(type_)
 
     def __dtype_from(self, type_: type) -> Tuple[dtype]:
         try:
@@ -104,7 +108,7 @@ class JustDtype(CompositionMixin):
         return f'Type of {name} must be type, not {type_name}!'
 
     def __doc_string(self) -> str:
-        dtypes = tuple(dtype_.name for dtype_ in self.dtypes)
+        dtypes = tuple(dtype_.name for dtype_ in self.__dtypes)
         dtypes_string = dtypes[0] if len(dtypes) == 1 else f'one of {dtypes}'
         doc_string = DOC_HEADER.format(dtypes_string)
         doc_string += DOC_BODY
