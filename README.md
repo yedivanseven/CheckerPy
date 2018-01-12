@@ -1,6 +1,6 @@
 # CheckerPy
 
-_Provides type and value checkers both as callables and as decorators._
+_Provides type and value checkers both as callables and as decorators_
 
 ## Introduction
 The purpose of this package is provide a series of type and value checkers.
