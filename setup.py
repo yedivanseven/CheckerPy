@@ -1,7 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='checkerpy',
-      version='0.0.9',
+      version='0.9.1',
       description='Type and value checkers both as callables and decorators',
       url='https://github.com/yedivanseven/CheckerPy',
       download_url='https://github.com/yedivanseven/CheckerPy',
@@ -17,9 +17,6 @@ setup(name='checkerpy',
           'Programming Language :: Python :: 3 :: Only',
           'Topic :: Software Development'],
       keywords='validation',
-      packages=['checkerpy/decorators',
-                'checkerpy/functional',
-                'checkerpy/types',
-                'checkerpy/validators'],
+      packages=find_packages(exclude=['checkerpy.tests', 'checkerpy.tests.*']),
       python_requires='>=3.5',
       test_suite='checkerpy.tests')
