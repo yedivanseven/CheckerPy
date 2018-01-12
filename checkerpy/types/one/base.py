@@ -1,3 +1,4 @@
+from types import FunctionType, MethodType
 from .just import Just
 
 JustType = Just(type, identifier='JustType')
@@ -10,3 +11,5 @@ JustTuple = Just(tuple, identifier='JustTuple')
 JustList = Just(list, identifier='JustList')
 JustSet = Just(set, identifier='JustSet')
 JustDict = Just(dict, identifier='JustDict')
+JustFunc = Just(FunctionType, identifier='JustFunc')
+JustMeth = Just(MethodType, identifier='JustMeth')
