@@ -8,14 +8,14 @@ Values are passed through
 Prior work
 
 ## Documentation
-1. [[Single Values|### 1. Singe Values]]
+1. [Single Values](#chapter1)
 2. Iterables
 3. Numpy Support
 4. Combining Validators
 5. Decorators
 -----------------------
 
-### 1. Single Values
+### 1. Single Values <a name=chapter1></a>
 #### 1.1 Type checking
 Type checkers are created by instantiating the class `Just`. To, for example,
 create one for integers, you would do:
