@@ -16,18 +16,17 @@ pip install checkerpy
 ```
 
 ### Related work
-You might want to consider also:
-- [pycheck](https://pypi.python.org/pypi/pycheck/0.1)
-- [pychecked](https://github.com/a-tal/pychecked)
-- [typechecker](https://pypi.python.org/pypi/typechecker/0.1.1)
-- [typecheck3](https://pypi.python.org/pypi/typecheck3/0.1.0)
-- [enforce](https://github.com/RussBaz/enforce)
-- [pysignature](https://github.com/intelimetrica/pysignature)
-- [pytypes](https://pypi.python.org/pypi/pytypes/1.0b3)
-- [typecheck-decorator](https://github.com/prechelt/typecheck-decorator)
-- [typeguard](https://github.com/agronholm/typeguard)
-
-I apologize if I have missed your favorite package in this list.
+You might want to consider also
+[pycheck](https://pypi.python.org/pypi/pycheck/0.1), 
+[pychecked](https://github.com/a-tal/pychecked), 
+[typechecker](https://pypi.python.org/pypi/typechecker/0.1.1), 
+[typecheck3](https://pypi.python.org/pypi/typecheck3/0.1.0), 
+[enforce](https://github.com/RussBaz/enforce), 
+[pysignature](https://github.com/intelimetrica/pysignature), 
+[pytypes](https://pypi.python.org/pypi/pytypes/1.0b3), 
+[typecheck-decorator](https://github.com/prechelt/typecheck-decorator), or
+[typeguard](https://github.com/agronholm/typeguard). I apologize if I have
+missed your favorite package in this list.
 
 ## Usage
 1. [Single Values](#chapter1)
