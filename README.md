@@ -548,3 +548,4 @@ function or method.
 2. `Typed` and `Bounded` should always be the _first_ decorators you apply to
 a function or method, that is, they should be at the _lowest_ position,
 directly above the function definition.
+3. Optional _*args_ and _**kwargs_ are not checked.
