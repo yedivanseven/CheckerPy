@@ -9,13 +9,13 @@ They all work in the same way:
 - If it passes the check(s), it is returned unaltered in type and value.
 - If it does _not_ pass the checks, an informative error is raised and logged. 
 
-### Installation
+#### Installation
 This package is available on `PyPi`. Simply type:
 ```
 pip install checkerpy
 ```
 
-### Related work
+#### Related work
 You might want to consider also
 [pycheck](https://pypi.python.org/pypi/pycheck/0.1), 
 [pychecked](https://github.com/a-tal/pychecked), 
