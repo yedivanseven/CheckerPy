@@ -8,7 +8,7 @@ Values are passed through
 Prior work
 
 ## Documentation
-1. Single Values
+1. [[Single Values|### 1. Singe Values]]
 2. Iterables
 3. Numpy Support
 4. Combining Validators
