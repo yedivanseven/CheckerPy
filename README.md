@@ -430,8 +430,6 @@ instance, can also be written as:
 ```python
 out = AllLimited.AllStr.NonEmpty.JustList(inp, lo='aaa', hi='zzz')
 ```
-Just use tab-completion to find out which validator-methods are already set
-before you chain them using the `o` method.
 
 The same is true for the `numpy` validators. Provided you have imported
 `JustInt64` from `checkerpy.types.numpy`, calling
@@ -446,6 +444,8 @@ and equivalent to calling
 ```python
 out = JustNdim.JustInt64.JustNdarray(a, 'once', ndim=1)
 ```
+Just use tab-completion to find out which validator-methods are already set
+before you chain them using the `o` method.
 ### 5. Decorators <a name=chapter5></a>
 For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
@@ -462,10 +462,15 @@ def show_age(name, age):
     print(f'{name} is {age} years old.')
 ```
 Here, argument `name` is checked for being of type `str` and the type of
-argument `age` must be either `int` or `float`. You can always specify more
-types in the decorator than there are arguments to the function. The extra
-types at the end are simply ignored. Also, you don't have to specify types for
-all arguments. In the example above, you might be happy with just:
+argument `age` must be either `int` or `float`.
+
+**Note**: _Specifying `(int, float)` for the second argument does_ not
+_mean that `age` must be a 2-tuple of an integer and a float!_
+
+You can always specify more types in the decorator than there are arguments
+to the function. The extra types at the end are simply ignored. Also, you
+don't have to specify types for all arguments. In the example above, you might
+be happy with just:
 ```python
 @Typed(str)
 def show_age(name, age):
@@ -498,17 +503,18 @@ show_age defined in module __main__ is of wrong type!` raised and logged.
 
 #### 5.2 Bounded
 To check if one or more arguments of a function (or method) are above, below,
-of outside given bounds, you can write
+or outside given bounds, you can write
 ```python
 @Bounded(('aaa', ...), (1, 99))
 def show_age(name, age):
     print(f'{name} is {age} years old.')
 ```
-Here, the argument `name` must be equal or greater than 'aaa' (`...` is used
-to indicated the absence of a lower or upper bound) and `age` must be anywhere
-between 1 and 99 (including the interval boundaries). As with the `Typed`
-decorator introduced above in subsection (5.1), you can pass as many or as few
-limits to the decorator as you like, both named and unnamed.
+Here, the argument `name` must be equal or greater than 'aaa' and `age` must
+be anywhere between 1 and 99 (including the interval boundaries). The
+ellipsis literal `...` is used to indicated the absence of a lower or upper
+bound. As with the `Typed` decorator introduced above in subsection (5.1), you
+can pass as many or as few limits to the decorator as you like, both named
+and unnamed, but
 
 **Note**: _Limits must strictly be given as_ tuples _of length 2!_
 
@@ -531,7 +537,8 @@ raised and logged.
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
 first argument is called _self_, _cls_ , or _mcs_ (static methods are
-obviously unaffected by this).
+obviously unaffected by this). If you insist on not sticking to this naming
+convention, use named keyword arguments to specify types or bounds.
 
 #### 5.4 Limitations
 When using the decorators just introduced, be aware of the following
