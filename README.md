@@ -275,14 +275,14 @@ JustNumber = Just(np.int32, np.int64, np.float32, np.float64)
 a = np.array([1, 2, 3])
 out = JustNumber(a[0])
 ```
-Of course, you can also check if a variable is a numpy array.
+Of course, you can also check if a variable is a numpy array,
 ```python
 JustNdarray = Just(np.ndarray, identifier='JustArray')
 
 inp = np.array([4.0, 5.0, 6.0])
 out = JustNdarray(inp)
 ```
-Again, you don't actually have to do this yourself because the type checker
+but you don't actually have to do this yourself because the type checker
 for `ndarray` is predefined already.
 ```python
 from checkerpy.types.numpy import JustNdarray
@@ -301,7 +301,7 @@ JustUint8 = JustDtype(np.uint8)
 a = np.array([1, 2, 3], dtype='uint8')
 out = JustUint8(a, name='small ints')
 ```
-But, of course, you don't have to do this manually because `CheckerPy` comes with
+Again, you don't have to do this manually because `CheckerPy` comes with
 type checkers for many of the numeric numpy dtypes predefined.
 
 If the numpy array or scalar to be checked does not have (one of) the required
@@ -374,13 +374,13 @@ validator does not have a `shape` attribute,
 ```python
 out = JustShape(1, shape=[(..., 3), (2, ...)])
 ```
-you also get a `ShapeError: Cannot determine shape of variable 1 with type int
-because it has no attribute shape!`
+you get a `ShapeError: Cannot determine shape of variable 1 with type int
+because it has no attribute shape!` raised and logged.
 
 ### 4. Combining Validators <a name=chapter4></a>
 What if you want to check for more than one property, for example, type _and_
-value? The simples thing you could do would be to simply call the second
-validator on the results of the first.
+value? The simplest thing you could do would be to call the second validator
+on the result of the first.
 ```python
 from checkerpy.types.one import JustList
 from checkerpy.validators.one import NonEmpty
@@ -389,7 +389,7 @@ inp = ['foo', 'bar', 'egg']
 mid = JustList(inp)
 out = NonEmpty(mid)
 ```
-More concisely, you could also try to squeeze everything on one line.
+You could also try to squeeze everything on one line.
 ```python
 out = NonEmpty(JustList(inp, name='placeholders'), name='placeholders')
 ```
@@ -398,7 +398,7 @@ variable `inp`, specified in the inner call to `JustList` is not passed on to
 the outer call of `NonEmpty` and, consequently, has to be specified again.
 
 Fortunately, `CheckerPy` offers a more elegant way of achieving exactly the same
-thing. All type and value checkers have a method `o()`, whose name was chosen
+thing. All type and value checkers have a method `o`, whose name was chosen
 to resemble the circular symbol used in mathematics to indicate the
 _composition_ of two functions. To use it, simply type
 ```python
@@ -406,8 +406,8 @@ out = NonEmpty.o(JustList)(inp, name='placeholders')
 ```
 Now,`inp` is piped first through `JustList` and then trough `NonEmpty` taking
 the `name` argument with it. What's best, however, is that the functional
-composition you get by combining two validators with the `o()` method again
-has an `o()` method, thus allowing you to continue the chain indefinitely.
+composition you get by combining two validators with the `o` method again
+has an `o` method, thus allowing you to continue the chain indefinitely.
 ```python
 from checkerpy.types.all import AllStr
 
@@ -415,14 +415,14 @@ out = AllStr.o(NonEmpty).o(JustList)(inp, 'placeholders')
 ```
 Not only is the `name` argument piped through the whole chain, but also all
 other keyword arguments you have encountered so far are piped through in the
-same way. Calling, for example,
+same way. When calling, for example,
 ```python
 from checkerpy.validators.all import AllLimited
 
 out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, lo='aaa', hi='zzz')
 ```
-the keyword arguments `lo` and `hi` are passed all the way through to the call
-of `AllLimited`.
+the keyword arguments `lo` and `hi` are passed all the way through to
+`AllLimited`.
 
 In order to further save you some typing, some useful functional compositions
 are already attached to most validators as methods. The example above, for
@@ -431,8 +431,21 @@ instance, can also be written as:
 out = AllLimited.AllStr.NonEmpty.JustList(inp, lo='aaa', hi='zzz')
 ```
 Just use tab-completion to find out which validator-methods are already set
-before you chain them using the `o()` method.
+before you chain them using the `o` method.
 
+The same is true for the `numpy` validators. Provided you have imported
+`JustInt64` from `checkerpy.types.numpy`, calling
+```python
+out = JustNdim(JustInt64(JustNdarray(a, 'again'), 'again'), 'again', ndim=1)
+```
+is equivalent to calling
+```python
+out = JustNdim.o(JustInt64).o(JustNdarray)(a, 'once', ndim=1)
+```
+and equivalent to calling
+```python
+out = JustNdim.JustInt64.JustNdarray(a, 'once', ndim=1)
+```
 ### 5. Decorators <a name=chapter5></a>
 For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
