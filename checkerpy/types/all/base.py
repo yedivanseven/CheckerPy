@@ -1,0 +1,11 @@
+from .all import All
+
+AllType = All(type, identifier='AllType')
+AllBool = All(bool, identifier='AllBool')
+AllInt = All(int, identifier='AllInt')
+AllFloat = All(float, identifier='AllFloat')
+AllStr = All(str, identifier='AllStr')
+AllTuple = All(tuple, identifier='AllTuple')
+AllList = All(list, identifier='AllList')
+AllSet = All(set, identifier='AllSet')
+AllDict = All(dict, identifier='AllDict')

@@ -1,0 +1,25 @@
+from setuptools import setup
+
+setup(name='checkerpy',
+      version='0.0.9',
+      description='Type and value checkers both as callables and decorators',
+      url='https://github.com/yedivanseven/CheckerPy',
+      download_url='https://github.com/yedivanseven/CheckerPy',
+      author='Georg Heimel',
+      author_email='georg@muckisnspirit.com',
+      license='MIT',
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: MIT License',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 3 :: Only',
+          'Topic :: Software Development'],
+      keywords='validation',
+      packages=['checkerpy/decorators',
+                'checkerpy/functional',
+                'checkerpy/types',
+                'checkerpy/validators'],
+      python_requires='>=3.5',
+      test_suite='checkerpy.tests')
