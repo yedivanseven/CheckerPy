@@ -13,8 +13,7 @@ Prior work
 3. Numpy Support
 4. Combining Validators
 5. Decorators
-
----
+-----------------------
 
 ### 1. Single Values
 #### 1.1 Type checking
