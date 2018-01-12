@@ -239,7 +239,7 @@ out = AllLimited({2, 7, 3, 4}, name='positive ints', lo=1)
 ```
 Again, you get two errors raised (and logged) if an iterable does not pass the
 test.
-```python
+```
 >>> out = AllNonEmpty([(), (3, 4), (5, 6)], 'short')
 ...
 EmptyError: Tuple must not be empty!
