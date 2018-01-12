@@ -1,3 +1,4 @@
+from types import FunctionType, MethodType
 from .all import All
 
 AllType = All(type, identifier='AllType')
@@ -9,3 +10,5 @@ AllTuple = All(tuple, identifier='AllTuple')
 AllList = All(list, identifier='AllList')
 AllSet = All(set, identifier='AllSet')
 AllDict = All(dict, identifier='AllDict')
+AllFunc = All(FunctionType, identifier='AllFunc')
+AllMeth = All(MethodType, identifier='AllMeth')
