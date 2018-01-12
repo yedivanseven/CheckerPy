@@ -1,4 +1,4 @@
-# TyPy
+# CheckerPy
 
 _Provides type and value checkers both as callables and as decorators._
 
@@ -11,7 +11,7 @@ Bli bla blo
 Type checkers are created by instantiating the class `Just`. To, for example,
 create one for integers, you would do:
 ```python
-from typy.types.one import Just
+from checkerpy.types.one import Just
 
 JustInt = Just(int, identifier='JustInt')
 ```
@@ -41,10 +41,10 @@ out = JustInt(2.0, name='level')
 which will result in `WrongTypeError: Type of level must be int, not float
 like 2.0!`
 
-As a matter of fact, `TyPy` already comes with type checkers for all built-in
+As a matter of fact, `CheckerPy` already comes with type checkers for all built-in
 types predefined. So you could just do
 ```python
-from typy.types.one import JustInt
+from checkerpy.types.one import JustInt
 ```
 and the same for `str`, `float`, `tuple`, etc.
 
@@ -77,10 +77,10 @@ are intended. Note, however, that if a value passes the type check, its type
 does not change from, for example, `int` to `JustInt` but it stays `int`.
 
 #### 1.2 Value checking
-Other than checking for type, `TyPy` also comes with validators for emptiness
+Other than checking for type, `CheckerPy` also comes with validators for emptiness
 and length of iterables, bounds, and membership of a set.
 ```python
-from typy.validators.one import NonEmpty, JustLen, Limited, OneOf
+from checkerpy.validators.one import NonEmpty, JustLen, Limited, OneOf
 ```
 ##### 1.2.1 NonEmpty
 As the name implies, `NonEmpty` raises and logs and error if an (optionally
@@ -169,7 +169,7 @@ elements of an iterable.
 Type checkers for all elements of an iterable are created by instantiating the
 class `All`. To, for example, create one for integers, you would do:
 ```python
-from typy.types.all import All
+from checkerpy.types.all import All
 
 AllInt = All(int, identifier='AllInt')
 ```
@@ -200,7 +200,7 @@ be an iterable with elements to inspect!` raised and logged.
 With the exception of `OneOf`, all value checkers introduced in subsection
 (1.2) are also available for the elements of an iterable.
 ```python
-from typy.validators.all import AllNonEmpty, AllLen, AllLimited
+from checkerpy.validators.all import AllNonEmpty, AllLen, AllLimited
 ```
 They also work and are used in exactly the same way. Again, you get two errors
 raised (and logged) if an iterable does not pass the test and an `IterError`
@@ -216,7 +216,7 @@ out = AllLimited({2, 7, 3, 4}, name='positive ints', lo=1)
 ```
 
 ### 3. Numpy Support
-You don't need to have `numpy` installed to use `TyPy`. If you nevertheless try
+You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
 to import something from a _numpy_ subpackage, you'll simply get an
 `ImportError`. If, however, you do have `numpy` installed, then you have a
 couple of additional validators available to you.
@@ -225,7 +225,7 @@ couple of additional validators available to you.
 You can, of course, simply use `Just` to check for the type of numpy _scalars_.
 ```python
 import numpy as np
-from typy.types.one import Just
+from checkerpy.types.one import Just
 
 JustNumber = Just(np.int32, np.int64, np.float32, np.float64)
 a = np.array([1, 2, 3])
@@ -241,7 +241,7 @@ out = JustNdarray(inp)
 Again, you don't actually have to do this yourself because the type checker
 for `ndarray` is predefined already.
 ```python
-from typy.types.numpy import JustNdarray
+from checkerpy.types.numpy import JustNdarray
 ```
 
 #### 3.2 Dtype checking
@@ -250,14 +250,14 @@ analogy to the `Just` class introduced in subsection (1.1), `Typy` provides
 a just `JustDtype` class that you can use to create dtype checkers for numpy
 arrays.
 ```python
-from typy.types.numpy import JustDtype
+from checkerpy.types.numpy import JustDtype
 
 JustUint8 = JustDtype(np.uint8)
 
 a = np.array([1, 2, 3], dtype='uint8')
 out = JustUint8(a, name='small ints')
 ```
-But, of course, you don't have to do this manually because `TyPy` comes with
+But, of course, you don't have to do this manually because `CheckerPy` comes with
 type checkers for many of the numeric numpy dtypes predefined.
 
 If the numpy array or scalar to be checked does not have (one of) the required
@@ -278,7 +278,7 @@ The dimensionality of numpy arrays is stored in their `ndim` attribute. If you
 want to make sure that a numpy array has (one of) a certain number of
 dimensions, you do
 ```python
-from typy.validators.numpy import JustNdim
+from checkerpy.validators.numpy import JustNdim
 
 a = np.array([[1, 2, 3], [4, 5, 6]])
 out = JustNdim(a, ndim=(1, 2))
@@ -304,7 +304,7 @@ foo with type str because it has no attribute ndim!` raised and logged.
 The actual shape of numpy arrays is stored in their `shape` attribute. To
 check if a given numpy array has a certain shape, use
 ```python
-from typy.validators.numpy import JustShape
+from checkerpy.validators.numpy import JustShape
 
 a = np.array([[1, 2, 3], [4, 5, 6]])
 out = JustShape(a, name='2x3', shape=(2, 3))
@@ -338,8 +338,8 @@ What if you want to check for more than one property, for example, type _and_
 value? The simples thing you could do would be to simply call the second
 validator on the results of the first.
 ```python
-from typy.types.one import JustList
-from typy.validators.one import NonEmpty
+from checkerpy.types.one import JustList
+from checkerpy.validators.one import NonEmpty
 
 inp = ['foo', 'bar', 'egg']
 mid = JustList(inp)
@@ -353,7 +353,7 @@ This, however is not only ugly but also has the drawback that the name of the
 variable `inp`, specified in the inner call to `JustList` is not passed on to
 the outer call of `NonEmpty` and, consequently, has to be specified again.
 
-Fortunately, `TyPy` offers a more elegant way of achieving exactly the same
+Fortunately, `CheckerPy` offers a more elegant way of achieving exactly the same
 thing. All type and value checkers have a method `o()`, whose name was chosen
 to resemble the circular symbol used in mathematics to indicate the
 _composition_ of two functions. To use it, simply type
@@ -365,7 +365,7 @@ the `name` argument with it. What's best, however, is that the functional
 composition you get by combining two validators with the `o()` method again
 has an `o()` method, thus allowing you to continue the chain indefinitely.
 ```python
-from typy.types.all import AllStr
+from checkerpy.types.all import AllStr
 
 out = AllStr.o(NonEmpty).o(JustList)(inp, 'placeholders')
 ```
@@ -373,7 +373,7 @@ Not only is the `name` argument piped through the whole chain, but also all
 other keyword arguments we have encountered so far are piped through in the
 same way. Calling, for example,
 ```python
-from typy.validators.all import AllLimited
+from checkerpy.validators.all import AllLimited
 
 out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, lo='aaa', hi='zzz')
 ```
@@ -390,10 +390,10 @@ Just use tab-completion to find out which validator-methods are already set
 before you chain them using the `o()` method.
 
 ### 5. Decorators
-For checking the values and types of function (or method) arguments, `TyPy`
+For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
 ```python
-from typy.decorators import Typed, Bounded
+from checkerpy.decorators import Typed, Bounded
 ```
 
 #### 5.1 Typed
