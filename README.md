@@ -24,8 +24,9 @@ You might want to consider also
 [enforce](https://github.com/RussBaz/enforce), 
 [pysignature](https://github.com/intelimetrica/pysignature), 
 [pytypes](https://pypi.python.org/pypi/pytypes/1.0b3), 
-[typecheck-decorator](https://github.com/prechelt/typecheck-decorator), or
-[typeguard](https://github.com/agronholm/typeguard). I apologize if I have
+[typecheck-decorator](https://github.com/prechelt/typecheck-decorator),
+[typeguard](https://github.com/agronholm/typeguard), or
+[mypy](http://mypy-lang.org/). I apologize if I have
 missed your favorite package in this list.
 
 ## Usage
