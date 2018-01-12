@@ -57,27 +57,27 @@ Once instantiated, the type checker can be used on a literal
 ```python
 out = JustInt(1)
 ```
-or a variable
+or a variable.
 ```python
 inp = 2
 out = JustInt(inp)
 ```
 If the passed-in variable of literal is not of type `int`, a `WrongTypeError:
-Type must be int, not str like foo!` error is raised and logged to the default
+Type must be int, not str like foo!` is raised and logged to the default
 logger.
 
-To make the error message more instructive, you can pass a name for the
-value in question,
+To make the error message more expressive, you can optionally pass a name for
+the value in question,
 ```python
 out = JustInt(2.0, name='level')
 ```
 which will result in `WrongTypeError: Type of level must be int, not float
 like 2.0!`
 
-As a matter of fact, `CheckerPy` already comes with type checkers for all built-in
-types predefined. So you could just do
+As a matter of fact, `CheckerPy` already comes with type checkers for all
+built-in types predefined. So you could just do
 ```python
-from checkerpy.types.one import JustInt
+from checkerpy.types.one import JustInt, JustList, JustDict
 ```
 and the same for `str`, `float`, `tuple`, etc.
 
@@ -123,7 +123,7 @@ out = NonEmpty(('foo', 'bar', 'egg'))
 out = NonEmpty({}, name='of cheeses')
 ```
 will raise and log `EmptyError: Dict of cheeses must not be empty!` Likewise,
-an error is raises and logged if the emptiness of the value passed to the
+an error is raised and logged if the emptiness of the value passed to the
 validator cannot be determined, that is,
 ```python
 out = NonEmpty(1, 'brain')
@@ -154,7 +154,7 @@ you will get `LenError: Length of 4 with type int cannot be determined!`
 raised and logged.
 
 ##### 1.2.3 Limited
-To check if an (optionally) named value is above, below or outside given
+To check if an (optionally named) value is above, below or outside given
 bounds, you use
 ```python
 out = Limited(3, name='level of detail', lo=1, hi=5)
@@ -174,7 +174,7 @@ you have specified (because it is, for example, of a wrong type),
 ```python
 out = Limited(3, 'the level of detail', lo='a', hi='z')
 ```
-you get `WrongTypeError: Cannot compare type int of the level of detail with
+you get a `WrongTypeError: Cannot compare type int of the level of detail with
 limits of types str and str!` raised and logged.
 
 ##### 1.2.4 OneOf
@@ -223,7 +223,7 @@ out = AllInt(1, 'single integer')
 you get an `IterError: Variable single integer with type int does not seem to
 be an iterable with elements to inspect!` raised and logged.
 
-**Note**: *This is a common feature of all iterable validators*
+**Note**: *This is a common feature of all iterable validators.*
 
 #### 2.2 Value Checking
 With the exception of `OneOf`, all value checkers introduced in subsection
@@ -231,18 +231,25 @@ With the exception of `OneOf`, all value checkers introduced in subsection
 ```python
 from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen 
 ```
-They also work and are used in exactly the same way. Again, you get two errors
-raised (and logged) if an iterable does not pass the test and an `IterError`
-if you try to check something that is not an iterable. If, for example, you
-want to make sure that you get a list of 2-tuples, use:
+They also work and are used in exactly the same way.
 ```python
+out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], 'short')
 out = AllLen([(1, 2), (3, 4), (5, 6)], length=2)
-```
-Or is, as another example, you want to make sure that you get a set of
-positive integers, use:
-```python
 out = AllLimited({2, 7, 3, 4}, name='positive ints', lo=1)
 ```
+Again, you get two errors raised (and logged) if an iterable does not pass the
+test.
+```python
+>>> out = AllNonEmpty([(), (3, 4), (5, 6)], 'short')
+...
+EmptyError: Tuple must not be empty!
+...
+EmptyError: An element of the list short is empty!
+```
+will get you a
+and an `IterError`
+if you try to check something that is not an iterable. If, for example, you
+want to make sure that you get a list of 2-tuples, use:
 
 ### 3. Numpy Support <a name=chapter3></a>
 You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
