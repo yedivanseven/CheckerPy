@@ -1,17 +1,14 @@
 import logging as log
-from typing import Tuple
 from .nonempty import NonEmpty
 from ...functional.mixins import CompositionClassMixin
 from ...functional import CompositionOf
 from ...types.one import _COMPARABLES
 from ...exceptions import LimitError, WrongTypeError
 
-TYPES = Tuple[type, ...]
-
 
 class ComparableRegistrar(type):
     """Sets compositions of class and type/non-empty checkers as attributes."""
-    def __init__(cls, class_name: str, bases: TYPES, attributes: dict) -> None:
+    def __init__(cls, class_name: str, bases, attributes: dict) -> None:
         super().__init__(class_name, (), attributes)
         for comparable in _COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))

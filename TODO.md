@@ -1,5 +1,5 @@
 # To Do
-- Add tests for TypedTuple!
+- Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add AllTyped!
 - Use map wherever possible!
