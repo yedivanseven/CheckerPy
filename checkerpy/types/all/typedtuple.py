@@ -3,11 +3,12 @@ from typing import Tuple, List, Union
 from ..one import Just
 from ...validators.one import JustLen
 from ...exceptions import LenError, WrongTypeError
+from ...functional.mixins import CompositionClassMixin
 
 TYPES = Union[Tuple[type, ...], List[type]]
 
 
-class TypedTuple:
+class TypedTuple(CompositionClassMixin):
     def __new__(cls, value: tuple, name=None, types=(), **kwargs) -> tuple:
         cls._name = str(name) if name is not None else ''
         types, length = cls.__length_of(types)
