@@ -64,13 +64,11 @@ class Typed(FunctionTypeMixin):
     def __init__(self, *arg_types: TYPES, **kwarg_types: TYPES) -> None:
         self.arg_types = []
         for type_ in arg_types:
-            type_checker = Just(type_) if self.single(type_) else Just(*type_)
-            self.arg_types.append(type_checker)
+            self.arg_types.append(Just(type_))
         self.n_arg_types = len(self.arg_types)
         self.kwarg_types = {}
         for name, type_ in kwarg_types.items():
-            type_checker = Just(type_) if self.single(type_) else Just(*type_)
-            self.kwarg_types.update({name: type_checker})
+            self.kwarg_types.update({name: Just(type_)})
 
     def __call__(self, function_to_decorate: TO_DECORATE) -> DECORATED:
         first, func_specs = self.type_of(function_to_decorate)
