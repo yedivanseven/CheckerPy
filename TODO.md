@@ -1,7 +1,8 @@
 # To Do
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
-- Add AllTyped!
+- Add LimitedDict and LimitedTuple
+- Add AllTyped, AllTypedDict, AllTypedTuple!
 - Use map wherever possible!
 - Restrict specifications of multiple types to sets wherever needed!
 - Expand type and bound checking in decorators to iterables!
