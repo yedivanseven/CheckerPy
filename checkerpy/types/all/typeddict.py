@@ -28,7 +28,7 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
         if values and values is not ...:
             for key, value in mapping.items():
                 try:
-                    _ = Just(values)(mapping[key], f'dictionary entry {key}')
+                    _ = Just(values)(value, name=f'dictionary entry {key}')
                 except WrongTypeError as error:
                     message = cls.__element_of_wrong_type_message()
                     log.error(message)
