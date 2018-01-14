@@ -62,9 +62,7 @@ class Typed(FunctionTypeMixin):
     """
 
     def __init__(self, *arg_types: TYPES, **kwarg_types: TYPES) -> None:
-        self.arg_types = []
-        for type_ in arg_types:
-            self.arg_types.append(Just(type_))
+        self.arg_types = tuple(map(Just, arg_types))
         self.n_arg_types = len(self.arg_types)
         self.kwarg_types = {}
         for name, type_ in kwarg_types.items():
