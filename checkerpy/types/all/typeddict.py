@@ -1,8 +1,9 @@
-from .all import All
-from ..one import JustDict
+import logging as log
+from ..one import JustDict, Just
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen
+from ...exceptions import WrongTypeError
 
 
 class Registrar(type):
@@ -15,9 +16,26 @@ class Registrar(type):
 class TypedDict(CompositionClassMixin, metaclass=Registrar):
     def __new__(cls, mapping: dict, name=None, keys=(), values=(), **kwargs):
         cls._name = str(name) if name is not None else ''
-        mapping = JustDict(mapping)
+        mapping = JustDict(mapping, name=name)
         if keys and keys is not ...:
-            _ = All(keys)(mapping, name=name)
+            for key in mapping.keys():
+                try:
+                    _ = Just(keys)(key, name=f'dictionary key')
+                except WrongTypeError as error:
+                    message = cls.__element_of_wrong_type_message()
+                    log.error(message)
+                    raise WrongTypeError(message) from error
         if values and values is not ...:
-            _ = All(values)(mapping.values(), name=name)
+            for key, value in mapping.items():
+                try:
+                    _ = Just(values)(mapping[key], f'dictionary entry {key}')
+                except WrongTypeError as error:
+                    message = cls.__element_of_wrong_type_message()
+                    log.error(message)
+                    raise WrongTypeError(message) from error
         return mapping
+
+    @classmethod
+    def __element_of_wrong_type_message(cls) -> str:
+        name = ' '+cls._name if cls._name else ''
+        return f'An element of the dictionary{name} has a wrong type!'

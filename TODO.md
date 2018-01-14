@@ -1,5 +1,4 @@
 # To Do
-- Interpolate dictionary key into error message of TypedDict!
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add LimitedDict and LimitedTuple!
