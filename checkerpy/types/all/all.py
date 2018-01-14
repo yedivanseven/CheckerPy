@@ -1,5 +1,5 @@
 import logging as log
-from typing import Iterable, Union, Tuple, List, Set
+from typing import Union, Tuple, Iterable
 from .docstring import DOC_HEADER, DOC_BODY
 from ..one import _ITERABLES, Just
 from ...validators.one import NonEmpty
@@ -7,7 +7,7 @@ from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError, IterError
 
-TYPES = Union[type, Set[type], Tuple[type, ...], List[type]]
+TYPES = Union[type, Iterable[type]]
 
 
 class All(CompositionMixin):
@@ -57,7 +57,7 @@ class All(CompositionMixin):
         setattr(self, 'NonEmpty', CompositionOf(self, NonEmpty))
 
     @property
-    def types(self):
+    def types(self) -> Tuple[type, ...]:
         return self.__types
 
     def __call__(self, iterable: Iterable, name=None, **kwargs) -> Iterable:

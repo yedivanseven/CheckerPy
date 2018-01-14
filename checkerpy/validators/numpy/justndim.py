@@ -57,10 +57,8 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
     def __new__(cls, array, name=None, ndim: NDIM_TYPE = 1, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(array)
-        cls._ndims = ()
         ndims = ndim if type(ndim) in (tuple, list, set) else (ndim,)
-        for ndim in ndims:
-            cls._ndims += cls.__validated(ndim)
+        cls._ndims = tuple(map(cls.__validate, ndims))
         try:
             array_ndim = array.ndim
         except AttributeError as error:
@@ -74,13 +72,13 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
         return array
 
     @classmethod
-    def __validated(cls, ndim: int) -> Tuple[int]:
+    def __validate(cls, ndim: int) -> int:
         try:
             ndim = int(ndim)
         except (ValueError, TypeError) as error:
             message = cls.__invalid_ndim_message_for(ndim)
             raise IntError(message) from error
-        return ndim,
+        return ndim
 
     @staticmethod
     def __invalid_ndim_message_for(value) -> str:

@@ -5,8 +5,9 @@
 - Add LimitedDict and LimitedTuple!
 - Add LengthDict and LengthTuple!
 - Add AllTyped, AllTypedDict, AllTypedTuple!
-- Use map wherever possible, in particular in AllNonEmpty!
-- Restrict specifications of multiple types to sets wherever needed!
+- Use (star)map wherever possible!
+- Allow ... to skip checking in Decorators!
 - Expand type and bound checking in decorators to iterables!
+- Adopt (int, ...) notation for typed tuples of arbitrary length!
 - Write _Checked_ decorator providing a single validator for each argument!
 - Check _*args_ and _**kwargs_ with decorators!

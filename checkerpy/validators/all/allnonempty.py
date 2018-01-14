@@ -55,13 +55,12 @@ class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
             message = cls.__not_an_iterable_message_for(iterable)
             log.error(message)
             raise IterError(message)
-        for value in iterable:
-            try:
-                _ = NonEmpty(value, None)
-            except EmptyError as error:
-                message = cls.__is_empty_message_for(iterable)
-                log.error(message)
-                raise EmptyError(message) from error
+        try:
+            _ = tuple(map(NonEmpty, iterable))
+        except EmptyError as error:
+            message = cls.__is_empty_message_for(iterable)
+            log.error(message)
+            raise EmptyError(message) from error
         return iterable
 
     @classmethod

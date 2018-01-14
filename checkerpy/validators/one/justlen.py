@@ -1,5 +1,4 @@
 import logging as log
-from typing import Tuple
 from .registrar import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
@@ -55,10 +54,8 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
     def __new__(cls, iterable, name=None, length=1, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(iterable)
-        cls._lengths = ()
         lengths = length if type(length) in (tuple, list, set) else (length, )
-        for length in lengths:
-            cls._lengths += cls.__validated(length)
+        cls._lengths = tuple(map(cls.__validate, lengths))
         try:
             length_of_iterable = len(iterable)
         except TypeError as error:
@@ -72,13 +69,13 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
         return iterable
 
     @classmethod
-    def __validated(cls, length: int) -> Tuple[int]:
+    def __validate(cls, length: int) -> int:
         try:
             length = int(length)
         except (ValueError, TypeError) as error:
             message = cls.__invalid_type_message_for(length)
             raise IntError(message) from error
-        return length,
+        return length
 
     @staticmethod
     def __invalid_type_message_for(value) -> str:

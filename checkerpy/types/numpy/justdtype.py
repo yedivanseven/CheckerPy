@@ -1,5 +1,5 @@
 import logging as log
-from typing import Tuple, Union, Set, List
+from typing import Tuple, Union, Iterable
 from numpy import dtype
 from .docstring import DOC_HEADER, DOC_BODY
 from .justndarray import JustNdarray
@@ -7,7 +7,7 @@ from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError, DtypeError
 
-TYPES = Union[type, Set[type], Tuple[type, ...], List[type]]
+TYPES = Union[type, Iterable[type]]
 
 
 class JustDtype(CompositionMixin):
@@ -44,14 +44,13 @@ class JustDtype(CompositionMixin):
 
     def __init__(self, *types: TYPES, identifier: str = 'JustDtype') -> None:
         self._name = None
-        self.__dtypes = ()
-        self.__register_dtypes_from(types)
+        self.__dtypes = self.__registered(types)
         self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
         setattr(self, 'JustNdarray', CompositionOf(self, JustNdarray))
 
     @property
-    def dtypes(self):
+    def dtypes(self) -> Tuple[dtype, ...]:
         return self.__dtypes
 
     def __call__(self, value, name=None, **kwargs):
@@ -89,21 +88,20 @@ class JustDtype(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __register_dtypes_from(self, types: Tuple[type, ...]) -> None:
+    def __registered(self, types: Tuple[type, ...]) -> Tuple[dtype, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
         type_is_iter = len(types) == 1 and type(types[0]) in (tuple, list, set)
         types = types[0] if type_is_iter else types
-        for type_ in types:
-            self.__dtypes += self.__dtype_from(type_)
+        return tuple(map(self.__dtype_from, types))
 
-    def __dtype_from(self, type_: type) -> Tuple[dtype]:
+    def __dtype_from(self, type_: type) -> dtype:
         try:
             dtype_ = dtype(type_)
         except TypeError:
             message = self.__invalid_type_message_for(type_)
             raise TypeError(message)
-        return dtype_,
+        return dtype_
 
     @staticmethod
     def __invalid_type_message_for(type_) -> str:

@@ -1,10 +1,10 @@
 import logging as log
-from typing import Tuple, Union, Set, List
+from typing import Tuple, Union, Iterable
 from .docstring import DOC_HEADER, DOC_BODY
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError
 
-TYPES = Union[type, Set[type], Tuple[type, ...], List[type]]
+TYPES = Union[type, Iterable[type]]
 
 
 class Just(CompositionMixin):
@@ -42,13 +42,12 @@ class Just(CompositionMixin):
 
     def __init__(self, *types: TYPES, identifier: str = 'Just') -> None:
         self._name = None
-        self.__types = ()
-        self.__register_types_from(types)
+        self.__types = self.__registered(types)
         self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
 
     @property
-    def types(self):
+    def types(self) -> Tuple[type, ...]:
         return self.__types
 
     def __call__(self, value, name=None, **kwargs):
@@ -74,19 +73,18 @@ class Just(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __register_types_from(self, types: Tuple[type, ...]) -> None:
+    def __registered(self, types: Tuple[type, ...]) -> Tuple[type, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
         type_is_iter = len(types) == 1 and type(types[0]) in (tuple, list, set)
         types = types[0] if type_is_iter else types
-        for type_ in types:
-            self.__types += self.__validated(type_)
+        return tuple(map(self.__validate, types))
 
-    def __validated(self, type_: type) -> Tuple[type]:
+    def __validate(self, type_: type) -> type:
         if not type(type_) is type:
             message = self.__invalid_type_message_for(type_)
             raise TypeError(message)
-        return type_,
+        return type_
 
     @staticmethod
     def __invalid_type_message_for(type_) -> str:
