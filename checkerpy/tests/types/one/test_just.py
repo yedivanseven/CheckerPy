@@ -14,13 +14,13 @@ class TestJustInstantiation(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_type_to_check_wrong_type(self):
-        err_msg = 'Type of foo must be type, not str!'
+        err_msg = 'Type of type specifier foo must be type, not str!'
         with self.assertRaises(TypeError) as err:
             _ = Just('foo')
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_two_types_to_check_wrong_type(self):
-        err_msg = 'Type of bar must be type, not str!'
+        err_msg = 'Type of type specifier bar must be type, not str!'
         with self.assertRaises(TypeError) as err:
             _ = Just(int, 'bar')
         self.assertEqual(str(err.exception), err_msg)

@@ -90,7 +90,7 @@ class Just(CompositionMixin):
     def __invalid_type_message_for(type_) -> str:
         name = type_.__name__ if hasattr(type_, '__name__') else type_
         type_name = type(type_).__name__
-        return f'Type of {name} must be type, not {type_name}!'
+        return f'Type of type specifier {name} must be type, not {type_name}!'
 
     def __doc_string(self) -> str:
         types = tuple(type_.__name__ for type_ in self.__types)
