@@ -1,9 +1,8 @@
 import logging as log
-from typing import Iterable
 from .registrars import AllIterableRegistrar
 from ..one import JustLen
 from ...functional.mixins import CompositionClassMixin
-from ...exceptions import LenError, IterError
+from ...exceptions import IterError
 
 
 class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
