@@ -158,7 +158,7 @@ class TestAllLimited(ut.TestCase):
 
     def test_error_on_empty_element_in_named_dict(self):
         log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval (Ellipsis, 3]!',
+                   ' the allowed interval (-inf, 3]!',
                    'ERROR:root:An element of the'
                    ' dict test is out of bounds!']
         err_msg = 'An element of the dict test is out of bounds!'

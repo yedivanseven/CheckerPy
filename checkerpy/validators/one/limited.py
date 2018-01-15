@@ -88,8 +88,8 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     @classmethod
     def __value_out_of_bounds_message_for(cls, value, lo, hi) -> str:
-        left = '(' if lo in (float('-inf'), Ellipsis) else '['
-        right = ')' if hi in (float('+inf'), Ellipsis) else ']'
+        left = '(-inf' if lo in (float('-inf'), Ellipsis) else f'[{lo}'
+        right = 'inf)' if hi in (float('+inf'), Ellipsis) else f'{hi}]'
         value_name = ' of '+cls._name if cls._name else ''
         return (f'Value {value}{value_name} lies outside the'
-                f' allowed interval {left}{lo}, {hi}{right}!')
+                f' allowed interval {left}, {right}!')

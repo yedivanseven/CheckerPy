@@ -131,8 +131,8 @@ class TestLimited(ut.TestCase):
 
     def test_out_of_bounds_error_with_lower_limit_None(self):
         log_msg = ['ERROR:root:Value 3 lies outside '
-                   'the allowed interval (Ellipsis, 2]!']
-        err_msg = 'Value 3 lies outside the allowed interval (Ellipsis, 2]!'
+                   'the allowed interval (-inf, 2]!']
+        err_msg = 'Value 3 lies outside the allowed interval (-inf, 2]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = Limited(3, hi=2)
@@ -151,8 +151,8 @@ class TestLimited(ut.TestCase):
 
     def test_out_of_bounds_error_with_upper_limit_None(self):
         log_msg = ['ERROR:root:Value 0 lies outside '
-                   'the allowed interval [1.0, Ellipsis)!']
-        err_msg = 'Value 0 lies outside the allowed interval [1.0, Ellipsis)!'
+                   'the allowed interval [1.0, inf)!']
+        err_msg = 'Value 0 lies outside the allowed interval [1.0, inf)!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = Limited(0, lo=1.0)
