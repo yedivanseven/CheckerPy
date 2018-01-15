@@ -112,10 +112,10 @@ class TestAll(ut.TestCase):
 
     def test_error_on_wrong_unnamed_variable_with_one_type(self):
         AllInt = All(int)
-        log_msg = ['ERROR:root:Type must be int, not float like 5.0!',
-                   'ERROR:root:An element of the '
-                   'tuple (4, 5.0) has wrong type!']
-        err_msg = 'An element of the tuple (4, 5.0) has wrong type!'
+        log_msg = ['ERROR:root:Type of element 1 in tuple (4,'
+                   ' 5.0) must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in tuple (4, 5.0)'
+                   ' must be int, not float like 5.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllInt((4, 5.0))
@@ -124,37 +124,73 @@ class TestAll(ut.TestCase):
 
     def test_error_on_wrong_named_variable_with_one_type(self):
         AllInt = All(int)
-        log_msg = ['ERROR:root:Type must be int, not float like 5.0!',
-                   'ERROR:root:An element of the tuple test has wrong type!']
-        err_msg = 'An element of the tuple test has wrong type!'
+        log_msg = ['ERROR:root:Type of element 1 in tuple '
+                   'test must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in tuple test '
+                   'must be int, not float like 5.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllInt((4, 5.0), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_named_dict_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of key in dict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt({4: 'four', 5.0: 'five'}, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_error_on_wrong_unnamed_variable_with_two_types(self):
         AllNum = All(int, float)
-        log_msg = ["ERROR:root:Type must be one of "
-                   "('int', 'float'), not str like bar!",
-                   "ERROR:root:An element of the tuple"
-                   " (4, 5.0, 'bar') has wrong type!"]
-        err_msg = "An element of the tuple (4, 5.0, 'bar') has wrong type!"
+        log_msg = ["ERROR:root:Type of element 2 in tuple (4, 5.0, 'bar')"
+                   " must be one of ('int', 'float'), not str like bar!"]
+        err_msg = ("Type of element 2 in tuple (4, 5.0, 'bar') must"
+                   " be one of ('int', 'float'), not str like bar!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllNum((4, 5.0, 'bar'))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_unnamed_dict_with_two_types(self):
+        AllNum = All(int, float)
+        log_msg = ["ERROR:root:Type of key in dict {4: 'four', 'bar': 3}"
+                   " must be one of ('int', 'float'), not str like bar!"]
+        err_msg = ("Type of key in dict {4: 'four', 'bar': 3} must"
+                   " be one of ('int', 'float'), not str like bar!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllNum({4: 'four', 'bar': 3})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_error_on_wrong_named_variable_with_two_types(self):
         AllNum = All(int, float)
-        log_msg = ["ERROR:root:Type must be one of "
-                   "('int', 'float'), not str like bar!",
-                   'ERROR:root:An element of the tuple test has wrong type!']
-        err_msg = 'An element of the tuple test has wrong type!'
+        log_msg = ["ERROR:root:Type of element 2 in tuple test must"
+                   " be one of ('int', 'float'), not str like bar!"]
+        err_msg = ("Type of element 2 in tuple test must be one"
+                   " of ('int', 'float'), not str like bar!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllNum((4, 5.0, 'bar'), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_dict_with_two_types(self):
+        AllNum = All(int, float)
+        log_msg = ["ERROR:root:Type of key in dict test must be"
+                   " one of ('int', 'float'), not str like bar!"]
+        err_msg = ("Type of key in dict test must be one of"
+                   " ('int', 'float'), not str like bar!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllNum({4: 'four', 5.0: 'five', 'bar': 3}, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -181,12 +217,25 @@ class TestAll(ut.TestCase):
 
     def test_works_through_type_and_non_empty_checkers(self):
         AllInt = All(int)
-        log_msg = ['ERROR:root:Type must be int, not float like 5.0!',
-                   'ERROR:root:An element of the tuple test has wrong type!']
-        err_msg = 'An element of the tuple test has wrong type!'
+        log_msg = ['ERROR:root:Type of element 1 in tuple '
+                   'test must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in tuple test '
+                   'must be int, not float like 5.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllInt.NonEmpty.JustTuple((4, 5.0), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_through_dict_and_non_empty_checkers(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of key in dict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt.NonEmpty.JustDict({4: 'four', 5.0: 'five'}, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

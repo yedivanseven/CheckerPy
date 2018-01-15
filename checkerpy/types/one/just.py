@@ -24,7 +24,7 @@ class Just(CompositionMixin):
     >>> JustMyType = Just(MyType)
 
     It is highly recommended to also pass the optional keyword `identifier`,
-    which should be a valid python identifier for the name of the type checker.
+    which should be a valid python identifier, as the name of the type checker.
 
     >>> JustInt = Just(int, identifier='JustInt')
 
@@ -37,6 +37,8 @@ class Just(CompositionMixin):
         If the types to check for specified when instantiating the
         type-checker object contain one or more entries that are not of
         type ``type`` themselves.
+    ValueError
+        If the (optional) identifier is not a valid python identifier.
 
     """
 

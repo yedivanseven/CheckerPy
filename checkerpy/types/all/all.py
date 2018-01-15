@@ -5,7 +5,7 @@ from ..one import _ITERABLES, Just
 from ...validators.one import NonEmpty
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
-from ...exceptions import WrongTypeError, IterError
+from ...exceptions import IterError
 
 TYPES = Union[type, Iterable[type]]
 
@@ -27,7 +27,7 @@ class All(CompositionMixin):
     >>> AllMyType = All(MyType)
 
     It is highly recommended to also pass the optional keyword `identifier`,
-    which should be a valid python identifier for the name of the type checker.
+    which should be a valid python identifier, as the name of the type checker.
 
     >>> AllInt = All(int, identifier='AllInt')
 
@@ -40,6 +40,8 @@ class All(CompositionMixin):
         If the types to check for specified when instantiating the
         type-checker object contain one or more entries that are not of
         type ``type`` themselves.
+    ValueError
+        If the (optional) identifier is not a valid python identifier.
 
     See Also
     --------
@@ -63,26 +65,23 @@ class All(CompositionMixin):
     def __call__(self, iterable: Iterable, name=None, **kwargs) -> Iterable:
         self._name = str(name) if name is not None else ''
         self.__string = ' ' + (self._name or str(iterable))
+        self.__iter_type = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
-            message = self.__not_an_iterable_message_for(iterable)
+            message = self.__not_an_iterable_message()
             log.error(message)
             raise IterError(message)
-        try:
-            _ = tuple(map(self.__just, iterable))
-        except WrongTypeError as error:
-            message = self.__element_of_wrong_type_message_for(iterable)
-            log.error(message)
-            raise WrongTypeError(message) from error
+        for index, element in enumerate(iterable):
+            _ = self.__just(element, name=self.__name_from(index))
         return iterable
 
-    def __not_an_iterable_message_for(self, value) -> str:
-        type_name = type(value).__name__
-        return (f'Variable{self.__string} with type {type_name} does '
-                'not seem to be an iterable with elements to inspect!')
+    def __not_an_iterable_message(self) -> str:
+        return (f'Variable{self.__string} with type {self.__iter_type} does'
+                ' not seem to be an iterable with elements to inspect!')
 
-    def __element_of_wrong_type_message_for(self, iterable: Iterable) -> str:
-        type_name = type(iterable).__name__
-        return f'An element of the {type_name}{self.__string} has wrong type!'
+    def __name_from(self, index: int) -> str:
+        if self.__iter_type == 'dict':
+            return f'key in dict{self.__string}'
+        return f'element {index} in {self.__iter_type}{self.__string}'
 
     @staticmethod
     def __identified(identifier: str) -> str:
