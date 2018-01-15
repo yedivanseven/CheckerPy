@@ -1,5 +1,6 @@
 # To Do
-- Refine error message of the All validators and types to include index!
+- Refine error message of the All validators and types to index or key of iterable!
+- Skip second error in the All validators and types!
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add LimitedDict and LimitedTuple!
