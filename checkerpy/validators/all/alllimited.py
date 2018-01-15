@@ -68,27 +68,26 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     def __new__(cls, iterable, name=None, lo=..., hi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
-        cls.__string = ' ' + (cls._name or str(iterable))
+        cls.__string = cls._name or str(iterable)
+        cls.__iter_type = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
-            message = cls.__not_an_iterable_message_for(iterable)
+            message = cls.__not_an_iterable_message_for()
             log.error(message)
             raise IterError(message)
-        for value in iterable:
-            try:
-                _ = Limited(value, None, lo=lo, hi=hi, **kwargs)
-            except LimitError as error:
-                message = cls.__out_of_bounds_message_for(iterable)
-                log.error(message)
-                raise LimitError(message) from error
+        for index, value in enumerate(iterable):
+            value_name = cls.__name_from(index)
+            _ = Limited(value, name=value_name, lo=lo, hi=hi, **kwargs)
         return iterable
 
     @classmethod
-    def __not_an_iterable_message_for(cls, value) -> str:
-        type_name = type(value).__name__
-        return (f'Variable{cls.__string} with type {type_name} does not'
-                ' seem to be an iterable with elements to inspect!')
+    def __not_an_iterable_message_for(cls) -> str:
+        return (f'Variable {cls.__string} with type {cls.__iter_type} does'
+                ' not seem to be an iterable with elements to inspect!')
 
     @classmethod
-    def __out_of_bounds_message_for(cls, iterable: Iterable) -> str:
-        type_name = type(iterable).__name__
-        return f'An element of the {type_name}{cls.__string} is out of bounds!'
+    def __name_from(cls, index: int) -> str:
+        if cls.__iter_type == 'dict':
+            return f'dict key in {cls.__string}'
+        elif cls.__iter_type == 'set':
+            return f'set {cls.__string}'
+        return f'{cls.__iter_type} {cls.__string} with index {index}'

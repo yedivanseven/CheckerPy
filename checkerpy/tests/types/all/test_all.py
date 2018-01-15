@@ -208,8 +208,8 @@ class TestAll(ut.TestCase):
 
     def test_error_on_wrong_unnamed_set_with_two_types(self):
         AllNum = All(int, float)
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
+        with self.assertLogs(level=logging.ERROR):
+            with self.assertRaises(WrongTypeError):
                 _ = AllNum({4, 'bar'})
 
     def test_error_on_wrong_named_variable_with_two_types(self):
@@ -290,6 +290,18 @@ class TestAll(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllInt.NonEmpty.JustDict({4: 'four', 5.0: 'five'}, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_through_set_and_non_empty_checkers(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of element in set test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of element in set test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt.NonEmpty.JustSet({4, 5.0}, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

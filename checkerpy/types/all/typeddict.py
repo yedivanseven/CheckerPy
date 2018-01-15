@@ -15,7 +15,7 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
     def __new__(cls, mapping: dict, name=None, keys=(), values=(), **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string =  cls._name or str(mapping)
-        mapping = JustDict(mapping, name=name)
+        mapping = JustDict(mapping, name=name, **kwargs)
         if keys and keys is not ...:
             for key in mapping:
                 _ = Just(keys)(key, name=f'key in dictionary {cls.__string}')

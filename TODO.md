@@ -1,8 +1,8 @@
 # To Do
-- Refine error message of AllLimited and AllNonEmpty validators to index or key of iterable!
+- Refine error message of AllNonEmpty validator to index or key of iterable!
 - Make sure set an dict are correctly handled (no index in error message)!
-- Skip second error in AllLimited and AllNonEmpty!
-- Adjust tests of AllLimited and AllNonEmpty!
+- Skip second error in AllNonEmpty!
+- Adjust tests of AllNonEmpty!
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add LimitedDict and LimitedTuple!

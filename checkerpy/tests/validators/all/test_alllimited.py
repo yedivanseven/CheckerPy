@@ -36,22 +36,22 @@ class TestAllLimited(ut.TestCase):
         output = AllLimited(inputs, lo='a', hi='c')
         self.assertEqual(output, inputs)
 
-    def test_error_on_empty_element_in_unnamed_str(self):
-        log_msg = ['ERROR:root:Value d lies '
-                   'outside the allowed interval [a, c]!',
-                   'ERROR:root:An element of the str abd is out of bounds!']
-        err_msg = 'An element of the str abd is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_unnamed_str(self):
+        log_msg = ['ERROR:root:Value d of str abd with index 2'
+                   ' lies outside the allowed interval [a, c]!']
+        err_msg = ('Value d of str abd with index 2 lies'
+                   ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited('abd', lo='a', hi='c')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_empty_element_in_named_str(self):
-        log_msg = ['ERROR:root:Value d lies '
-                   'outside the allowed interval [a, c]!',
-                   'ERROR:root:An element of the str test is out of bounds!']
-        err_msg = 'An element of the str test is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_named_str(self):
+        log_msg = ['ERROR:root:Value d of str test with index '
+                   '2 lies outside the allowed interval [a, c]!']
+        err_msg = ('Value d of str test with index 2 lies'
+                   ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited('abd', 'test', lo='a', hi='c')
@@ -63,24 +63,22 @@ class TestAllLimited(ut.TestCase):
         output = AllLimited(inputs, lo=1, hi=3)
         self.assertTupleEqual(output, inputs)
 
-    def test_error_on_empty_element_in_unnamed_tuple(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   'ERROR:root:An element of the '
-                   'tuple (1, 2, 4) is out of bounds!']
-        err_msg = 'An element of the tuple (1, 2, 4) is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_unnamed_tuple(self):
+        log_msg = ['ERROR:root:Value 4 of tuple (1, 2, 4) with index'
+                   ' 2 lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of tuple (1, 2, 4) with index 2 lies'
+                   ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited((1, 2, 4), lo=1, hi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_empty_element_in_named_tuple(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   'ERROR:root:An element of the '
-                   'tuple test is out of bounds!']
-        err_msg = 'An element of the tuple test is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_named_tuple(self):
+        log_msg = ['ERROR:root:Value 4 of tuple test with index '
+                   '2 lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of tuple test with index 2 lies'
+                   ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited((1, 2, 4), 'test', lo=1, hi=3)
@@ -92,24 +90,22 @@ class TestAllLimited(ut.TestCase):
         output = AllLimited(inputs, lo=1, hi=3)
         self.assertListEqual(output, inputs)
 
-    def test_error_on_empty_element_in_unnamed_list(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   'ERROR:root:An element of the '
-                   'list [1, 2, 4] is out of bounds!']
-        err_msg = 'An element of the list [1, 2, 4] is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_unnamed_list(self):
+        log_msg = ['ERROR:root:Value 4 of list [1, 2, 4] with index'
+                   ' 2 lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of list [1, 2, 4] with index 2 lies'
+                   ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited([1, 2, 4], lo=1, hi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_empty_element_in_named_list(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   'ERROR:root:An element of the'
-                   ' list test is out of bounds!']
-        err_msg = 'An element of the list test is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_named_list(self):
+        log_msg = ['ERROR:root:Value 4 of list test with index '
+                   '2 lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of list test with index 2 lies'
+                   ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited([1, 2, 4], 'test', lo=1, hi=3)
@@ -121,17 +117,16 @@ class TestAllLimited(ut.TestCase):
         output = AllLimited(inputs, lo=1, hi=3)
         self.assertSetEqual(output, inputs)
 
-    def test_error_on_empty_element_in_unnamed_set(self):
+    def test_error_on_out_of_bounds_element_in_unnamed_set(self):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited({1, 2, 4}, lo=1, hi=3)
 
-    def test_error_on_empty_element_in_named_set(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   'ERROR:root:An element of the'
-                   ' set test is out of bounds!']
-        err_msg = 'An element of the set test is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_named_set(self):
+        log_msg = ['ERROR:root:Value 4 of set test lies '
+                   'outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of set test lies outside'
+                   ' the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited({1, 2, 4}, 'test', lo=1, hi=3)
@@ -143,25 +138,22 @@ class TestAllLimited(ut.TestCase):
         output = AllLimited(inputs, lo=1, hi=3)
         self.assertDictEqual(output, inputs)
 
-    def test_error_on_empty_element_in_unnamed_dict(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval [1, 3]!',
-                   "ERROR:root:An element of the dict {1: 'one',"
-                   " 2: 'two', 4: 'four'} is out of bounds!"]
-        err_msg = ("An element of the dict {1: 'one', 2:"
-                   " 'two', 4: 'four'} is out of bounds!")
+    def test_error_on_out_of_bounds_element_in_unnamed_dict(self):
+        log_msg = ["ERROR:root:Value 4 of dict key in {1: 'one', 2: 'two',"
+                   " 4: 'four'} lies outside the allowed interval [1, 3]!"]
+        err_msg = ("Value 4 of dict key in {1: 'one', 2: 'two', 4: "
+                   "'four'} lies outside the allowed interval [1, 3]!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited({1: 'one', 2: 'two', 4: 'four'}, lo=1, hi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_empty_element_in_named_dict(self):
-        log_msg = ['ERROR:root:Value 4 lies outside'
-                   ' the allowed interval (-inf, 3]!',
-                   'ERROR:root:An element of the'
-                   ' dict test is out of bounds!']
-        err_msg = 'An element of the dict test is out of bounds!'
+    def test_error_on_out_of_bounds_element_in_named_dict(self):
+        log_msg = ['ERROR:root:Value 4 of dict key in test lies'
+                   ' outside the allowed interval (-inf, 3]!']
+        err_msg = ('Value 4 of dict key in test lies outside'
+                   ' the allowed interval (-inf, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited({1: 'one', 2: 'two', 4: 'four'}, 'test', hi=3)
@@ -184,10 +176,10 @@ class TestAllLimited(ut.TestCase):
         self.assertIsInstance(AllLimited.NonEmpty, CompositionOf)
 
     def test_hi_and_lo_are_passed_through_type_and_non_empty_checker(self):
-        log_msg = ['ERROR:root:Value d lies '
-                   'outside the allowed interval [a, c]!',
-                   'ERROR:root:An element of the str test is out of bounds!']
-        err_msg = 'An element of the str test is out of bounds!'
+        log_msg = ['ERROR:root:Value d of str test with index 2'
+                   ' lies outside the allowed interval [a, c]!']
+        err_msg = ('Value d of str test with index 2 lies'
+                   ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = AllLimited.AllStr.NonEmpty('abd', 'test', lo='a', hi='c')
