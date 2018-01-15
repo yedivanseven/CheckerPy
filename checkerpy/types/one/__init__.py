@@ -6,11 +6,12 @@ from .compound import JustNum, JustIter, JustSequence, JustFuncMeth
 
 __all__ = ['Just', 'JustType',
            'JustBool', 'JustInt', 'JustFloat', 'JustComplex',
-           'JustStr', 'JustTuple', 'JustList', 'JustSet',
-           'JustDict', 'JustNum', 'JustIter', 'JustSequence',
-           'JustFunc', 'JustMeth', 'JustFuncMeth']
+           'JustStr', 'JustTuple', 'JustList', 'JustSet', 'JustDict',
+           'JustFunc', 'JustMeth',
+           'JustNum', 'JustIter', 'JustSequence', 'JustFuncMeth']
 
-_COMPARABLES = (JustBool, JustInt, JustFloat, JustStr, JustTuple,
-                JustList, JustSet, JustNum, JustSequence)
-_ITERABLES = (JustStr, JustTuple, JustList, JustSet,
-              JustDict, JustIter, JustSequence)
+_COMPARABLES = (JustBool, JustInt, JustFloat,
+                JustStr, JustTuple, JustList, JustSet,
+                JustNum, JustSequence)
+_ITERABLES = (JustStr, JustTuple, JustList, JustSet, JustDict,
+              JustIter, JustSequence)

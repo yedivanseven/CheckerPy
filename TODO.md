@@ -1,4 +1,5 @@
 # To Do
+- Refine error message of the All validators and types to include index!
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add LimitedDict and LimitedTuple!
