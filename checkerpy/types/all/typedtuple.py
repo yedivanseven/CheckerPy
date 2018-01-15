@@ -10,11 +10,11 @@ TYPES = Union[Tuple[type, ...], List[type]]
 class TypedTuple(CompositionClassMixin):
     def __new__(cls, value: tuple, name=None, types=(), **kwargs) -> tuple:
         cls._name = str(name) if name is not None else ''
-        cls.__string = ' '+cls._name if cls._name else ''
+        cls.__string = cls._name or str(value)
         types, length = cls.__length_of(types)
         value = JustLen.JustTuple(value, name=name, length=length)
         for index, element in enumerate(value):
-            element_name = f'element {index} in tuple{cls.__string}'
+            element_name = f'element {index} in tuple{ cls.__string}'
             _ = Just(types[index])(element, name=element_name)
         return value
 

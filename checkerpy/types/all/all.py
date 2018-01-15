@@ -54,24 +54,26 @@ class All(CompositionMixin):
 
     def __call__(self, iterable: Iterable, name=None, **kwargs) -> Iterable:
         self._name = str(name) if name is not None else ''
-        self.__string = ' ' + (self._name or str(iterable))
+        self.__string = self._name or str(iterable)
         self.__iter_type = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
             message = self.__not_an_iterable_message()
             log.error(message)
             raise IterError(message)
-        for index, element in enumerate(iterable):
-            _ = self.__just(element, name=self.__name_from(index))
+        for index, value in enumerate(iterable):
+            _ = self.__just(value, name=self.__name_from(index))
         return iterable
 
     def __not_an_iterable_message(self) -> str:
-        return (f'Variable{self.__string} with type {self.__iter_type} does'
+        return (f'Variable {self.__string} with type {self.__iter_type} does'
                 ' not seem to be an iterable with elements to inspect!')
 
     def __name_from(self, index: int) -> str:
         if self.__iter_type == 'dict':
-            return f'key in dict{self.__string}'
-        return f'element {index} in {self.__iter_type}{self.__string}'
+            return f'key in dict {self.__string}'
+        elif self.__iter_type == 'set':
+            return f'element in set {self.__string}'
+        return f'element {index} in {self.__iter_type} {self.__string}'
 
     @staticmethod
     def __identified(identifier: str) -> str:

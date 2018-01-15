@@ -122,6 +122,30 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_unnamed_dict_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ["ERROR:root:Type of key in dict {4: 'four', "
+                   "5.0: 'five'} must be int, not float like 5.0!"]
+        err_msg = ("Type of key in dict {4: 'four', 5.0: "
+                   "'five'} must be int, not float like 5.0!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt({4: 'four', 5.0: 'five'})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_set_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ["ERROR:root:Type of element in set {4, "
+                   "5.0} must be int, not float like 5.0!"]
+        err_msg = ("Type of element in set {4, 5.0} must"
+                   " be int, not float like 5.0!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt({4, 5.0})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_error_on_wrong_named_variable_with_one_type(self):
         AllInt = All(int)
         log_msg = ['ERROR:root:Type of element 1 in tuple '
@@ -143,6 +167,18 @@ class TestAll(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllInt({4: 'four', 5.0: 'five'}, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_set_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of element in set test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of element in set test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt({4, 5.0}, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -170,6 +206,12 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_unnamed_set_with_two_types(self):
+        AllNum = All(int, float)
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllNum({4, 'bar'})
+
     def test_error_on_wrong_named_variable_with_two_types(self):
         AllNum = All(int, float)
         log_msg = ["ERROR:root:Type of element 2 in tuple test must"
@@ -191,6 +233,18 @@ class TestAll(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllNum({4: 'four', 5.0: 'five', 'bar': 3}, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_set_with_two_types(self):
+        AllNum = All(int, float)
+        log_msg = ["ERROR:root:Type of element in set test must be"
+                   " one of ('int', 'float'), not str like bar!"]
+        err_msg = ("Type of element in set test must be one of"
+                   " ('int', 'float'), not str like bar!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllNum({4, 5.0, 'bar'}, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
