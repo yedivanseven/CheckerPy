@@ -21,6 +21,6 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
                 _ = Just(keys)(key, name=f'key in dictionary{cls.__string}')
         if values and values is not ...:
             for key, value in mapping.items():
-                value_name = f'entry "{key}" in dictionary{cls.__string}'
+                value_name = f'entry {key} in dictionary{cls.__string}'
                 _ = Just(values)(value, name=value_name)
         return mapping
