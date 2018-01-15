@@ -2,7 +2,6 @@
 - Refine error message of the All validators to index or key of iterable!
 - Skip second error in the All validators!
 - Adjust tests of the All validators!
-- Rewrite docstring of All and Just!
 - Add tests for TypedDict and TypedTuple!
 - Write Docstring for TypedDict amd TypedTuple!
 - Add LimitedDict and LimitedTuple!

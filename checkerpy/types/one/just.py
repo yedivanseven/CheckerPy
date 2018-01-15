@@ -10,35 +10,25 @@ TYPES = Union[type, Iterable[type]]
 class Just(CompositionMixin):
     """Class for easily and concisely defining type-checker objects.
 
-    Examples
-    --------
-    A new type checker for one or more built-in type(s) can be defined like so:
-
-    >>> JustNum = Just(int, float)
-
-    Custom types are also possible:
-
-    >>> class MyType:
-    ...     pass
-    ...
-    >>> JustMyType = Just(MyType)
-
-    It is highly recommended to also pass the optional keyword `identifier`,
-    which should be a valid python identifier, as the name of the type checker.
-
-    >>> JustInt = Just(int, identifier='JustInt')
+    Parameters
+    ----------
+    types : *type
+        One or more type(s) to check for.
+    identifier : str, optional
+        A valid python identifier as name of the type checker object.
+        Defaults to 'Just'.
 
     Raises
     ------
     AttributeError
-        If no types to check for are found when instantiating the
+        If no `types` to check for are found when instantiating the
         type-checker object.
     TypeError
-        If the types to check for specified when instantiating the
+        If the `types` to check for specified when instantiating the
         type-checker object contain one or more entries that are not of
         type ``type`` themselves.
     ValueError
-        If the (optional) identifier is not a valid python identifier.
+        If the (optional) `identifier` is not a valid python identifier.
 
     """
 

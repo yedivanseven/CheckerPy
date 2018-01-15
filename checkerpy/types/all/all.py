@@ -13,35 +13,25 @@ TYPES = Union[type, Iterable[type]]
 class All(CompositionMixin):
     """Class for easily defining type-checkers for all elements of an iterable.
 
-    Examples
-    --------
-    A new type checker for all elements of an iterable can be defined like so:
-
-    >>> AllNum = All(int, float)
-
-    Custom types are also possible:
-
-    >>> class MyType:
-    ...     pass
-    ...
-    >>> AllMyType = All(MyType)
-
-    It is highly recommended to also pass the optional keyword `identifier`,
-    which should be a valid python identifier, as the name of the type checker.
-
-    >>> AllInt = All(int, identifier='AllInt')
+    Parameters
+    ----------
+    types : *type
+        One or more type(s) to check for.
+    identifier : str, optional
+        A valid python identifier as name of the type checker object.
+        Defaults to 'All'.
 
     Raises
     ------
     AttributeError
-        If no types to check for are found when instantiating the
+        If no `types` to check for are found when instantiating the
         type-checker object.
     TypeError
-        If the types to check for specified when instantiating the
+        If the `types` to check for specified when instantiating the
         type-checker object contain one or more entries that are not of
         type ``type`` themselves.
     ValueError
-        If the (optional) identifier is not a valid python identifier.
+        If the (optional) `identifier` is not a valid python identifier.
 
     See Also
     --------
