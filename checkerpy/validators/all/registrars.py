@@ -15,6 +15,10 @@ class IterableRegistrar(type):
             setattr(cls, iterable.__name__, CompositionOf(cls, iterable))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
 
+    def _not_an_iterable_message_for(cls) -> str:
+        return (f'Variable {cls._string} with type {cls._iter_type} does'
+                ' not seem to be an iterable with elements to inspect!')
+
 
 class AllIterableRegistrar(IterableRegistrar):
     """Sets compositions of class and all-iterable type checkers as attr's."""

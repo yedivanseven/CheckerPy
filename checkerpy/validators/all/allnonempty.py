@@ -3,7 +3,7 @@ from typing import Iterable
 from .registrars import AllIterableRegistrar
 from ..one import NonEmpty
 from ...functional.mixins import CompositionClassMixin
-from ...exceptions import IterError, EmptyError
+from ...exceptions import IterError
 
 
 class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
@@ -50,26 +50,20 @@ class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     def __new__(cls, iterable: Iterable, name=None, **kwargs) -> Iterable:
         cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(iterable)
+        cls._string = cls._name or str(iterable)
+        cls._iter_type = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
-            message = cls.__not_an_iterable_message_for(iterable)
+            message = cls._not_an_iterable_message_for()
             log.error(message)
             raise IterError(message)
-        try:
-            _ = tuple(map(NonEmpty, iterable))
-        except EmptyError as error:
-            message = cls.__is_empty_message_for(iterable)
-            log.error(message)
-            raise EmptyError(message) from error
+        for index, value in enumerate(iterable):
+            _ = NonEmpty(value, name=cls.__name_from(index), **kwargs)
         return iterable
 
     @classmethod
-    def __not_an_iterable_message_for(cls, value) -> str:
-        type_name = type(value).__name__
-        return (f'Variable {cls.__string} with type {type_name} does not'
-                ' seem to be an iterable with elements to inspect!')
-
-    @classmethod
-    def __is_empty_message_for(cls, iterable: Iterable) -> str:
-        type_name = type(iterable).__name__
-        return f'An element of the {type_name} {cls.__string} is empty!'
+    def __name_from(cls, index: int) -> str:
+        if cls._iter_type == 'dict':
+            return f'key in dict {cls._string}'
+        elif cls._iter_type == 'set':
+            return f'in set {cls._string}'
+        return f'with index {index} in {cls._iter_type} {cls._string}'

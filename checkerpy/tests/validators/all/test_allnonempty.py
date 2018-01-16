@@ -37,10 +37,9 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_empty_element_in_unnamed_tuple(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the "
-                   "tuple ('f', 'o', '') is empty!"]
-        err_msg = "An element of the tuple ('f', 'o', '') is empty!"
+        log_msg = ["ERROR:root:Str with index 2 in tuple"
+                   " ('f', 'o', '') must not be empty!"]
+        err_msg = "Str with index 2 in tuple ('f', 'o', '') must not be empty!"
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty(('f', 'o', ''))
@@ -48,9 +47,9 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_empty_element_in_named_tuple(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the tuple test is empty!"]
-        err_msg = "An element of the tuple test is empty!"
+        log_msg = ['ERROR:root:Str with index 2 in'
+                   ' tuple test must not be empty!']
+        err_msg = 'Str with index 2 in tuple test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty(('f', 'o', ''), 'test')
@@ -63,10 +62,9 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertListEqual(output, inputs)
 
     def test_error_on_empty_element_in_unnamed_list(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the "
-                   "list ['f', 'o', ''] is empty!"]
-        err_msg = "An element of the list ['f', 'o', ''] is empty!"
+        log_msg = ["ERROR:root:Str with index 2 in list"
+                   " ['f', 'o', ''] must not be empty!"]
+        err_msg = "Str with index 2 in list ['f', 'o', ''] must not be empty!"
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty(['f', 'o', ''])
@@ -74,9 +72,9 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_empty_element_in_named_list(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the list test is empty!"]
-        err_msg = "An element of the list test is empty!"
+        log_msg = ['ERROR:root:Str with index 2 in'
+                   ' list test must not be empty!']
+        err_msg = 'Str with index 2 in list test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty(['f', 'o', ''], 'test')
@@ -89,14 +87,13 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertSetEqual(output, inputs)
 
     def test_error_on_empty_element_in_unnamed_set(self):
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(EmptyError) as err:
+        with self.assertLogs(level=logging.ERROR):
+            with self.assertRaises(EmptyError):
                 _ = AllNonEmpty({'f', 'o', ''})
 
     def test_error_on_empty_element_in_named_set(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the set test is empty!"]
-        err_msg = "An element of the set test is empty!"
+        log_msg = ['ERROR:root:Str in set test must not be empty!']
+        err_msg = 'Str in set test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty({'f', 'o', ''}, 'test')
@@ -109,10 +106,9 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertDictEqual(output, inputs)
 
     def test_error_on_empty_element_in_unnamed_dict(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the dict "
-                   "{'f': 1, 'o': 2, '': 3} is empty!"]
-        err_msg = "An element of the dict {'f': 1, 'o': 2, '': 3} is empty!"
+        log_msg = ["ERROR:root:Str key in dict {'f': 1,"
+                   " 'o': 2, '': 3} must not be empty!"]
+        err_msg = "Str key in dict {'f': 1, 'o': 2, '': 3} must not be empty!"
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty({'f': 1, 'o': 2, '': 3})
@@ -120,9 +116,8 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_empty_element_in_named_dict(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the dict test is empty!"]
-        err_msg = "An element of the dict test is empty!"
+        log_msg = ['ERROR:root:Str key in dict test must not be empty!']
+        err_msg = 'Str key in dict test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty({'f': 1, 'o': 2, '': 3}, 'test')
@@ -154,9 +149,9 @@ class TestAllNonEmpty(ut.TestCase):
             self.assertIsInstance(type_checker, CompositionOf)
 
     def test_works_through_type_and_non_empty_checker(self):
-        log_msg = ['ERROR:root:Str must not be empty!',
-                   "ERROR:root:An element of the tuple test is empty!"]
-        err_msg = "An element of the tuple test is empty!"
+        log_msg = ['ERROR:root:Str with index 2 in'
+                   ' tuple test must not be empty!']
+        err_msg = 'Str with index 2 in tuple test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = AllNonEmpty.AllStr.NonEmpty(('f', 'o', ''), 'test')

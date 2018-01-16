@@ -57,10 +57,10 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     def __new__(cls, iterable, name=None, length=1, **kwargs):
         cls._name = str(name) if name is not None else ''
-        cls.__string = ' ' + (cls._name or str(iterable))
-        cls.__iter_type = ' ' + type(iterable).__name__
+        cls._string = cls._name or str(iterable)
+        cls._iter_type = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
-            message = cls.__not_an_iterable_message_for()
+            message = cls._not_an_iterable_message_for()
             log.error(message)
             raise IterError(message)
         for index, value in enumerate(iterable):
@@ -69,14 +69,10 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         return iterable
 
     @classmethod
-    def __not_an_iterable_message_for(cls) -> str:
-        return (f'Variable{cls.__string} with type{cls.__iter_type} does'
-                ' not seem to be an iterable with elements to inspect!')
-
-    @classmethod
     def __name_from(cls, index: int, value) -> str:
-        if cls.__iter_type == ' dict':
-            return f'key {value} in dict{cls.__string}'
-        elif cls.__iter_type == ' set':
-            return f'{value} in set{cls.__string}'
-        return f'{value} at position {index} in{cls.__iter_type}{cls.__string}'
+        if cls._iter_type == 'dict':
+            return f'key {value} in dict {cls._string}'
+        elif cls._iter_type == 'set':
+            return f'{value} in set {cls._string}'
+        return (f'{value} with index {index} in '
+                f'{cls._iter_type} {cls._string}')

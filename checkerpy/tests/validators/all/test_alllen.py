@@ -37,9 +37,9 @@ class TestAllLen(ut.TestCase):
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_wrong_length_element_in_unnamed_tuple(self):
-        log_msg = ["ERROR:root:Length of str ba at position 1 in "
+        log_msg = ["ERROR:root:Length of str ba with index 1 in "
                    "tuple ('foo', 'ba', 'baz') must be 3, not 2!"]
-        err_msg = ("Length of str ba at position 1 in tuple "
+        err_msg = ("Length of str ba with index 1 in tuple "
                    "('foo', 'ba', 'baz') must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
@@ -48,9 +48,9 @@ class TestAllLen(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_wrong_length_element_in_named_tuple(self):
-        log_msg = ["ERROR:root:Length of str ba at position"
+        log_msg = ["ERROR:root:Length of str ba with index"
                    " 1 in tuple test must be 3, not 2!"]
-        err_msg = ("Length of str ba at position 1 "
+        err_msg = ("Length of str ba with index 1 "
                    "in tuple test must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
@@ -64,9 +64,9 @@ class TestAllLen(ut.TestCase):
         self.assertListEqual(output, inputs)
 
     def test_error_on_wrong_length_element_in_unnamed_list(self):
-        log_msg = ["ERROR:root:Length of str ba at position 1 in "
+        log_msg = ["ERROR:root:Length of str ba with index 1 in "
                    "list ['foo', 'ba', 'baz'] must be 3, not 2!"]
-        err_msg = ("Length of str ba at position 1 in list "
+        err_msg = ("Length of str ba with index 1 in list "
                    "['foo', 'ba', 'baz'] must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
@@ -75,9 +75,9 @@ class TestAllLen(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_wrong_length_element_in_named_list(self):
-        log_msg = ['ERROR:root:Length of str ba at position'
+        log_msg = ['ERROR:root:Length of str ba with index'
                    ' 1 in list test must be 3, not 2!']
-        err_msg = ('Length of str ba at position 1 '
+        err_msg = ('Length of str ba with index 1 '
                    'in list test must be 3, not 2!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
@@ -155,9 +155,9 @@ class TestAllLen(ut.TestCase):
             self.assertIsInstance(type_checker, CompositionOf)
 
     def test_length_is_passed_through_type_checker(self):
-        log_msg = ['ERROR:root:Length of str ba at position'
+        log_msg = ['ERROR:root:Length of str ba with index'
                    ' 1 in tuple test must be 3, not 2!']
-        err_msg = ('Length of str ba at position 1 '
+        err_msg = ('Length of str ba with index 1 '
                    'in tuple test must be 3, not 2!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
