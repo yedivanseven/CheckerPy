@@ -1,12 +1,10 @@
 # To Do
-- Add tests for TypedDict and TypedTuple!
-- Write Docstring for TypedDict amd TypedTuple!
-- Add LimitedDict and LimitedTuple!
-- Add LengthDict and LengthTuple!
-- Add AllTyped, AllTypedDict, AllTypedTuple!
-- Use (star)map wherever possible!
 - Allow ... to skip checking in Decorators!
 - Expand type and bound checking in decorators to iterables!
 - Adopt (int, ...) notation for typed tuples of arbitrary length!
 - Write _Checked_ decorator providing a single validator for each argument!
+- Add LimitedDict and LimitedTuple!
+- Add LengthDict and LengthTuple!
+- Add AllTyped, AllTypedDict, AllTypedTuple!
+- Use (star)map wherever possible!
 - Check _*args_ and _**kwargs_ with decorators!

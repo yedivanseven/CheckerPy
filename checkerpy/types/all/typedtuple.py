@@ -40,7 +40,8 @@ class TypedTuple(CompositionClassMixin):
         If `value` is not a tuple or if any of its elements do not have (one
         of) the permitted type(s).
     LenError
-        If the tuple passed in does not have the same length as `types`.
+        If the tuple passed in does not have the same length as `types` or
+        if the type specification does not have a meaningful length.
     TypeError
         If the type specification `types` is not understood.
 
@@ -56,7 +57,7 @@ class TypedTuple(CompositionClassMixin):
         types, length = cls.__length_of(types)
         value = JustLen.JustTuple(value, name=name, length=length)
         for index, element in enumerate(value):
-            element_name = f'element {index} in tuple{ cls.__string}'
+            element_name = f'element {index} in tuple {cls.__string}'
             _ = Just(types[index])(element, name=element_name)
         return value
 
