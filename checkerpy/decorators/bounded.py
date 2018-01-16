@@ -25,6 +25,15 @@ class Bounded(FunctionTypeMixin):
     >>> f(1, 5, 3, 4, z=2)
     15
 
+    If no check is desired for, say, the second of three arguments, it can be
+    skipped like so:
+    >>> @Bounded((1, 3), ..., (4, 6))
+    >>> def f(x, y, z):
+    ...     return x + y + z
+    ...
+    >>> f(2, True, 5.0)
+    8.0
+
     If, however, only one or a few arguments of a function of method are to be
     checked for limits, then directly assigning the limits to these arguments
     by `name` might be more convenient.
@@ -43,10 +52,12 @@ class Bounded(FunctionTypeMixin):
 
     Notes
     -----
-    The first argument of (class) methods must be called `self` or `cls`. Also,
-    specifying limits for more arguments than present in the function or method
-    call is never a problem and neither is specifying limits for named keyword
-    arguments that do not actually occur in the function or method signature.
+    The first argument of (class) methods must be called `self`, `cls`, or
+    `mcs`. Also, specifying limits for more arguments than present in the
+    function or method call is never a problem and neither is specifying
+    limits for named keyword arguments that do not actually occur in the
+    function or method signature. Specifying limits per named keyword argument
+    takes precedence over limit specification by positional argument.
 
     Raises
     ------
@@ -107,9 +118,11 @@ class Bounded(FunctionTypeMixin):
         return bounded_function
 
     def arg_format_checked(self, arg_limits: ARG_LIMITS) -> ARG_LIMITS:
+        arg_limits = list(arg_limits)
         for arg_number, limit in enumerate(arg_limits):
-            self.check(arg_number+1, limit)
-        return arg_limits
+            arg_limits[arg_number] = (..., ...) if limit is ... else limit
+            self.check(arg_number+1, arg_limits[arg_number])
+        return tuple(arg_limits)
 
     def kwarg_format_checked(self, kwarg_limits: KWARG_LIMITS) -> KWARG_LIMITS:
         for arg_name, limit in kwarg_limits.items():

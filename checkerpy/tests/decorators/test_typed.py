@@ -424,7 +424,7 @@ class TestTypedFunctionsKwargTypes(ut.TestCase):
         output = f(1, 2.0, 3)
         self.assertEqual(output, 6.0)
 
-    def test_error_with_mixed_arg_types_too_few_types(self):
+    def test_error_with_mixed_kwarg_types_too_few_types(self):
         @Typed(z=(int, str), y=float)
         def f(x, y, z):
             return x + y + z
@@ -467,6 +467,69 @@ class TestTypedFunctionsKwargTypes(ut.TestCase):
             return 3.0
         output = f()
         self.assertEqual(output, 3.0)
+
+
+class TestTypedFunctionsOther(ut.TestCase):
+
+    def test_works_with_arg_type_and_ellipsis(self):
+        @Typed(int, ..., float)
+        def f(x, y, z):
+            return x + y + z
+        output = f(1, True, 2.0)
+        self.assertEqual(output, 4.0)
+
+    def test_error_with_arg_type_and_ellipsis(self):
+        @Typed(int, ..., str)
+        def f(x, y, z):
+            return x + y + z
+        log_msg = ['ERROR:root:Type of z must be str, not bool like True!',
+                   'ERROR:root:An argument of function f defined '
+                   f'in module {__name__} is of wrong type!']
+        err_msg = ('An argument of function f defined in '
+                   f'module {__name__} is of wrong type!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(1, 2.0, True)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_kwarg_types_and_ellipsis(self):
+        @Typed(..., bool, z=(float, tuple))
+        def f(x, y, z):
+            return x + y + z
+        output = f(1, True, 2.0)
+        self.assertEqual(output, 4.0)
+
+    def test_error_with_kwarg_types_and_ellipsis(self):
+        @Typed(int, ..., z=(float, tuple))
+        def f(x, y, z):
+            return x + y + z
+        log_msg = ["ERROR:root:Type of z must be one of "
+                   "('float', 'tuple'), not bool like True!",
+                   'ERROR:root:An argument of function f defined '
+                   f'in module {__name__} is of wrong type!']
+        err_msg = ('An argument of function f defined in '
+                   f'module {__name__} is of wrong type!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(1, 2.0, True)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_kwarg_types_take_precedence_over_arg_types(self):
+        @Typed(int, float, bool, z=str)
+        def f(x, y, z):
+            return x + y + z
+        log_msg = ['ERROR:root:Type of z must be str, not bool like True!',
+                   'ERROR:root:An argument of function f defined '
+                   f'in module {__name__} is of wrong type!']
+        err_msg = ('An argument of function f defined in '
+                   f'module {__name__} is of wrong type!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(1, 2.0, True)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
     def test_works_with_optional_args_and_kwargs(self):
         @Typed(y=(int, str), x=float)

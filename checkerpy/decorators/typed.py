@@ -23,7 +23,7 @@ class Typed(FunctionTypeMixin):
     >>> f(1, 2, 3, 4, z=4)
     15
 
-    If no type checks are desired for, say, the second of three arguments, they
+    If no type check is desired for, say, the second of three arguments, it
     can be skipped like so:
     >>> @Typed(int, ..., str)
     >>> def f(x, y, z):
@@ -51,10 +51,11 @@ class Typed(FunctionTypeMixin):
     Notes
     -----
     The first argument of (class) methods must be called `self`, `cls`, or
-    `mcs`. Also, secifying types for more arguments than present in the
+    `mcs`. Also, specifying types for more arguments than present in the
     function or method call is never a problem and neither is specifying types
     for named keyword arguments that do not actually occur in the function or
-    method signature.
+    method signature. Specifying types per named keyword argument takes
+    precedence over type specification by positional argument.
 
     Raises
     ------

@@ -580,6 +580,73 @@ class TestBoundedMixedLimits(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_kwarg_limits_take_precedence_over_arg_limits(self):
+        @Bounded((1, 3), ('aaa', 'zzz'), z=('a', 'c'), y=(4, 6))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Cannot compare type str of'
+                   ' y with limits of types int and int!',
+                   'ERROR:root:An argument of function f '
+                   f'defined in module {__name__} cannot be '
+                   f'compared with the corresponding limits!']
+        err_msg = (f'An argument of function f defined in module {__name__}'
+                   ' cannot be compared with the corresponding limits!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(2, 'foo')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedEllipsis(ut.TestCase):
+
+    def test_works_with_arg_limit_and_ellipsis(self):
+        @Bounded((1, 3), ..., (4, 6))
+        def f(x, y, z):
+            return x + y + z
+        output = f(2, 0, 5)
+        self.assertEqual(output, 7)
+
+    def test_type_error_with_arg_limit_and_ellipsis(self):
+        @Bounded(..., (4, 6))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Value 7 of y lies '
+                   'outside the allowed interval [4, 6]!',
+                   'ERROR:root:An argument of function f defined'
+                   f' in module {__name__} is out of bounds!']
+        err_msg = ('An argument of function f defined in'
+                   f' module {__name__} is out of bounds!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(2, 7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_mixed_limits_and_ellipsis(self):
+        @Bounded(..., (1, 6), z=(-1, 1))
+        def f(x, y, z):
+            return x + y + z
+        output = f(2, 5, 0)
+        self.assertEqual(output, 7)
+
+    def test_limit_error_with_mixed_limits_and_ellipsis(self):
+        @Bounded((1, 3), ..., z=(4, 6))
+        def f(x, y, z):
+            return x + y + z
+        log_msg = ['ERROR:root:Cannot compare type str of'
+                   ' x with limits of types int and int!',
+                   'ERROR:root:An argument of function f '
+                   f'defined in module {__name__} cannot be '
+                   f'compared with the corresponding limits!']
+        err_msg = (f'An argument of function f defined in module {__name__}'
+                   ' cannot be compared with the corresponding limits!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f('foo', 'bar', 5.0)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
 
 class TestBoundedMethod(ut.TestCase):
 
