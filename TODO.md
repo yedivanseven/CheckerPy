@@ -1,5 +1,7 @@
 # To Do
-- Allow ... to skip checking in Decorators!
+- Are *args checked by Typed if there are too many arg_types specified?
+- Add tests to Typed decorator to include ...
+- Allow ... to skip checking in Bounded decorator!
 - Expand type and bound checking in decorators to iterables!
 - Adopt (int, ...) notation for typed tuples of arbitrary length!
 - Write _Checked_ decorator providing a single validator for each argument!

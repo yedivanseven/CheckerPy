@@ -23,7 +23,16 @@ class Typed(FunctionTypeMixin):
     >>> f(1, 2, 3, 4, z=4)
     15
 
-    If, however, only one or a few arguments of a function of method are to be
+    If no type checks are desired for, say, the second of three arguments, they
+    can be skipped like so:
+    >>> @Typed(int, ..., str)
+    >>> def f(x, y, z):
+    ...    return x, y, z
+    ...
+    >>> f(1, True, 'bar')
+    (1, True, 'bar')
+
+    If, however, only one or a few arguments of a function or method are to be
     type checked, then directly assigning one or more types to these arguments
     by `name` might be more convenient.
 
@@ -41,10 +50,11 @@ class Typed(FunctionTypeMixin):
 
     Notes
     -----
-    The first argument of (class) methods must be called `self` or `cls`. Also,
-    specifying types for more arguments than present in the function or method
-    call is never a problem and neither is specifying types for named keyword
-    arguments that do not actually occur in the function or method signature.
+    The first argument of (class) methods must be called `self`, `cls`, or
+    `mcs`. Also, secifying types for more arguments than present in the
+    function or method call is never a problem and neither is specifying types
+    for named keyword arguments that do not actually occur in the function or
+    method signature.
 
     Raises
     ------
@@ -62,7 +72,10 @@ class Typed(FunctionTypeMixin):
     """
 
     def __init__(self, *arg_types: TYPES, **kwarg_types: TYPES) -> None:
-        self.arg_types = tuple(map(Just, arg_types))
+        self.arg_types = []
+        for arg_type in arg_types:
+            just_type = (lambda x, y: x) if arg_type is ... else Just(arg_type)
+            self.arg_types.append(just_type)
         self.n_arg_types = len(self.arg_types)
         self.kwarg_types = {}
         for name, type_ in kwarg_types.items():
