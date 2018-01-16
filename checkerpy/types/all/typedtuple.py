@@ -8,6 +8,48 @@ TYPES = Union[Tuple[type, ...], List[type]]
 
 
 class TypedTuple(CompositionClassMixin):
+    """Checks for different type(s) of each element in a defined-length tuple.
+
+    Parameters
+    ----------
+    value : tuple
+        The defined-length tuple to check the type(s) of its elements for.
+    name : str, optional
+        The name of the tuple to check the length and element type(s) of.
+        Defaults to None.
+    types : tuple(type), tuple(tuple(type))
+        Tuple of the length to check for with either one type for each element
+        of `value` or a tuple of types for each element of `value`.
+
+    Returns
+    -------
+    tuple
+        The tuple passed in.
+
+    Methods
+    -------
+    o(callable) : CompositionOf
+        Daisy-chains the tuple length and type checker to another `callable`,
+        returning the functional composition of both. The argument `types` is
+        passed through to the `TypedTuple` checker when when calling the
+        composition.
+
+    Raises
+    ------
+    WrongTypeError
+        If `value` is not a tuple or if any of its elements do not have (one
+        of) the permitted type(s).
+    LenError
+        If the tuple passed in does not have the same length as `types`.
+    TypeError
+        If the type specification `types` is not understood.
+
+    See Also
+    --------
+    Just, JustLen, CompositionOf
+
+    """
+
     def __new__(cls, value: tuple, name=None, types=(), **kwargs) -> tuple:
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(value)
