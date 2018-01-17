@@ -101,9 +101,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_unnamed_wrong_key_single_type(self):
         inp = {1: 'one', 2.0: 'two', 3: 'three'}
-        log_msg = ["ERROR:root:Type of key in dictionary {1: 'one', 2.0:"
+        log_msg = ["ERROR:root:Type of key in dict {1: 'one', 2.0:"
                    " 'two', 3: 'three'} must be int, not float like 2.0!"]
-        err_msg = ("Type of key in dictionary {1: 'one', 2.0: 'two',"
+        err_msg = ("Type of key in dict {1: 'one', 2.0: 'two',"
                    " 3: 'three'} must be int, not float like 2.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -113,9 +113,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_wrong_key_single_type(self):
         inp = {1: 'one', 2.0: 'two', 3: 'three'}
-        log_msg = ['ERROR:root:Type of key in dictionary '
+        log_msg = ['ERROR:root:Type of key in dict '
                    'test must be int, not float like 2.0!']
-        err_msg = ('Type of key in dictionary test must'
+        err_msg = ('Type of key in dict test must'
                    ' be int, not float like 2.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -125,9 +125,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_unnamed_wrong_value_single_type(self):
         inp = {1: 'one', 2: False, 3: 'three'}
-        log_msg = ["ERROR:root:Type of entry 2 in dictionary {1: 'one', 2:"
+        log_msg = ["ERROR:root:Type of entry 2 in dict {1: 'one', 2:"
                    " False, 3: 'three'} must be str, not bool like False!"]
-        err_msg = ("Type of entry 2 in dictionary {1: 'one', 2: False,"
+        err_msg = ("Type of entry 2 in dict {1: 'one', 2: False,"
                    " 3: 'three'} must be str, not bool like False!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -137,9 +137,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_wrong_value_single_type(self):
         inp = {1: 'one', 2: False, 3: 'three'}
-        log_msg = ['ERROR:root:Type of entry 2 in dictionary '
+        log_msg = ['ERROR:root:Type of entry 2 in dict '
                    'test must be str, not bool like False!']
-        err_msg = ('Type of entry 2 in dictionary test '
+        err_msg = ('Type of entry 2 in dict test '
                    'must be str, not bool like False!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -149,10 +149,10 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_unnamed_wrong_key_multiple_types(self):
         inp = {1: 'one', 2.0: 'two', 3: 'three'}
-        log_msg = ["ERROR:root:Type of key in dictionary {1:"
+        log_msg = ["ERROR:root:Type of key in dict {1:"
                    " 'one', 2.0: 'two', 3: 'three'} must be "
                    "one of ('int', 'bool'), not float like 2.0!"]
-        err_msg = ("Type of key in dictionary {1: 'one',"
+        err_msg = ("Type of key in dict {1: 'one',"
                    " 2.0: 'two', 3: 'three'} must be one "
                    "of ('int', 'bool'), not float like 2.0!")
         with self.assertLogs(level=logging.ERROR) as log:
@@ -163,9 +163,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_wrong_key_multiple_types(self):
         inp = {1: 'one', 2.0: 'two', 3: 'three'}
-        log_msg = ["ERROR:root:Type of key in dictionary test must "
+        log_msg = ["ERROR:root:Type of key in dict test must "
                    "be one of ('int', 'bool'), not float like 2.0!"]
-        err_msg = ("Type of key in dictionary test must be one"
+        err_msg = ("Type of key in dict test must be one"
                    " of ('int', 'bool'), not float like 2.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -175,10 +175,10 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_unnamed_wrong_value_multiple_types(self):
         inp = {1: 'one', 2: False, 3: 'three'}
-        log_msg = ["ERROR:root:Type of entry 2 in dictionary {1:"
+        log_msg = ["ERROR:root:Type of entry 2 in dict {1:"
                    " 'one', 2: False, 3: 'three'} must be one of"
                    " ('str', 'int'), not bool like False!"]
-        err_msg = ("Type of entry 2 in dictionary {1: 'one',"
+        err_msg = ("Type of entry 2 in dict {1: 'one',"
                    " 2: False, 3: 'three'} must be one of "
                    "('str', 'int'), not bool like False!")
         with self.assertLogs(level=logging.ERROR) as log:
@@ -189,9 +189,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_wrong_value_multiple_types(self):
         inp = {1: 'one', 2: False, 3: 'three'}
-        log_msg = ["ERROR:root:Type of entry 2 in dictionary test must"
+        log_msg = ["ERROR:root:Type of entry 2 in dict test must"
                    " be one of ('str', 'int'), not bool like False!"]
-        err_msg = ("Type of entry 2 in dictionary test must be "
+        err_msg = ("Type of entry 2 in dict test must be "
                    "one of ('str', 'int'), not bool like False!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -201,9 +201,9 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_wrong_key_and_values_multiple_types(self):
         inp = {1: 'one', 2.0: 'two', 3: True}
-        log_msg = ["ERROR:root:Type of key in dictionary test must "
+        log_msg = ["ERROR:root:Type of key in dict test must "
                    "be one of ('int', 'bool'), not float like 2.0!"]
-        err_msg = ("Type of key in dictionary test must be one"
+        err_msg = ("Type of key in dict test must be one"
                    " of ('int', 'bool'), not float like 2.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -231,13 +231,31 @@ class TestTypedDict(ut.TestCase):
 
     def test_keys_and_values_piped_through_JustLen(self):
         inp = {1: 'one', 2: False, 3: 'three'}
-        log_msg = ["ERROR:root:Type of entry 2 in dictionary {1: 'one', 2:"
+        log_msg = ["ERROR:root:Type of entry 2 in dict {1: 'one', 2:"
                    " False, 3: 'three'} must be str, not bool like False!"]
-        err_msg = ("Type of entry 2 in dictionary {1: 'one', 2: False,"
+        err_msg = ("Type of entry 2 in dict {1: 'one', 2: False,"
                    " 3: 'three'} must be str, not bool like False!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = TypedDict.JustLen(inp, length=3, keys=int, values=str)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_has_attribute_NonEmpty(self):
+        self.assertTrue(hasattr(TypedDict, 'NonEmpty'))
+
+    def test_attribute_NonEmpty_is_CompositionOf(self):
+        self.assertIsInstance(TypedDict.NonEmpty, CompositionOf)
+
+    def test_keys_and_values_piped_through_NonEmpty(self):
+        inp = {1: 'one', 2: False, 3: 'three'}
+        log_msg = ["ERROR:root:Type of entry 2 in dict {1: 'one', 2:"
+                   " False, 3: 'three'} must be str, not bool like False!"]
+        err_msg = ("Type of entry 2 in dict {1: 'one', 2: False,"
+                   " 3: 'three'} must be str, not bool like False!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = TypedDict.NonEmpty(inp, keys=int, values=str)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

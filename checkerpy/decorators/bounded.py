@@ -25,7 +25,7 @@ class Bounded(FunctionTypeMixin):
     >>> f(1, 5, 3, 4, z=2)
     15
 
-    If no check is desired for, say, the second of three arguments, it can be
+    If no check is desired for, say, the second of three arguments, it may be
     skipped like so:
     >>> @Bounded((1, 3), ..., (4, 6))
     >>> def f(x, y, z):

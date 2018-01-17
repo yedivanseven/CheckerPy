@@ -1,7 +1,7 @@
 from ..one import JustDict, Just
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionClassMixin
-from ...validators.one import JustLen
+from ...validators.one import JustLen, NonEmpty
 
 
 class Registrar(type):
@@ -9,6 +9,7 @@ class Registrar(type):
     def __init__(cls, class_name: str, bases, attributes: dict) -> None:
         super().__init__(class_name, (), attributes)
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
+        setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
 
 
 class TypedDict(CompositionClassMixin, metaclass=Registrar):
@@ -61,10 +62,12 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
         cls.__string = cls._name or str(mapping)
         mapping = JustDict(mapping, name=name, **kwargs)
         if keys and keys is not ...:
+            JustKeys = Just(keys, identifier='JustKeys')
             for key in mapping:
-                _ = Just(keys)(key, name=f'key in dictionary {cls.__string}')
+                _ = JustKeys(key, name=f'key in dict {cls.__string}')
         if values and values is not ...:
+            JustValues = Just(values, identifier='JustValues')
             for key, value in mapping.items():
-                value_name = f'entry {key} in dictionary {cls.__string}'
-                _ = Just(values)(value, name=value_name)
+                value_name = f'entry {key} in dict {cls.__string}'
+                _ = JustValues(value, name=value_name)
         return mapping

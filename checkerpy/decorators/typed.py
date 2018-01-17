@@ -1,10 +1,7 @@
 import logging as log
-from typing import Union, Tuple
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
-from ..types.one import Just
-from ..exceptions import WrongTypeError
-
-TYPES = Union[type, Tuple[type, ...]]
+from .parser import Parser, any_type
+from ..exceptions import WrongTypeError, LenError
 
 
 class Typed(FunctionTypeMixin):
@@ -24,7 +21,7 @@ class Typed(FunctionTypeMixin):
     15
 
     If no type check is desired for, say, the second of three arguments, it
-    can be skipped like so:
+    may be skipped like so:
     >>> @Typed(int, ..., str)
     >>> def f(x, y, z):
     ...    return x, y, z
@@ -72,15 +69,11 @@ class Typed(FunctionTypeMixin):
 
     """
 
-    def __init__(self, *arg_types: TYPES, **kwarg_types: TYPES) -> None:
-        self.arg_types = []
-        for arg_type in arg_types:
-            just_type = (lambda x, y: x) if arg_type is ... else Just(arg_type)
-            self.arg_types.append(just_type)
+    def __init__(self, *arg_types, **kwarg_types) -> None:
+        parsed = Parser()
+        self.arg_types = parsed(arg_types)
         self.n_arg_types = len(self.arg_types)
-        self.kwarg_types = {}
-        for name, type_ in kwarg_types.items():
-            self.kwarg_types.update({name: Just(type_)})
+        self.kwarg_types = parsed(kwarg_types)
 
     def __call__(self, function_to_decorate: TO_DECORATE) -> DECORATED:
         first, func_specs = self.type_of(function_to_decorate)
@@ -99,10 +92,10 @@ class Typed(FunctionTypeMixin):
             for i in i_args:
                 named_args.update({names[i]: args[first+i]})
             for arg_name, arg_value in named_args.items():
-                arg_type = self.kwarg_types.get(arg_name, lambda x, y: x)
+                arg_type = self.kwarg_types.get(arg_name, any_type)
                 try:
                     _ = arg_type(arg_value, arg_name)
-                except WrongTypeError as error:
+                except (WrongTypeError, LenError) as error:
                     message = self.error_message_with(func_specs)
                     log.error(message)
                     raise WrongTypeError(message) from error
@@ -111,10 +104,6 @@ class Typed(FunctionTypeMixin):
         typed_function.__name__, typed_function.__module__ = func_specs[1:]
         typed_function.__doc__ = function_to_decorate.__doc__
         return typed_function
-
-    @staticmethod
-    def single(value: TYPES) -> bool:
-        return type(value) not in (tuple, list, set)
 
     @staticmethod
     def error_message_with(func_specs: (str, str, str)) -> str:

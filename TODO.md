@@ -1,6 +1,5 @@
 # To Do
-- Expand type and bound checking in decorators to iterables!
-- Adopt (int, ...) notation for typed tuples of arbitrary length!
+- Expand bound checking in decorators to iterables!
 - Write _Checked_ decorator providing a single validator for each argument!
 - Add LimitedDict and LimitedTuple!
 - Add LengthDict and LengthTuple!
