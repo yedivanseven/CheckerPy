@@ -1,4 +1,6 @@
 # To Do
+- Write tests and docstring for parser!
+- Rewrite docstring for Typed decorator!
 - Expand bound checking in decorators to iterables!
 - Write _Checked_ decorator providing a single validator for each argument!
 - Add LimitedDict and LimitedTuple!

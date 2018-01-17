@@ -77,6 +77,7 @@ class Typed(FunctionTypeMixin):
 
     def __call__(self, function_to_decorate: TO_DECORATE) -> DECORATED:
         first, func_specs = self.type_of(function_to_decorate)
+        arg_string = 'argument {}' + self.func_string_from(func_specs)
         arg_count = function_to_decorate.__code__.co_argcount
         names = function_to_decorate.__code__.co_varnames[first:arg_count]
         n_names = len(names)
@@ -93,12 +94,7 @@ class Typed(FunctionTypeMixin):
                 named_args.update({names[i]: args[first+i]})
             for arg_name, arg_value in named_args.items():
                 arg_type = self.kwarg_types.get(arg_name, any_type)
-                try:
-                    _ = arg_type(arg_value, arg_name)
-                except (WrongTypeError, LenError) as error:
-                    message = self.error_message_with(func_specs)
-                    log.error(message)
-                    raise WrongTypeError(message) from error
+                _ = arg_type(arg_value, arg_string.format(arg_name))
             return function_to_decorate(*args, **kwargs)
 
         typed_function.__name__, typed_function.__module__ = func_specs[1:]
@@ -106,7 +102,5 @@ class Typed(FunctionTypeMixin):
         return typed_function
 
     @staticmethod
-    def error_message_with(func_specs: (str, str, str)) -> str:
-        func_type, func_name, module = func_specs
-        return (f'An argument of {func_type} {func_name}'
-                f' {module} is of wrong type!')
+    def func_string_from(func_specs: (str, str, str)) -> str:
+        return ' to {} {} defined in module {}'.format(*func_specs)

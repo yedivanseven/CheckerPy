@@ -144,12 +144,10 @@ class Bounded(FunctionTypeMixin):
 
     @staticmethod
     def out_of_bounds_message_with(func_specs: (str, str, str)) -> str:
-        func_type, func_name, module = func_specs
-        return (f'An argument of {func_type} {func_name}'
-                f' {module} is out of bounds!')
+        return ('An argument of {} {} defined in module {}'
+                ' is out of bounds!'.format(*func_specs))
 
     @staticmethod
     def uncomparable_message_with(func_specs: (str, str, str)) -> str:
-        func_type, func_name, module = func_specs
-        return (f'An argument of {func_type} {func_name} {module} '
-                f'cannot be compared with the corresponding limits!')
+        return ('An argument of {} {} defined in module {} cannot be compared'
+                ' with the corresponding limits!'.format(*func_specs))

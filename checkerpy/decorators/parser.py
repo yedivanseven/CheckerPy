@@ -25,7 +25,11 @@ class Parser:
         type_specs, type_checkers = self.__iterators_for(type_specs)
         for type_id, type_spec in type_specs:
             type_of = ... if type_spec is ... else type(type_spec)
-            checker = self.__checker_for[type_of](type_spec, type_id)
+            try:
+                checker = self.__checker_for[type_of](type_spec, type_id)
+            except KeyError as error:
+                message = 'Did not understand type specification!'
+                raise ValueError(message) from error
             type_checkers[type_id] = checker
         return type_checkers
 
@@ -48,10 +52,6 @@ class Parser:
     @staticmethod
     def ellipsis_checker(ellipsis=..., type_id: TYPE_ID = None) -> Callable:
         return any_type
-
-    @staticmethod
-    def __unity(value: Any, name: str = None, **kwargs) -> Any:
-        return value
 
     @staticmethod
     def tuple_checker(types, type_id: TYPE_ID) -> Callable:
@@ -77,7 +77,8 @@ class Parser:
 
     @staticmethod
     def dict_checker(types: dict, type_id: TYPE_ID) -> Callable:
-        types_name = f'for type specification of argument {type_id}'
+        prefix = ' at position' if type(type_id) is int else ''
+        types_name = f'for type specification of argument{prefix} {type_id}'
         types = JustLen.JustDict(types, name=types_name, length=1)
         keys = tuple(types.keys())[0]
         values = tuple(types.values())[0]
