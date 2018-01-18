@@ -55,7 +55,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, length=1, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, length=1, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__

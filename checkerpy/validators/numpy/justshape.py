@@ -64,7 +64,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
 
     """
 
-    def __new__(cls, array, name=None, shape: SHAPE = (...,), **kwargs):
+    def __new__(cls, array, name=None, *, shape: SHAPE = (...,), **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(array)
         cls._shapes = cls.__validated(shape)

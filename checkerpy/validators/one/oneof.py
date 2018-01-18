@@ -47,7 +47,7 @@ class OneOf(CompositionClassMixin):
 
     """
 
-    def __new__(cls, value, name=None, items=(), **kwargs):
+    def __new__(cls, value, name:str = None, *, items=(), **kwargs) -> None:
         cls._name = str(name) if name is not None else ''
         cls._items = cls.__formatted(items)
         if value not in cls._items:

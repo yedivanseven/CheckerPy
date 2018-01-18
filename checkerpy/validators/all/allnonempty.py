@@ -57,7 +57,7 @@ class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
             log.error(message)
             raise IterError(message)
         for index, value in enumerate(iterable):
-            _ = NonEmpty(value, name=cls.__name_from(index), **kwargs)
+            _ = NonEmpty(value, name=cls.__name_from(index))
         return iterable
 
     @classmethod

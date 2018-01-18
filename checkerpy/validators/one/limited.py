@@ -62,7 +62,7 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     """
 
-    def __new__(cls, value, name=None, lo=..., hi=..., **kwargs):
+    def __new__(cls, value, name: str = None, *, lo=..., hi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
         try:
             value_too_small = False if lo is Ellipsis else value < lo

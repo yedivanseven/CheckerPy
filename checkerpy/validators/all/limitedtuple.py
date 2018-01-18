@@ -74,8 +74,8 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
 
     @classmethod
     def __length_of(cls, limits: LIMITS) -> Tuple[LIMITS, int]:
-        message = cls.__has_no_length_message_for(limits)
         if type(limits) not in (tuple, list):
+            message = cls.__has_no_length_message_for(limits)
             raise LenError(message)
         limits = [(..., ...) if limit is ... else limit for limit in limits]
         for index, limit in enumerate(limits):

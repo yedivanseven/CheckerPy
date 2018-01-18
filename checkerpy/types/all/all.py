@@ -62,7 +62,7 @@ class All(CompositionMixin):
             log.error(message)
             raise IterError(message)
         for index, value in enumerate(iterable):
-            _ = self.__just(value, name=self.__name_from(index), **kwargs)
+            _ = self.__just(value, name=self.__name_from(index))
         return iterable
 
     def __not_an_iterable_message(self) -> str:

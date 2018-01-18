@@ -101,8 +101,9 @@ class Bounded(FunctionTypeMixin):
                 named_args.update({names[i]: args[first+i]})
             for arg_name, arg_value in named_args.items():
                 limit = self.kwarg_limits.get(arg_name, (..., ...))
+                lo, hi = limit
                 try:
-                    _ = Limited(named_args[arg_name], arg_name, *limit)
+                    _ = Limited(named_args[arg_name], arg_name, lo=lo, hi=hi)
                 except LimitError as error:
                     message = self.out_of_bounds_message_with(func_specs)
                     log.error(message)

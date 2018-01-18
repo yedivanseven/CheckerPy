@@ -51,7 +51,7 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, length=1, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, length=1, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(iterable)
         lengths = length if type(length) in (tuple, list, set) else (length, )

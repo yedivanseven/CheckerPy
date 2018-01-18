@@ -173,7 +173,7 @@ class TestLimited(ut.TestCase):
         for comparable in _COMPARABLES:
             self.assertTrue(hasattr(Limited, comparable.__name__))
 
-    def test_iterable_type_checkers_are_type_CompositionOf(self):
+    def test_comparable_type_checkers_are_type_CompositionOf(self):
         for comparable in _COMPARABLES:
             type_checker = getattr(Limited, comparable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
@@ -205,15 +205,6 @@ class TestLimited(ut.TestCase):
             return x
         composition = Limited.o(f)
         self.assertIsInstance(composition, CompositionOf)
-
-    def test_o_raises_error_on_argument_not_callable(self):
-        err_msg = ('foo must be a callable that accepts (i) a value,'
-                   ' (ii) an optional name for that value, and (iii)'
-                   ' any number of keyword arguments!')
-        with self.assertRaises(CallableError) as err:
-            _ = Limited.o('foo')
-        self.assertEqual(str(err.exception), err_msg)
-
 
 
 if __name__ == '__main__':

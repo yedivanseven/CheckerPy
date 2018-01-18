@@ -55,7 +55,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, lo=..., hi=..., **kwargs):
+    def __new__(cls, iterable, name: str = None, *, lo=..., hi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__
@@ -65,7 +65,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
             raise IterError(message)
         for index, value in enumerate(iterable):
             value_name = cls.__name_from(index)
-            _ = Limited(value, name=value_name, lo=lo, hi=hi, **kwargs)
+            _ = Limited(value, name=value_name, lo=lo, hi=hi)
         return iterable
 
     @classmethod
