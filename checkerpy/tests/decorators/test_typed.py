@@ -289,6 +289,29 @@ class TestTypedFunctionsMixedArgTypesOptionalArgsKwargs(ut.TestCase):
         output = f(3, 2.0, w=1, z=True)
         self.assertEqual(output, 7.0)
 
+    def test_works_with_required_kwonly_args(self):
+        @Typed(int, float, str, z=bool)
+        def f(x, y, *, z):
+            return x + y + z
+        output = f(1, 2.0, z=True)
+        self.assertEqual(output, 4.0)
+
+    def test_required_kwonly_args_are_checked(self):
+        @Typed(int, float, str)
+        def f(x, y, *, z):
+            return x + y + z
+        log_msg = ['ERROR:root:Type of argument z to function f defined '
+                   'in module checkerpy.tests.decorators.test_typed must'
+                   ' be str, not bool like True!']
+        err_msg = ('Type of argument z to function f defined in '
+                   'module checkerpy.tests.decorators.test_typed'
+                   ' must be str, not bool like True!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(1, 2.0, z=True)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
 
 class TestTypedFunctionsSingleKwargType(ut.TestCase):
 
@@ -687,7 +710,7 @@ class TestTypedFunctionsDefaults(ut.TestCase):
         output = f(1.0, 2, z=5)
         self.assertEqual(output, 8)
 
-    def test_error_on_overring_defaults_with_arg(self):
+    def test_error_on_overriding_defaults_with_arg(self):
         @Typed(y=(int, float), z=str)
         def f(x, y, z=3):
             return x + y + z
@@ -703,7 +726,7 @@ class TestTypedFunctionsDefaults(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_overring_defaults_with_kwarg(self):
+    def test_error_on_overriding_defaults_with_kwarg(self):
         @Typed(y=(int, float), z=str)
         def f(x, y, z=3):
             return x + y + z

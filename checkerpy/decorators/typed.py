@@ -1,5 +1,9 @@
+from types import FunctionType, MethodType
+from typing import Union, Callable
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
 from .parser import Parser, any_type
+
+FUNC = Union[FunctionType, MethodType]
 
 
 class Typed(FunctionTypeMixin):
@@ -93,7 +97,9 @@ class Typed(FunctionTypeMixin):
         first, func_specs = self.type_of(function_to_decorate)
         arg_string = self.arg_string_from(func_specs)
         arg_count = function_to_decorate.__code__.co_argcount
-        names = function_to_decorate.__code__.co_varnames[first:arg_count]
+        kwonly_arg_count = function_to_decorate.__code__.co_kwonlyargcount
+        tot_arg_count = arg_count + kwonly_arg_count
+        names = function_to_decorate.__code__.co_varnames[first:tot_arg_count]
         n_names = len(names)
         arg_range = range(min(n_names, self.n_arg_types))
         for arg in arg_range:
@@ -111,11 +117,18 @@ class Typed(FunctionTypeMixin):
                 _ = arg_type(arg_value, arg_string.format(arg_name))
             return function_to_decorate(*args, **kwargs)
 
-        typed_function.__name__, typed_function.__module__ = func_specs[1:]
-        typed_function.__doc__ = function_to_decorate.__doc__
-        return typed_function
+        return self.transfer_attributes(function_to_decorate, typed_function)
 
     @staticmethod
     def arg_string_from(func_specs: (str, str, str)) -> str:
         func_string = 'to {} {} defined in module {}'.format(*func_specs)
         return 'argument {} ' + func_string
+
+    @staticmethod
+    def transfer_attributes(original: FUNC, decorated: Callable) -> FUNC:
+        decorated.__annotations__ = original.__annotations__
+        decorated.__dict__ = original.__dict__
+        decorated.__doc__ = original.__doc__
+        decorated.__module__ = original.__module__
+        decorated.__name__ = original.__name__
+        return decorated
