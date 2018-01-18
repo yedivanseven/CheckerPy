@@ -19,7 +19,9 @@ class TypedTuple(CompositionClassMixin):
         Defaults to None.
     types : tuple(type), tuple(tuple(type))
         Tuple of the length to check for with either one type for each element
-        of `value` or a tuple of types for each element of `value`.
+        of `value` or a tuple of types for each element of `value`. Use the
+        ellipsis literal ... to skip type checking of the tuple element at
+        that position.
 
     Returns
     -------
@@ -57,8 +59,9 @@ class TypedTuple(CompositionClassMixin):
         types, length = cls.__length_of(types)
         value = JustLen.JustTuple(value, name=name, length=length)
         for index, element in enumerate(value):
-            element_name = f'element {index} in tuple {cls.__string}'
-            _ = Just(types[index])(element, name=element_name)
+            if types[index] not in (..., (...,), [...], {...}):
+                element_name = f'element {index} in tuple {cls.__string}'
+                _ = Just(types[index])(element, name=element_name)
         return value
 
     @classmethod

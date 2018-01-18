@@ -1131,6 +1131,31 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_typed_tuple_two_types_ellipsis(self):
+        @Typed(((...,), (str, bool)))
+        def f(x):
+            return x
+        inp = (1, 'foo')
+        out = f(inp)
+        self.assertTupleEqual(out, inp)
+
+    def test_wrong_type_error_with_typed_tuple_two_types_ellipsis(self):
+        @Typed(((int, float), (...,)))
+        def f(x):
+            return x
+        log_msg = ["ERROR:root:Type of element 0 in tuple argument x"
+                   " to function f defined in module checkerpy.tests"
+                   ".decorators.test_typed must be one of ('int', "
+                   "'float'), not str like foo!"]
+        err_msg = ("Type of element 0 in tuple argument x to function f"
+                   " defined in module checkerpy.tests.decorators.test_"
+                   "typed must be one of ('int', 'float'), not str like foo!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(('foo', False))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_not_tuple_error_with_tuple_two_types(self):
         @Typed(((int, float), (str, bool)))
         def f(x):

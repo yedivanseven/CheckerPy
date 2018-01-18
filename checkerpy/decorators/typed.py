@@ -1,49 +1,63 @@
-import logging as log
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
 from .parser import Parser, any_type
-from ..exceptions import WrongTypeError, LenError
 
 
 class Typed(FunctionTypeMixin):
     """Decorator for checking the types of arguments in functions and methods.
 
+    Parameters
+    ----------
+    *arg_types
+        Type specification for function or method arguments by position. May
+        be ellipsis, a type, or an iterable of types. See Examples.
+    **kwarg_types
+        Type specification for function or method arguments by name. May
+        be ellipsis, a type, or an iterable of types. See Examples.
+
     Examples
     --------
-    If all or only the first couple of arguments of a function or method are
-    to be type checked, then one or more types per argument may be passed to
-    the decorator like so:
+    To arguments for a single type each, simply specify that type.
 
-    >>> @Typed(int, (int, float))
-    >>> def f(x, y=6, *args, **kwargs):
-    ...     return x + y + sum(args) + kwargs['z']
-    ...
-    >>> f(1, 2, 3, 4, z=4)
-    15
+    >>> @Typed(int, z=str, y=float)
+    >>> def f(x, y, z):
+    ...     return x + y, z
 
-    If no type check is desired for, say, the second of three arguments, it
-    may be skipped like so:
+    Pass the ellipsis literal ... to skip checking the type of the argument
+    at that position.
     >>> @Typed(int, ..., str)
     >>> def f(x, y, z):
-    ...    return x, y, z
-    ...
-    >>> f(1, True, 'bar')
-    (1, True, 'bar')
+    ...     return x + y, z
 
-    If, however, only one or a few arguments of a function or method are to be
-    type checked, then directly assigning one or more types to these arguments
-    by `name` might be more convenient.
+    To allow multiple types for an argument, pass a tuple of types.
 
-    >>> class Test:
-    ...     @Typed((int, float), v=float, z=str)
-    ...     def m(self, x, y, z, u, v):
-    ...         return x + y + int(z) + u + v
-    ...
-    >>> t = Test()
-    >>> t.m(1.0, 2, '3', 4, 5.0)
-    15.0
+    >>> @Typed((int, float), ..., z=(str, bool))
+    >>> def f(x, y, z):
+    ...     return x, y, z
 
-    Here, argument `x` is type checked for int or float, `v` for float, and
-    `z` for str, whereas arguments `y` and `u` are not type checked at all.
+    To ensure an argument is an iterable with elements of one or more types,
+    specify the desired iterable containing the allowed types. To skip type
+    checking of dictionary keys or values, pass the ellipsis literal ... for
+    one of the two.
+
+    >>> @Typed([int, bool], {float}, {...: (list, tuple)})
+    >>> def f(x, y, z):
+    ...     return sum(x) + sum(y), z.keys()
+
+    A typed tuple of arbitrary length is specified by including the ellipsis
+    literal ... in the sequence of allowed types.
+
+    >>> @Typed((bool, ...))
+    >>> def f(x):
+    ...     return any(x)
+
+    A tuple of fixed length with one or more permitted types for each element
+    is specified by a tuple of tuples of types. Use the 1-tuple (...,) to skip
+    type checking for the tuple element at that position.
+
+    >>> @Typed(((str,), (...,), (int, float)))
+    >>> def f(x):
+    ...     print(f'{x[0]} is {x[2]} years old.')
+    ...     return x[1]
 
     Notes
     -----
@@ -65,7 +79,7 @@ class Typed(FunctionTypeMixin):
 
     See Also
     --------
-    Just
+    Just, All, TypedTuple, TypedDict
 
     """
 
@@ -77,7 +91,7 @@ class Typed(FunctionTypeMixin):
 
     def __call__(self, function_to_decorate: TO_DECORATE) -> DECORATED:
         first, func_specs = self.type_of(function_to_decorate)
-        arg_string = 'argument {}' + self.func_string_from(func_specs)
+        arg_string = self.arg_string_from(func_specs)
         arg_count = function_to_decorate.__code__.co_argcount
         names = function_to_decorate.__code__.co_varnames[first:arg_count]
         n_names = len(names)
@@ -102,5 +116,6 @@ class Typed(FunctionTypeMixin):
         return typed_function
 
     @staticmethod
-    def func_string_from(func_specs: (str, str, str)) -> str:
-        return ' to {} {} defined in module {}'.format(*func_specs)
+    def arg_string_from(func_specs: (str, str, str)) -> str:
+        func_string = 'to {} {} defined in module {}'.format(*func_specs)
+        return 'argument {} ' + func_string

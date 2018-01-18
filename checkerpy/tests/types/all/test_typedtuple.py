@@ -39,6 +39,26 @@ class TestTypedTuple(ut.TestCase):
         out = TypedTuple(inp, types=[(int, float), (str, tuple), (bool, list)])
         self.assertTupleEqual(out, inp)
 
+    def test_works_with_ellipsis_literal(self):
+        inp = (1, 'foo', True)
+        out = TypedTuple(inp, types=[(int, float), ..., (bool, list)])
+        self.assertTupleEqual(out, inp)
+
+    def test_works_with_ellipsis_tuple(self):
+        inp = (1, 'foo', True)
+        out = TypedTuple(inp, types=[(int, float), (...,), (bool, list)])
+        self.assertTupleEqual(out, inp)
+
+    def test_works_with_ellipsis_list(self):
+        inp = (1, 'foo', True)
+        out = TypedTuple(inp, types=[(int, float), [...], (bool, list)])
+        self.assertTupleEqual(out, inp)
+
+    def test_works_with_ellipsis_set(self):
+        inp = (1, 'foo', True)
+        out = TypedTuple(inp, types=[(int, float), {...}, (bool, list)])
+        self.assertTupleEqual(out, inp)
+
     def test_error_on_unnamed_tuple_wrong_length(self):
         inp = (1, 'foo', True)
         log_msg = ["ERROR:root:Length of tuple (1, "
@@ -105,6 +125,18 @@ class TestTypedTuple(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = TypedTuple(inp, 'test', types=(int, (int, float), bool))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_tuple_element_ellipsis(self):
+        inp = (1, 'foo', True)
+        log_msg = ["ERROR:root:Type of element 1 in tuple test must"
+                   " be one of ('int', 'float'), not str like foo!"]
+        err_msg = ("Type of element 1 in tuple test must be one"
+                   " of ('int', 'float'), not str like foo!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = TypedTuple(inp, 'test', types=(..., (int, float), bool))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
