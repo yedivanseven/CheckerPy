@@ -104,8 +104,8 @@ class Typed(FunctionTypeMixin):
             named_args = kwargs.copy()
             n_args = len(args)
             i_args = range(min(n_args-first, n_names))
-            for i in i_args:
-                named_args.update({names[i]: args[first+i]})
+            for i_arg in i_args:
+                named_args.update({names[i_arg]: args[first+i_arg]})
             for arg_name, arg_value in named_args.items():
                 arg_type = self.kwarg_types.get(arg_name, any_type)
                 _ = arg_type(arg_value, arg_string.format(arg_name))
