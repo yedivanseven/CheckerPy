@@ -82,8 +82,8 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
         lo_type = type(lo).__name__
         hi_type = type(hi).__name__
         value_type = type(value).__name__
-        value_name = ' of ' + (cls._name or str(value))
-        return (f'Cannot compare type {value_type}{value_name}'
+        value_name = cls._name or str(value)
+        return (f'Cannot compare type {value_type} of {value_name}'
                 f' with limits of types {lo_type} and {hi_type}!')
 
     @classmethod

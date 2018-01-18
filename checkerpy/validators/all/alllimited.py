@@ -1,18 +1,8 @@
 import logging as log
-from .registrars import IterableRegistrar, TYPES
+from .registrars import AllComparableRegistrar
 from ..one import Limited
-from ...types.all import _ALL_COMPARABLES
-from ...functional import CompositionOf
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IterError
-
-
-class AllComparableRegistrar(IterableRegistrar):
-    """Set compositions of class and all-comparable type checkers as attr's."""
-    def __init__(cls, class_name: str, bases: TYPES, attributes: dict) -> None:
-        super().__init__(class_name, bases, attributes)
-        for comparable in _ALL_COMPARABLES:
-            setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
 
 
 class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):

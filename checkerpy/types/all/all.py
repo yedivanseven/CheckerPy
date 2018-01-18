@@ -2,7 +2,7 @@ import logging as log
 from typing import Union, Tuple, Iterable
 from .docstring import DOC_HEADER, DOC_BODY
 from ..one import _ITERABLES, Just
-from ...validators.one import NonEmpty
+from ...validators.one import NonEmpty, JustLen
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import IterError
@@ -47,6 +47,7 @@ class All(CompositionMixin):
         for iterable in _ITERABLES:
             setattr(self, iterable.__name__, CompositionOf(self, iterable))
         setattr(self, 'NonEmpty', CompositionOf(self, NonEmpty))
+        setattr(self, 'JustLen', CompositionOf(self, JustLen))
 
     @property
     def types(self) -> Tuple[type, ...]:

@@ -14,7 +14,7 @@ __all__ = ['All', 'AllType', 'AllBool', 'AllInt', 'AllFloat',
 _ALL_COMPARABLES = (AllBool, AllInt, AllFloat,
                     AllStr, AllTuple, AllList, AllSet,
                     AllNum, AllSequence,
-                    TypedTuple)
+                    TypedTuple, TypedDict)
 _ALL_ITERABLES = (AllStr, AllTuple, AllList, AllSet, AllDict,
                   AllIter, AllSequence,
                   TypedDict, TypedTuple)

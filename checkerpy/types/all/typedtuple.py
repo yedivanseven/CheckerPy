@@ -13,9 +13,9 @@ class TypedTuple(CompositionClassMixin):
     Parameters
     ----------
     value : tuple
-        The defined-length tuple to check the type(s) of its elements for.
+        The tuple to check the length and element types of.
     name : str, optional
-        The name of the tuple to check the length and element type(s) of.
+        The name of the tuple to check the length and the element type(s) of.
         Defaults to None.
     types : tuple(type), tuple(tuple(type))
         Tuple of the length to check for with either one type for each element
@@ -49,11 +49,11 @@ class TypedTuple(CompositionClassMixin):
 
     See Also
     --------
-    Just, JustLen, CompositionOf
+    All, JustLen, CompositionOf
 
     """
 
-    def __new__(cls, value: tuple, name=None, types=(), **kwargs) -> tuple:
+    def __new__(cls, value: tuple, name=None, *, types=(), **kwargs) -> tuple:
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(value)
         types, length = cls.__length_of(types)

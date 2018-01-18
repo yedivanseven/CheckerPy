@@ -5,7 +5,7 @@ from ...validators.one import JustLen, NonEmpty
 
 
 class Registrar(type):
-    """Sets composition of class and JustLen validator as attribute."""
+    """Sets compositions of class with JustLen and NonEmpty as attributes."""
     def __init__(cls, class_name: str, bases, attributes: dict) -> None:
         super().__init__(class_name, (), attributes)
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
@@ -37,11 +37,14 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
     o(callable) : CompositionOf
         Daisy-chains the dict type checker to another `callable`, returning
         the functional composition of both. The arguments `keys` and `values`
-        are passed through to the `TypedDict` checker when when calling the
+        are passed through to the `TypedDict` checker when calling the
         composition.
     JustLen(iterable, name, length) : iterable
         Checks for `length` of `iterable` with `name` before passing it (as
         well as the `keys` and `values` keywords) on to `TypedDict`.
+    NonEmpty(iterable, name) : iterable
+        Checks if `iterable` with `name` is empty before passing it (as well
+        as the `keys` and `values` keywords) on to `TypedDict`.
 
     Raises
     ------
@@ -53,14 +56,14 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
 
     See Also
     --------
-    Just, CompositionOf
+    All, JustLen, NonEmpty, CompositionOf
 
     """
 
-    def __new__(cls, mapping: dict, name=None, keys=(), values=(), **kwargs):
+    def __new__(cls, mapping, name=None, *, keys=(), values=(), **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(mapping)
-        mapping = JustDict(mapping, name=name, **kwargs)
+        mapping = JustDict(mapping, name=name)
         if keys and keys is not ...:
             JustKeys = Just(keys, identifier='JustKeys')
             for key in mapping:
