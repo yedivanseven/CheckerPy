@@ -4,60 +4,52 @@ from ...decorators import Bounded
 from ...exceptions import LimitError, WrongTypeError
 
 
-class TestBoundedInstantiation(ut.TestCase):
+class TestBoundedFunctionsArgLimits(ut.TestCase):
 
-    def test_works_with_sane_arg_limits(self):
+    def test_works_with_args_but_no_limits(self):
+        @Bounded()
+        def f(x, y):
+            return x + y
+        output = f(1, 2)
+        self.assertEqual(output, 3)
+
+    def test_works_with_too_few_arg_limits(self):
         @Bounded((1, 3))
-        def f(x):
-            return x
-        output = f(2)
-        self.assertEqual(output, 2)
+        def f(x, y):
+            return x + y
+        output = f(2, 5)
+        self.assertEqual(output, 7)
 
-    def test_error_on_arg_limits_not_tuple(self):
-        err_msg = ('Type of limits on argument 1 must '
-                   'be tuple, not list like [1, 2]!')
-        with self.assertRaises(TypeError) as err:
-            @Bounded([1, 2])
-            def f(x):
-                return x
+    def test_limit_error_with_too_few_arg_limits(self):
+        @Bounded((1, 3))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Value 5 of argument x to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [1, 3]!']
+        err_msg = ('Value 5 of argument x to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(5, 'foo')
         self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
-    def test_error_on_length_of_arg_limit_tuple_not_2(self):
-        err_msg = ('There must be exactly 2 limits (lo'
-                   ' and hi) for argument 1, not 3!')
-        with self.assertRaises(ValueError) as err:
-            @Bounded((1, 2, 3))
-            def f(x):
-                return x
+    def test_type_error_with_too_few_arg_limits(self):
+        @Bounded((1, 3))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f('foo', 7)
         self.assertEqual(str(err.exception), err_msg)
-
-    def test_works_with_sane_kwarg_limits(self):
-        @Bounded(x=(1, 3))
-        def f(x):
-            return x
-        output = f(2)
-        self.assertEqual(output, 2)
-
-    def test_error_on_kwarg_limits_not_tuple(self):
-        err_msg = ('Type of limits on argument x must '
-                   'be tuple, not list like [1, 2]!')
-        with self.assertRaises(TypeError) as err:
-            @Bounded(x=[1, 2])
-            def f(x):
-                return x
-        self.assertEqual(str(err.exception), err_msg)
-
-    def test_error_on_length_of_kwarg_limit_tuple_not_2(self):
-        err_msg = ('There must be exactly 2 limits (lo'
-                   ' and hi) for argument x, not 3!')
-        with self.assertRaises(ValueError) as err:
-            @Bounded(x=(1, 2, 3))
-            def f(x):
-                return x
-        self.assertEqual(str(err.exception), err_msg)
-
-
-class TestBoundedArgLimits(ut.TestCase):
+        self.assertEqual(log.output, log_msg)
 
     def test_works_with_right_number_of_arg_limits(self):
         @Bounded((1, 3), (4, 6))
@@ -70,12 +62,11 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f(2, 7)
@@ -86,13 +77,12 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 7)
@@ -110,12 +100,11 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6), ('a', 'c'))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f(2, 7)
@@ -126,13 +115,12 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6), ('a', 'c'))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 7)
@@ -146,52 +134,8 @@ class TestBoundedArgLimits(ut.TestCase):
         output = f()
         self.assertEqual(output, 7)
 
-    def test_works_with_too_few_arg_limits(self):
-        @Bounded((1, 3))
-        def f(x, y):
-            return x + y
-        output = f(2, 5)
-        self.assertEqual(output, 7)
 
-    def test_limit_error_with_too_few_arg_limits(self):
-        @Bounded((1, 3))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Value 5 of x lies '
-                   'outside the allowed interval [1, 3]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LimitError) as err:
-                _ = f(5, 'foo')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_type_error_with_too_few_arg_limits(self):
-        @Bounded((1, 3))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                _ = f('foo', 7)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_works_with_args_but_no_limits(self):
-        @Bounded()
-        def f(x, y):
-            return x + y
-        output = f(1, 2)
-        self.assertEqual(output, 3)
+class TestBoundedFunctionsArgLimitsOptionalArgsKwargs(ut.TestCase):
 
     def test_works_with_optional_args_and_kwargs(self):
         @Bounded((1, 3), (4, 6))
@@ -204,13 +148,12 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6))
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 5, 1, 3, z=4)
@@ -221,128 +164,91 @@ class TestBoundedArgLimits(ut.TestCase):
         @Bounded((1, 3), (4, 6))
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
-        log_msg = ['ERROR:root:Value 6 of x lies '
-                   'outside the allowed interval [1, 3]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 6 of argument x to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [1, 3]!']
+        err_msg = ('Value 6 of argument x to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f(6, 5, 1, 3, z=4)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_optional_args_are_not_checked(self):
+        @Bounded((1, 3), (4, 6), ('a', 'c'))
+        def f(x, y, *args):
+            return x + y + sum(args)
+        output = f(3, 5.0, True, 4.0)
+        self.assertEqual(output, 13.0)
 
-class TestBoundedKwargLimits(ut.TestCase):
+    def test_optional_kwargs_are_not_checked(self):
+        @Bounded((1, 3), (4, 6), ('a', 'c'))
+        def f(x, y, **kwargs):
+            return x + y + kwargs['z'] + kwargs['w']
+        output = f(3, 5.0, w=1, z=True)
+        self.assertEqual(output, 10)
 
-    def test_works_with_right_number_of_kwarg_limits(self):
-        @Bounded(y=(1, 3), x=(4, 6))
-        def f(x, y):
-            return x + y
-        output = f(5, 2)
-        self.assertEqual(output, 7)
+    def test_works_with_required_kwonly_args(self):
+        @Bounded((1, 3), (4, 6), ('a', 'c'))
+        def f(x, y, *, z):
+            return x + y, z
+        output = f(1, 5.0, z='b')
+        self.assertEqual(output,(6.0, 'b'))
 
-    def test_limit_error_with_right_number_of_kwarg_limits(self):
-        @Bounded(y=(1, 3), x=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Value 7 of x lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LimitError) as err:
-                _ = f(7, 2)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_type_error_with_right_number_of_kwarg_limits(self):
-        @Bounded(y=(1, 3), x=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+    def test_required_kwonly_args_are_type_checked(self):
+        @Bounded((1, 3), (4, 6), ('a', 'c'))
+        def f(x, y, *, z='b'):
+            return x + y, z
+        log_msg = ['ERROR:root:Cannot compare type int of argument z to '
+                   f'function f defined in module {__name__} with limits'
+                   f' of types str and str!']
+        err_msg = ('Cannot compare type int of argument z to '
+                   f'function f defined in module {__name__} '
+                   f'with limits of types str and str!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = f('foo', 2)
+                _ = f(2, 5.0, z=4)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_too_many_kwarg_limits(self):
-        @Bounded(y=(1, 3), z=('a', 'c'), x=(4, 6))
-        def f(x, y):
-            return x + y
-        output = f(5, 2)
-        self.assertEqual(output, 7)
-
-    def test_limit_error_with_too_many_kwarg_limits(self):
-        @Bounded(y=(1, 3), z=('a', 'c'), x=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Value 7 of x lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+    def test_required_kwonly_args_are_limit_checked(self):
+        @Bounded((1, 3), (4, 6), (7, 9))
+        def f(x, y, *, z=8):
+            return x + y + z
+        log_msg = ['ERROR:root:Value 5 of argument z to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [7, 9]!']
+        err_msg = ('Value 5 of argument z to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [7, 9]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = f(7, 2)
+                _ = f(2, 5.0, z=5)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_type_error_with_too_many_kwarg_limits(self):
-        @Bounded(y=(1, 3), z=('a', 'c'), x=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                _ = f('foo', 2)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
 
-    def test_works_with_kwarg_limits_but_no_args(self):
-        @Bounded(y=(1, 3), z=('a', 'c'), x=(4, 6))
-        def f():
-            return 7
-        output = f()
-        self.assertEqual(output, 7)
+class TestBoundedFunctionsKwargLimits(ut.TestCase):
 
     def test_works_with_too_few_kwarg_limits(self):
-        @Bounded(y=(1, 3))
+        @Bounded(y=(4, 6))
         def f(x, y):
             return x + y
-        output = f(5, 2)
+        output = f(2, 5)
         self.assertEqual(output, 7)
 
     def test_limit_error_with_too_few_kwarg_limits(self):
         @Bounded(y=(1, 3))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Value 5 of y lies '
-                   'outside the allowed interval [1, 3]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 5 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [1, 3]!']
+        err_msg = ('Value 5 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = f('foo', 5)
+                _ = f(7, 5)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -350,44 +256,121 @@ class TestBoundedKwargLimits(ut.TestCase):
         @Bounded(y=(1, 3))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' y with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument y to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument y to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = f('foo', 'bar')
+                _ = f(7, 'foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_kwargs_but_no_limits(self):
-        @Bounded()
-        def f(x=3, y=2):
+    def test_works_with_right_number_of_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3))
+        def f(x, y):
             return x + y
-        output = f(1)
-        self.assertEqual(output, 3)
+        output = f(2, 5)
+        self.assertEqual(output, 7)
+
+    def test_limit_error_with_right_number_of_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(2, 7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_with_right_number_of_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f('foo', 7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_too_many_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y):
+            return x + y
+        output = f(2, 5)
+        self.assertEqual(output, 7)
+
+    def test_limit_error_with_too_many_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(2, 7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_with_too_many_kwarg_limits(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y):
+            return x + y
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f('foo', 7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_kwarg_limits_but_no_args(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f():
+            return 7
+        output = f()
+        self.assertEqual(output, 7)
+
+
+class TestBoundedFunctionsKwargLimitsOptionalArgsKwargs(ut.TestCase):
 
     def test_works_with_optional_args_and_kwargs(self):
-        @Bounded(y=(1, 3), x=(4, 6))
+        @Bounded(y=(4, 6), x=(1, 3))
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
-        output = f(5, 2, 1, 3, z=4)
+        output = f(2, 5, 1, 3, z=4)
         self.assertEqual(output, 15.0)
 
     def test_type_error_with_optional_args_and_kwargs(self):
-        @Bounded(y=(1, 3), x=(4, 6))
+        @Bounded(y=(4, 6), x=(1, 3))
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 5, 1, 3, z=4)
@@ -395,23 +378,74 @@ class TestBoundedKwargLimits(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_limit_error_with_optional_args_and_kwargs(self):
-        @Bounded(y=(1, 3), x=(4, 6))
+        @Bounded(y=(4, 6), x=(1, 3))
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
-        log_msg = ['ERROR:root:Value 6 of y lies '
-                   'outside the allowed interval [1, 3]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 6 of argument x to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [1, 3]!']
+        err_msg = ('Value 6 of argument x to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = f(5, 6, 1, 3, z=4)
+                _ = f(6, 5, 1, 3, z=4)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_optional_args_are_not_checked(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y, *args):
+            return x + y + sum(args)
+        output = f(3, 5.0, True, 4.0)
+        self.assertEqual(output, 13.0)
+
+    def test_optional_kwargs_are_not_checked(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y, **kwargs):
+            return x + y + kwargs['u'] + kwargs['w']
+        output = f(3, 5.0, u=1, w=True)
+        self.assertEqual(output, 10)
+
+    def test_works_with_required_kwonly_args(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y, *, z):
+            return x + y, z
+        output = f(1, 5.0, z='b')
+        self.assertEqual(output, (6.0, 'b'))
+
+    def test_optional_kwargs_are_type_checked_if_kwarg_limit_specified(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=('a', 'c'))
+        def f(x, y, *args, **kwargs):
+            return x + y + sum(args), kwargs['z']
+        log_msg = ['ERROR:root:Cannot compare type int of argument z to '
+                   f'function f defined in module {__name__} with limits'
+                   f' of types str and str!']
+        err_msg = ('Cannot compare type int of argument z to '
+                   f'function f defined in module {__name__} '
+                   f'with limits of types str and str!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(2, 5.0, z=4)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_optional_kwargs_are_limit_checked_if_kwarg_limit_specified(self):
+        @Bounded(y=(4, 6), x=(1, 3), z=(7, 9))
+        def f(x, y, *args, **kwargs):
+            return x + y + sum(args) + kwargs['z']
+        log_msg = ['ERROR:root:Value 5 of argument z to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [7, 9]!']
+        err_msg = ('Value 5 of argument z to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [7, 9]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(2, 5.0, z=5)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
 
-class TestBoundedMixedLimits(ut.TestCase):
+class TestBoundedFunctionsMixedLimits(ut.TestCase):
 
     def test_works_with_right_number_of_mixed_limits(self):
         @Bounded((1, 3), y=(4, 6))
@@ -424,12 +458,11 @@ class TestBoundedMixedLimits(ut.TestCase):
         @Bounded((1, 3), y=(4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f(2, 7)
@@ -440,143 +473,15 @@ class TestBoundedMixedLimits(ut.TestCase):
         @Bounded((1, 3), y=(4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' y with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = f(2, 'foo')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_works_with_too_many_mixed_limits(self):
-        @Bounded((1, 3), z=('a', 'c'), y=(4, 6))
-        def f(x, y):
-            return x + y
-        output = f(2, 5)
-        self.assertEqual(output, 7)
-
-    def test_limit_error_with_too_many_mixed_limits(self):
-        @Bounded((1, 3), z=('a', 'c'), y=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LimitError) as err:
-                _ = f(2, 7)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_type_error_with_too_many_mixed_limits(self):
-        @Bounded((1, 3), z=('a', 'c'), y=(4, 6))
-        def f(x, y):
-            return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' y with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                _ = f(2, 'foo')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_works_with_mixed_limits_but_no_args(self):
-        @Bounded((1, 3), z=('a', 'c'), y=(4, 6))
-        def f():
-            return 7
-        output = f()
-        self.assertEqual(output, 7)
-
-    def test_works_with_too_few_mixed_limits(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z):
-            return x + y + z
-        output = f(2, 7, 5)
-        self.assertEqual(output, 14)
-
-    def test_limit_error_with_too_few_mixed_limits(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z):
-            return x + y + z
-        log_msg = ['ERROR:root:Value 7 of z lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LimitError) as err:
-                _ = f(2, 'foo', 7)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_type_error_with_too_few_mixed_limits(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z):
-            return x + y + z
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' z with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                _ = f(2, 'foo', 'bar')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_works_with_optional_args_and_kwargs(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z, *args, **kwargs):
-            return x + y + z + sum(args) + kwargs['u']
-        output = f(2, 7, 5, 3, 0, u=4)
-        self.assertEqual(output, 21)
-
-    def test_type_error_with_optional_args_and_kwargs(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z, *args, **kwargs):
-            return x + y + z + sum(args) + kwargs['u']
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' z with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                _ = f(2, 7, 'foo', 3, 0, u=4)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_limit_error_with_optional_args_and_kwargs(self):
-        @Bounded((1, 3), z=(4, 6))
-        def f(x, y, z, *args, **kwargs):
-            return x + y + z + sum(args) + kwargs['u']
-        log_msg = ['ERROR:root:Value 7 of z lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LimitError) as err:
-                _ = f(2, 9, 7, 3, 0, u=4)
+                _ = f('foo', 7)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -584,13 +489,12 @@ class TestBoundedMixedLimits(ut.TestCase):
         @Bounded((1, 3), ('aaa', 'zzz'), z=('a', 'c'), y=(4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' y with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument y to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument y to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(2, 'foo')
@@ -598,7 +502,7 @@ class TestBoundedMixedLimits(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
 
-class TestBoundedEllipsis(ut.TestCase):
+class TestBoundedFunctionEllipsis(ut.TestCase):
 
     def test_works_with_arg_limit_and_ellipsis(self):
         @Bounded((1, 3), ..., (4, 6))
@@ -611,12 +515,11 @@ class TestBoundedEllipsis(ut.TestCase):
         @Bounded(..., (4, 6))
         def f(x, y):
             return x + y
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of function f defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of function f defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 7 of argument y to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f(2, 7)
@@ -634,13 +537,12 @@ class TestBoundedEllipsis(ut.TestCase):
         @Bounded((1, 3), ..., z=(4, 6))
         def f(x, y, z):
             return x + y + z
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' x with limits of types int and int!',
-                   'ERROR:root:An argument of function f '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of function f defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument x to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 'bar', 5.0)
@@ -665,12 +567,11 @@ class TestBoundedMethod(ut.TestCase):
             def m(self, x, y):
                 return x + y
         t = Test()
-        log_msg = ['ERROR:root:Value 7 of y lies '
-                   'outside the allowed interval [4, 6]!',
-                   'ERROR:root:An argument of method m defined'
-                   f' in module {__name__} is out of bounds!']
-        err_msg = ('An argument of method m defined in'
-                   f' module {__name__} is out of bounds!')
+        log_msg = ['ERROR:root:Value 7 of argument y to method m'
+                   f' defined in module {__name__} lies outside '
+                   'the allowed interval [4, 6]!']
+        err_msg = ('Value 7 of argument y to method m defined in module '
+                   f'{__name__} lies outside the allowed interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = t.m(2, 7)
@@ -683,16 +584,124 @@ class TestBoundedMethod(ut.TestCase):
             def m(self, x, y):
                 return x + y
         t = Test()
-        log_msg = ['ERROR:root:Cannot compare type str of'
-                   ' y with limits of types int and int!',
-                   'ERROR:root:An argument of method m '
-                   f'defined in module {__name__} cannot be '
-                   f'compared with the corresponding limits!']
-        err_msg = (f'An argument of method m defined in module {__name__}'
-                   ' cannot be compared with the corresponding limits!')
+        log_msg = ['ERROR:root:Cannot compare type str of argument y to'
+                   f' method m defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument y to'
+                   f' method m defined in module {__name__} '
+                   'with limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = t.m(2, 'foo')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedFunctionsDefaults(ut.TestCase):
+
+    def test_works_with_defaults(self):
+        @Bounded((1, 3), z=(4, 6))
+        def f(x, y, z=5):
+            return x + y + z
+        output = f(2, 5)
+        self.assertEqual(output, 12)
+        output = f(2, 5, 4)
+        self.assertEqual(output, 11)
+        output = f(2, 5, z=6)
+        self.assertEqual(output, 13)
+
+    def test_defaults_are_not_checked(self):
+        @Bounded((1, 3), (4, 6), z=('a', 'c'))
+        def f(x, y, z=3):
+            return x + y + z
+        output = f(2, 5)
+        self.assertEqual(output, 10)
+
+    def test_limit_error_on_overriding_defaults_with_arg(self):
+        @Bounded(z=(1, 3), y=(4, 6))
+        def f(x, y, z=2):
+            return x + y + z
+        log_msg = ['ERROR:root:Value 4 of argument z to function '
+                   f'f defined in module {__name__} lies outside '
+                   'the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of argument z to function f defined in module '
+                   f'{__name__} lies outside the allowed interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f(2, 5, 4)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_overriding_defaults_with_kwarg(self):
+        @Bounded(z=(1, 3), y=(4, 6))
+        def f(x, y, z):
+            return x + y + z
+        log_msg = ['ERROR:root:Cannot compare type str of argument z to '
+                   f'function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of argument z to '
+                   f'function f defined in module {__name__} '
+                   'with limits of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f(2, 5, 'foo')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedFunctionIterables(ut.TestCase):
+
+    def test_works_with_tuple(self):
+        @Bounded(((1, 3), (4, 6)))
+        def f(x):
+            return x
+        inputs = (1, 5)
+        output = f(inputs)
+        self.assertTupleEqual(output, inputs)
+
+    def test_error_on_not_a_tuple(self):
+        @Bounded(((1, 3), (4, 6)))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Type of argument x to function f defined in '
+                   f'module {__name__} must be tuple, not list like [1, 5]!']
+        err_msg = ('Type of argument x to function f defined in '
+                   f'module {__name__} must be tuple, not list like [1, 5]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f([1, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_tuple_element(self):
+        @Bounded(((1, 3), (4, 6)))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value 2 of element 1 in tuple argument x to'
+                   f' function f defined in module {__name__} lies outside'
+                   f' the allowed interval [4, 6]!']
+        err_msg = ('Value 2 of element 1 in tuple argument x to function f '
+                   f'defined in module {__name__} lies outside the allowed '
+                   f'interval [4, 6]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f((1, 2))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_tuple_element(self):
+        @Bounded(((1, 3), (4, 6)))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type str of element 1 in tuple'
+                   f' argument x to function f defined in module {__name__} '
+                   'with limits of types int and int!']
+        err_msg = ('Cannot compare type str of element 1 in tuple argument x'
+                   f' to function f defined in module {__name__} with limits'
+                   f' of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f((1, 'a'))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

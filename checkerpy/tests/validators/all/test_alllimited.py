@@ -37,9 +37,9 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_str(self):
-        log_msg = ['ERROR:root:Value d of str abd with index 2'
+        log_msg = ['ERROR:root:Value d of str abd at index 2'
                    ' lies outside the allowed interval [a, c]!']
-        err_msg = ('Value d of str abd with index 2 lies'
+        err_msg = ('Value d of str abd at index 2 lies'
                    ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -48,9 +48,9 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_out_of_bounds_element_in_named_str(self):
-        log_msg = ['ERROR:root:Value d of str test with index '
+        log_msg = ['ERROR:root:Value d of str test at index '
                    '2 lies outside the allowed interval [a, c]!']
-        err_msg = ('Value d of str test with index 2 lies'
+        err_msg = ('Value d of str test at index 2 lies'
                    ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -64,9 +64,9 @@ class TestAllLimited(ut.TestCase):
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_tuple(self):
-        log_msg = ['ERROR:root:Value 4 of tuple (1, 2, 4) with index'
+        log_msg = ['ERROR:root:Value 4 of tuple (1, 2, 4) at index'
                    ' 2 lies outside the allowed interval [1, 3]!']
-        err_msg = ('Value 4 of tuple (1, 2, 4) with index 2 lies'
+        err_msg = ('Value 4 of tuple (1, 2, 4) at index 2 lies'
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -75,9 +75,9 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_out_of_bounds_element_in_named_tuple(self):
-        log_msg = ['ERROR:root:Value 4 of tuple test with index '
+        log_msg = ['ERROR:root:Value 4 of tuple test at index '
                    '2 lies outside the allowed interval [1, 3]!']
-        err_msg = ('Value 4 of tuple test with index 2 lies'
+        err_msg = ('Value 4 of tuple test at index 2 lies'
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -91,9 +91,9 @@ class TestAllLimited(ut.TestCase):
         self.assertListEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_list(self):
-        log_msg = ['ERROR:root:Value 4 of list [1, 2, 4] with index'
+        log_msg = ['ERROR:root:Value 4 of list [1, 2, 4] at index'
                    ' 2 lies outside the allowed interval [1, 3]!']
-        err_msg = ('Value 4 of list [1, 2, 4] with index 2 lies'
+        err_msg = ('Value 4 of list [1, 2, 4] at index 2 lies'
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -102,9 +102,9 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_out_of_bounds_element_in_named_list(self):
-        log_msg = ['ERROR:root:Value 4 of list test with index '
+        log_msg = ['ERROR:root:Value 4 of list test at index '
                    '2 lies outside the allowed interval [1, 3]!']
-        err_msg = ('Value 4 of list test with index 2 lies'
+        err_msg = ('Value 4 of list test at index 2 lies'
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -236,9 +236,9 @@ class TestAllLimited(ut.TestCase):
         self.assertIsInstance(AllLimited.NonEmpty, CompositionOf)
 
     def test_all_hi_and_lo_are_passed_through_type_and_non_empty_checker(self):
-        log_msg = ['ERROR:root:Value d of str test with index 2'
+        log_msg = ['ERROR:root:Value d of str test at index 2'
                    ' lies outside the allowed interval (-inf, c]!']
-        err_msg = ('Value d of str test with index 2 lies'
+        err_msg = ('Value d of str test at index 2 lies'
                    ' outside the allowed interval (-inf, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:

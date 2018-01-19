@@ -79,4 +79,4 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
             return s
         elif cls._iter_type == 'set':
             return f'set {cls._string}'
-        return f'{cls._iter_type} {cls._string} with index {index}'
+        return f'{cls._iter_type} {cls._string} at index {index}'

@@ -1,4 +1,5 @@
 # To Do
+- Write docstring for bounded decorator!
 - Write tests for Bounded decorator
 - Factor out common methods of parsers into BaseParser!
 - Refactor FunctionTypeMixin to
