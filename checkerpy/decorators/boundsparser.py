@@ -14,7 +14,7 @@ def identity(value: Any, name: str = None, **kwargs) -> Any:
     return value
 
 
-class LimitParser:
+class BoundsParser:
     """Takes tuple or dict of limits specs and returns limit checkers"""
     def __init__(self):
         self.__checker_for: CheckerDict = {type(...): self.ellipsis_checker,

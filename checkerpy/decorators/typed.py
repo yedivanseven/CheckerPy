@@ -3,7 +3,7 @@ from typing import Union, Callable
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
 from .typeparser import TypeParser, identity
 
-FUNC = Union[FunctionType, MethodType]
+Func = Union[FunctionType, MethodType]
 
 
 class Typed(FunctionTypeMixin):
@@ -125,7 +125,7 @@ class Typed(FunctionTypeMixin):
         return 'argument {} ' + func_string
 
     @staticmethod
-    def transfer_attributes(original: FUNC, decorated: Callable) -> FUNC:
+    def transfer_attributes(original: Func, decorated: Callable) -> Func:
         decorated.__annotations__ = original.__annotations__
         decorated.__dict__ = original.__dict__
         decorated.__doc__ = original.__doc__

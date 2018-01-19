@@ -1,5 +1,5 @@
 # To Do
-- Let Bounds decorator use BoundsParser!
+- Write tests for Bounded decorator
 - Factor out common methods of parsers into BaseParser!
 - Refactor FunctionTypeMixin to
   - provide the variable names from signature of decorated function or from varnames attribute of decorated function

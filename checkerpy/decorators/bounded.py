@@ -1,12 +1,9 @@
-import logging as log
-from typing import Dict, Tuple, Any, Union
+from types import FunctionType, MethodType
+from typing import Union, Callable
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
-from ..validators.one import Limited
-from ..exceptions import WrongTypeError, LimitError
+from .boundsparser import BoundsParser, identity
 
-LIMITS = Tuple[Any, Any]
-ARG_LIMITS = Tuple[LIMITS, ...]
-KWARG_LIMITS = Dict[str, Tuple[Any, Any]]
+Func = Union[FunctionType, MethodType]
 
 
 class Bounded(FunctionTypeMixin):
@@ -78,15 +75,19 @@ class Bounded(FunctionTypeMixin):
 
     """
 
-    def __init__(self, *arg_limits: LIMITS, **kwarg_limits: LIMITS) -> None:
-        self.arg_limits = self.arg_format_checked(arg_limits)
+    def __init__(self, *arg_limits, **kwarg_limits) -> None:
+        parsed = BoundsParser()
+        self.arg_limits = parsed(arg_limits)
         self.n_arg_limits = len(self.arg_limits)
-        self.kwarg_limits = self.kwarg_format_checked(kwarg_limits)
+        self.kwarg_limits = parsed(kwarg_limits)
 
     def __call__(self, function_to_decorate: TO_DECORATE) -> DECORATED:
         first, func_specs = self.type_of(function_to_decorate)
+        arg_string = self.arg_string_from(func_specs)
         arg_count = function_to_decorate.__code__.co_argcount
-        names = function_to_decorate.__code__.co_varnames[first:arg_count]
+        kwonly_arg_count = function_to_decorate.__code__.co_kwonlyargcount
+        tot_arg_count = arg_count + kwonly_arg_count
+        names = function_to_decorate.__code__.co_varnames[first:tot_arg_count]
         n_names = len(names)
         arg_range = range(min(n_names, self.n_arg_limits))
         for arg in arg_range:
@@ -100,55 +101,22 @@ class Bounded(FunctionTypeMixin):
             for i in i_args:
                 named_args.update({names[i]: args[first+i]})
             for arg_name, arg_value in named_args.items():
-                limit = self.kwarg_limits.get(arg_name, (..., ...))
-                lo, hi = limit
-                try:
-                    _ = Limited(named_args[arg_name], arg_name, lo=lo, hi=hi)
-                except LimitError as error:
-                    message = self.out_of_bounds_message_with(func_specs)
-                    log.error(message)
-                    raise LimitError(message) from error
-                except WrongTypeError as error:
-                    message = self.uncomparable_message_with(func_specs)
-                    log.error(message)
-                    raise WrongTypeError(message) from error
+                arg_limit = self.kwarg_limits.get(arg_name, identity)
+                _ = arg_limit(arg_value, arg_string.format(arg_name))
             return function_to_decorate(*args, **kwargs)
 
-        bounded_function.__name__, bounded_function.__module__ = func_specs[1:]
-        bounded_function.__doc__ = function_to_decorate.__doc__
-        return bounded_function
-
-    def arg_format_checked(self, arg_limits: ARG_LIMITS) -> ARG_LIMITS:
-        arg_limits = list(arg_limits)
-        for arg_number, limit in enumerate(arg_limits):
-            arg_limits[arg_number] = (..., ...) if limit is ... else limit
-            self.check(arg_number+1, arg_limits[arg_number])
-        return tuple(arg_limits)
-
-    def kwarg_format_checked(self, kwarg_limits: KWARG_LIMITS) -> KWARG_LIMITS:
-        for arg_name, limit in kwarg_limits.items():
-            self.check(arg_name, limit)
-        return kwarg_limits
+        return self.transfer_attributes(function_to_decorate, bounded_function)
 
     @staticmethod
-    def check(arg_id: Union[int, str], limit: LIMITS) -> None:
-        type_of_limit = type(limit)
-        if type_of_limit is not tuple:
-            message = (f'Type of limits on argument {arg_id} must be tuple,'
-                       f' not {type_of_limit.__name__} like {limit}!')
-            raise TypeError(message)
-        length_of_limit = len(limit)
-        if length_of_limit != 2:
-            message = ('There must be exactly 2 limits (lo and hi) for'
-                       f' argument {arg_id}, not {length_of_limit}!')
-            raise ValueError(message)
+    def arg_string_from(func_specs: (str, str, str)) -> str:
+        func_string = 'to {} {} defined in module {}'.format(*func_specs)
+        return 'argument {} ' + func_string
 
     @staticmethod
-    def out_of_bounds_message_with(func_specs: (str, str, str)) -> str:
-        return ('An argument of {} {} defined in module {}'
-                ' is out of bounds!'.format(*func_specs))
-
-    @staticmethod
-    def uncomparable_message_with(func_specs: (str, str, str)) -> str:
-        return ('An argument of {} {} defined in module {} cannot be compared'
-                ' with the corresponding limits!'.format(*func_specs))
+    def transfer_attributes(original: Func, decorated: Callable) -> Func:
+        decorated.__annotations__ = original.__annotations__
+        decorated.__dict__ = original.__dict__
+        decorated.__doc__ = original.__doc__
+        decorated.__module__ = original.__module__
+        decorated.__name__ = original.__name__
+        return decorated
