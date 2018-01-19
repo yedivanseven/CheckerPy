@@ -160,6 +160,64 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_dict_keys(self):
+        inputs = {1: 'one', 2: 'two', 3: 'three'}
+        output = AllLimited(inputs.keys(), lo=1, hi=3)
+        self.assertSetEqual(set(output), set(inputs.keys()))
+
+    def test_error_on_out_of_bounds_element_in_unnamed_dict_keys(self):
+        inputs = {1: 'one', 2: 'two', 4: 'three'}
+        log_msg = ['ERROR:root:Value 4 of dict_keys([1, 2, 4]) '
+                   'lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of dict_keys([1, 2, 4]) lies '
+                   'outside the allowed interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.keys(), lo=1, hi=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_out_of_bounds_element_in_named_dict_keys(self):
+        inputs = {1: 'one', 2: 'two', 4: 'three'}
+        log_msg = ['ERROR:root:Value 4 of key in dict test lies'
+                   ' outside the allowed interval (-inf, 3]!']
+        err_msg = ('Value 4 of key in dict test lies outside'
+                   ' the allowed interval (-inf, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.keys(), 'test', hi=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_dict_values(self):
+        inputs = {'one': 1, 'two': 2, 'three': 3}
+        output = AllLimited(inputs.values(), lo=1, hi=3)
+        self.assertSetEqual(set(output), set(inputs.values()))
+
+    def test_error_on_out_of_bounds_element_in_unnamed_dict_values(self):
+        inputs = {'one': 1, 'two': 2, 'three': 4}
+        log_msg = ['ERROR:root:Value 4 of dict_values([1, 2, 4]) '
+                   'lies outside the allowed interval [1, 3]!']
+        err_msg = ('Value 4 of dict_values([1, 2, 4]) lies '
+                   'outside the allowed interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.values(), lo=1, hi=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_out_of_bounds_element_in_named_dict_values(self):
+        inputs = {'one': 1, 'two': 2, 'three': 4}
+        log_msg = ['ERROR:root:Value 4 of dict values in test '
+                   'lies outside the allowed interval (-inf, 3]!']
+        err_msg = ('Value 4 of dict values in test lies '
+                   'outside the allowed interval (-inf, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.values(), 'test', hi=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(AllLimited, iterable.__name__))
