@@ -118,6 +118,7 @@ class BoundsParser:
     @staticmethod
     def __limits_string_from(limits_id: SpecID) -> str:
         prefix = ' at position' if type(limits_id) is int else ''
+        print(type(limits_id))
         return f'for limits specification of argument{prefix} {limits_id}'
 
     @staticmethod

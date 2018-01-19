@@ -4,6 +4,31 @@ from ...decorators import Bounded
 from ...exceptions import LimitError, WrongTypeError, LenError
 
 
+class TestBoundedInstantiation(ut.TestCase):
+
+    def test_error_on_limit_specification_not_tuple(self):
+        err_msg = ('Invalid expression 1 for limits specification'
+                   ' of argument at position 0!')
+        with self.assertRaises(ValueError) as err:
+            @Bounded(1)
+            def f(x, y):
+                return x + y
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_error_on_limit_specification_tuple_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification of'
+                   ' argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of'
+                   ' argument at position 0 must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded((1, 2, 3))
+                def f(x, y):
+                    return x + y
+            self.assertEqual(log.output, log_msg)
+        self.assertEqual(str(err.exception), err_msg)
+
+
 class TestBoundedFunctionsArgLimits(ut.TestCase):
 
     def test_works_with_args_but_no_limits(self):
@@ -649,7 +674,98 @@ class TestBoundedFunctionsDefaults(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
 
-class TestBoundedFunctionIterables(ut.TestCase):
+class TestBoundedFunctionTuple(ut.TestCase):
+
+    def test_works_with_tuple(self):
+        @Bounded((..., (4, 6)))
+        def f(x):
+            return x
+        inputs = (4, 5)
+        output = f(inputs)
+        self.assertTupleEqual(output, inputs)
+
+    def test_works_with_empty_tuple(self):
+        @Bounded((..., (4, 6)))
+        def f(x):
+            return x
+        inputs = ()
+        output = f(inputs)
+        self.assertTupleEqual(output, inputs)
+
+    def test_error_on_limit_specs_not_a_tuple(self):
+        log_msg = ['ERROR:root:Type of for limits specification of argument'
+                   ' at position 0 must be tuple, not list like [4]!']
+        err_msg = ('Type of for limits specification of argument '
+                   'at position 0 must be tuple, not list like [4]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                @Bounded((..., [4]))
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limit_specs_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of'
+                   ' argument at position 0 must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded(((1, 2, 3), ...))
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_argument_not_a_tuple(self):
+        @Bounded(((..., 6), ...))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Type of argument x to function f defined in '
+                   f'module {__name__} must be tuple, not list like [1, 5]!']
+        err_msg = ('Type of argument x to function f defined in '
+                   f'module {__name__} must be tuple, not list like [1, 5]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f([1, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_tuple_element(self):
+        @Bounded((..., (4, 6)))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value 2 of tuple argument x to function f '
+                   f'defined in module {__name__} at index 1 lies outside'
+                   ' the allowed interval [4, 6]!']
+        err_msg = ('Value 2 of tuple argument x to function f defined in '
+                   f'module {__name__} at index 1 lies outside the allowed'
+                   ' interval [4, 6]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f((5, 2))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_tuple_element(self):
+        @Bounded(((1, 3), ...))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type str of tuple argument x '
+                   f'to function f defined in module {__name__} at index 1 '
+                   'with limits of types int and int!']
+        err_msg = ('Cannot compare type str of tuple argument x to function'
+                   f' f defined in module {__name__} at index 1 with limits'
+                   ' of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f((1, 'a', 2))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedFunctionLimitedTuple(ut.TestCase):
 
     def test_works_with_limited_tuple(self):
         @Bounded(((1, 3), (4, 6)))
@@ -673,7 +789,7 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_typed_tuple_limited_length(self):
+    def test_error_on_limited_tuple_wrong_length(self):
         @Bounded(((1, 3), (4, ...)))
         def f(x):
             return x
@@ -693,10 +809,10 @@ class TestBoundedFunctionIterables(ut.TestCase):
             return x
         log_msg = ['ERROR:root:Value 2 of element 1 in tuple argument x to'
                    f' function f defined in module {__name__} lies outside'
-                   f' the allowed interval [4, 6]!']
+                   ' the allowed interval [4, 6]!']
         err_msg = ('Value 2 of element 1 in tuple argument x to function f '
                    f'defined in module {__name__} lies outside the allowed '
-                   f'interval [4, 6]!')
+                   'interval [4, 6]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f((1, 2))
@@ -712,10 +828,218 @@ class TestBoundedFunctionIterables(ut.TestCase):
                    'with limits of types int and int!']
         err_msg = ('Cannot compare type str of element 1 in tuple argument x'
                    f' to function f defined in module {__name__} with limits'
-                   f' of types int and int!')
+                   ' of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f((1, 'a'))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedFunctionList(ut.TestCase):
+
+    def test_works_with_List(self):
+        @Bounded([(1, 3)])
+        def f(x):
+            return x
+        inputs = [1, 2]
+        output = f(inputs)
+        self.assertListEqual(output, inputs)
+
+    def test_error_on_limit_specs_not_a_tuple(self):
+        log_msg = ['ERROR:root:Type of for limits specification of argument'
+                   ' at position 0 must be tuple, not int like 4!']
+        err_msg = ('Type of for limits specification of argument '
+                   'at position 0 must be tuple, not int like 4!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                @Bounded([4])
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limit_specs_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of'
+                   ' argument at position 0 must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded([(1, 2, 3)])
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_more_than_one_limit_specs(self):
+        log_msg = ['ERROR:root:Length of list for limits specification '
+                   'of argument at position 0 must be 1, not 2!']
+        err_msg = ('Length of list for limits specification'
+                   ' of argument at position 0 must be 1, not 2!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded([(1, 2), 3])
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_empty_list(self):
+        @Bounded([(1, 3)])
+        def f(x):
+            return x
+        inputs = []
+        output = f(inputs)
+        self.assertListEqual(output, inputs)
+
+    def test_error_on_not_a_list(self):
+        @Bounded([(1, 3)])
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Type of argument x to function f defined in '
+                   f'module {__name__} must be list, not tuple like (1, 5)!']
+        err_msg = ('Type of argument x to function f defined in '
+                   f'module {__name__} must be list, not tuple like (1, 5)!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f((1, 5))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_list_element(self):
+        @Bounded([(1, 3)])
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value 5 of list argument x to function f '
+                   f'defined in module {__name__} at index 1 lies outside'
+                   ' the allowed interval [1, 3]!']
+        err_msg = ('Value 5 of list argument x to function f defined in '
+                   f'module {__name__} at index 1 lies outside the allowed'
+                   ' interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f([2, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_set_element(self):
+        @Bounded([(1, 3)])
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type str of list argument x '
+                   f'to function f defined in module {__name__} at index 1'
+                   ' with limits of types int and int!']
+        err_msg = ('Cannot compare type str of list argument x to function'
+                   f' f defined in module {__name__} at index 1 with limits'
+                   ' of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f([1, 'a', 2])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestBoundedFunctionSet(ut.TestCase):
+
+    def test_works_with_set(self):
+        @Bounded({(1, 3)})
+        def f(x):
+            return x
+        inputs = {1, 2}
+        output = f(inputs)
+        self.assertSetEqual(output, inputs)
+
+    def test_error_on_limit_specs_not_a_tuple(self):
+        log_msg = ['ERROR:root:Type of for limits specification of argument'
+                   ' at position 0 must be tuple, not int like 4!']
+        err_msg = ('Type of for limits specification of argument '
+                   'at position 0 must be tuple, not int like 4!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                @Bounded({4})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limit_specs_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of'
+                   ' argument at position 0 must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded({(1, 2, 3)})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_more_than_one_limit_specs(self):
+        log_msg = ['ERROR:root:Length of set for limits specification '
+                   'of argument at position 0 must be 1, not 2!']
+        err_msg = ('Length of set for limits specification'
+                   ' of argument at position 0 must be 1, not 2!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded({(1, 2), 3})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_empty_set(self):
+        @Bounded({(1, 3)})
+        def f(x):
+            return x
+        inputs = set()
+        output = f(inputs)
+        self.assertSetEqual(output, inputs)
+
+    def test_error_on_not_a_set(self):
+        @Bounded({(1, 3)})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Type of argument x to function f defined in '
+                   f'module {__name__} must be set, not list like [1, 5]!']
+        err_msg = ('Type of argument x to function f defined in '
+                   f'module {__name__} must be set, not list like [1, 5]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f([1, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_set_element(self):
+        @Bounded({(1, 3)})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value 5 of set argument x to function f '
+                   f'defined in module {__name__} lies outside'
+                   ' the allowed interval [1, 3]!']
+        err_msg = ('Value 5 of set argument x to function f defined in '
+                   f'module {__name__} lies outside the allowed'
+                   ' interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f({2, 5})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_set_element(self):
+        @Bounded({(1, 3)})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type str of set argument x '
+                   f'to function f defined in module {__name__} '
+                   'with limits of types int and int!']
+        err_msg = ('Cannot compare type str of set argument x to function'
+                   f' f defined in module {__name__} with limits'
+                   ' of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f({1, 'a', 2})
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
