@@ -948,22 +948,30 @@ class TestTypedFunctionIterables(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_empty_dict(self):
+        log_msg = ['ERROR:root:Length of dict for type specification'
+                   ' of argument at position 0 must be 1, not 0!']
         err_msg = ('Length of dict for type specification of '
                    'argument at position 0 must be 1, not 0!')
-        with self.assertRaises(LenError) as err:
-            @Typed({})
-            def f(x):
-                return x
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Typed({})
+                def f(x):
+                    return x
         self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
     def test_error_on_dict_too_long(self):
+        log_msg = ['ERROR:root:Length of dict for type specification'
+                   ' of argument x must be 1, not 2!']
         err_msg = ('Length of dict for type specification'
                    ' of argument x must be 1, not 2!')
-        with self.assertRaises(LenError) as err:
-            @Typed(x={int: float, str: bool})
-            def f(x):
-                return x
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Typed(x={int: float, str: bool})
+                def f(x):
+                    return x
         self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
     def test_works_with_dict_key_one_type(self):
         @Typed({int: ...})
