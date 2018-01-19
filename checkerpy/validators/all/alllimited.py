@@ -70,8 +70,10 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     @classmethod
     def __name_from(cls, index: int) -> str:
-        if cls._iter_type == 'dict':
+        if cls._iter_type in ('dict', 'dict_keys'):
             return f'dict key in {cls._string}'
         elif cls._iter_type == 'set':
             return f'set {cls._string}'
+        elif cls._iter_type == 'dict_values':
+            return f'dict value in {cls._string}'
         return f'{cls._iter_type} {cls._string} with index {index}'

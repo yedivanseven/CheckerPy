@@ -9,12 +9,12 @@ TYPE_CHECKERS = Union[List[Callable], Dict[str, Callable]]
 TYPE_ID = Union[int, str]
 
 
-def any_type(value: Any, name: str = None, **kwargs) -> Any:
+def identity(value: Any, name: str = None, **kwargs) -> Any:
     """Simply return the first argument"""
     return value
 
 
-class Parser:
+class TypeParser:
     """Takes tuple or dict of type specifications and returns type checkers"""
     def __init__(self):
         self.__checker_for: CHECKER_DICT = {type(...): self.ellipsis_checker,
@@ -41,7 +41,7 @@ class Parser:
             message = self.__wrong_iterable_message_for(type_specs)
             raise TypeError(message)
         if type_of_type_specs is tuple:
-            type_checkers = [any_type for _ in type_specs]
+            type_checkers = [identity for _ in type_specs]
             type_specs = enumerate(type_specs)
         else:
             type_specs = type_specs.items()
@@ -50,7 +50,7 @@ class Parser:
 
     @staticmethod
     def ellipsis_checker(_, __) -> Callable:
-        return any_type
+        return identity
 
     @staticmethod
     def tuple_checker(types, _) -> Callable:
