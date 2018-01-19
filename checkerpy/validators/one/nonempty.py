@@ -1,3 +1,4 @@
+from typing import Iterable
 import logging as log
 from .registrar import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
@@ -42,7 +43,7 @@ class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, **kwargs):
+    def __new__(cls, iterable, name: str = None, **kwargs):
         cls._name = str(name) if name is not None else ''
         try:
             length_of_iterable = len(iterable)
@@ -63,7 +64,7 @@ class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
         return f'Emptiness of {var_name}type {type_name} cannot be determined!'
 
     @classmethod
-    def __is_empty_message_for(cls, iterable) -> str:
+    def __is_empty_message_for(cls, iterable: Iterable) -> str:
         iter_name = ' '+cls._name if cls._name else ''
         type_name = type(iterable).__name__
         return type_name.capitalize() + iter_name + ' must not be empty!'

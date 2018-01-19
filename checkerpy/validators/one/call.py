@@ -36,7 +36,7 @@ class Call(CompositionClassMixin):
 
     """
 
-    def __new__(cls, callbl: Callable, name=None, **kwargs):
+    def __new__(cls, callbl: Callable, name: str = None, **kwargs):
         if name is not None:
             cls._name = str(name)
         elif hasattr(callbl, '__name__'):
