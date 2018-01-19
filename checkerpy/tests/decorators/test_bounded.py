@@ -651,7 +651,7 @@ class TestBoundedFunctionsDefaults(ut.TestCase):
 
 class TestBoundedFunctionIterables(ut.TestCase):
 
-    def test_works_with_typed_tuple(self):
+    def test_works_with_limited_tuple(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
@@ -659,8 +659,8 @@ class TestBoundedFunctionIterables(ut.TestCase):
         output = f(inputs)
         self.assertTupleEqual(output, inputs)
 
-    def test_error_on_not_a_typed_tuple(self):
-        @Bounded(((1, 3), (4, 6)))
+    def test_error_on_not_a_limited_tuple(self):
+        @Bounded(((1, 3), (..., 6)))
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined in '
@@ -673,8 +673,8 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_typed_tuple_wrong_length(self):
-        @Bounded(((1, 3), (4, 6)))
+    def test_error_on_typed_tuple_limited_length(self):
+        @Bounded(((1, 3), (4, ...)))
         def f(x):
             return x
         log_msg = ['ERROR:root:Length of tuple argument x to function '
@@ -687,8 +687,8 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_limit_error_on_typed_tuple_element(self):
-        @Bounded(((1, 3), (4, 6)))
+    def test_limit_error_on_limited_tuple_element(self):
+        @Bounded(((..., ...), (4, 6)))
         def f(x):
             return x
         log_msg = ['ERROR:root:Value 2 of element 1 in tuple argument x to'
@@ -703,7 +703,7 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_type_error_on_typed_tuple_element(self):
+    def test_type_error_on_limited_tuple_element(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
