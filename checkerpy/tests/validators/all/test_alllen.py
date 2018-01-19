@@ -130,6 +130,62 @@ class TestAllLen(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_dict_keys(self):
+        inputs = {'foo': 1, 'bar': 2, 'baz': 3}
+        output = AllLen(inputs.keys(), length=3)
+        self.assertSetEqual(set(output), set(inputs.keys()))
+
+    def test_error_on_wrong_length_element_in_unnamed_dict_keys(self):
+        inputs = {'foo': 1, 'ba': 2, 'baz': 3}
+        log_msg = ["ERROR:root:Length of str key ba in dict_keys"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str key ba in dict_keys(['foo',"
+                   " 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.keys(), length=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_length_element_in_named_dict_keys(self):
+        inputs = {'foo': 1, 'ba': 2, 'baz': 3}
+        log_msg = ['ERROR:root:Length of str key ba '
+                   'in dict test must be 3, not 2!']
+        err_msg = 'Length of str key ba in dict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.keys(), 'test', length=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_dict_values(self):
+        inputs = {1: 'foo', 2: 'bar', 3: 'baz'}
+        output = AllLen(inputs.values(), length=3)
+        self.assertSetEqual(set(output), set(inputs.values()))
+
+    def test_error_on_wrong_length_element_in_unnamed_dict_values(self):
+        inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
+        log_msg = ["ERROR:root:Length of str value ba in dict_values"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str value ba in dict_values(['foo',"
+                   " 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.values(), length=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_length_element_in_named_dict_values(self):
+        inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
+        log_msg = ['ERROR:root:Length of str value ba'
+                   ' in dict test must be 3, not 2!']
+        err_msg = 'Length of str value ba in dict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.values(), 'test', length=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(AllLen, iterable.__name__))

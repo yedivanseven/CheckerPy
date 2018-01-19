@@ -72,7 +72,13 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     def __name_from(cls, index: int, value) -> str:
         if cls._iter_type == 'dict':
             return f'key {value} in dict {cls._string}'
+        elif cls._iter_type == 'dict_keys':
+            string = f'dict {cls._string}' if cls._name else cls._string
+            return f'key {value} in ' + string
         elif cls._iter_type == 'set':
             return f'{value} in set {cls._string}'
+        elif cls._iter_type == 'dict_values':
+            string = f'dict {cls._string}' if cls._name else cls._string
+            return f'value {value} in ' + string
         return (f'{value} with index {index} in '
                 f'{cls._iter_type} {cls._string}')
