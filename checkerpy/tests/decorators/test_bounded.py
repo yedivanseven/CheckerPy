@@ -1,7 +1,7 @@
 import logging
 import unittest as ut
 from ...decorators import Bounded
-from ...exceptions import LimitError, WrongTypeError
+from ...exceptions import LimitError, WrongTypeError, LenError
 
 
 class TestBoundedFunctionsArgLimits(ut.TestCase):
@@ -651,7 +651,7 @@ class TestBoundedFunctionsDefaults(ut.TestCase):
 
 class TestBoundedFunctionIterables(ut.TestCase):
 
-    def test_works_with_tuple(self):
+    def test_works_with_typed_tuple(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
@@ -659,7 +659,7 @@ class TestBoundedFunctionIterables(ut.TestCase):
         output = f(inputs)
         self.assertTupleEqual(output, inputs)
 
-    def test_error_on_not_a_tuple(self):
+    def test_error_on_not_a_typed_tuple(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
@@ -673,7 +673,21 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_limit_error_on_tuple_element(self):
+    def test_error_on_typed_tuple_wrong_length(self):
+        @Bounded(((1, 3), (4, 6)))
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Length of tuple argument x to function '
+                   f'f defined in module {__name__} must be 2, not 3!']
+        err_msg = ('Length of tuple argument x to function f defined'
+                   f' in module {__name__} must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = f((2, 5, 8))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_typed_tuple_element(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
@@ -689,7 +703,7 @@ class TestBoundedFunctionIterables(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_type_error_on_tuple_element(self):
+    def test_type_error_on_typed_tuple_element(self):
         @Bounded(((1, 3), (4, 6)))
         def f(x):
             return x
