@@ -1,4 +1,5 @@
 from ..one import JustDict, Just
+from ..all import All
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, NonEmpty
@@ -65,9 +66,8 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
         cls.__string = cls._name or str(mapping)
         mapping = JustDict(mapping, name=name)
         if keys and keys is not ...:
-            JustKeys = Just(keys, identifier='JustKeys')
-            for key in mapping:
-                _ = JustKeys(key, name=f'key in dict {cls.__string}')
+            AllKeys = All(keys, identifier='AllKeys')
+            _ = AllKeys(mapping, name=cls.__string)
         if values and values is not ...:
             JustValues = Just(values, identifier='JustValues')
             for key, value in mapping.items():
