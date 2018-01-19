@@ -57,7 +57,7 @@ class BoundsParser:
         lo, hi = JustLen.JustTuple(limits[0], name=limits_name, length=2)
 
         def limited_list(value, name: str = None):
-            return AllLimited.JustList(value, name=name, lo=lo, hi=hi)
+            return AllLimited.JustList(value, name=name, all_lo=lo, all_hi=hi)
 
         return limited_list
 
@@ -67,7 +67,7 @@ class BoundsParser:
         lo, hi = JustLen.JustTuple(limits.pop(), name=limits_name, length=2)
 
         def limited_set(value, name: str = None):
-            return AllLimited.JustSet(value, name=name, lo=lo, hi=hi)
+            return AllLimited.JustSet(value, name=name, all_lo=lo, all_hi=hi)
 
         return limited_set
 
@@ -79,11 +79,11 @@ class BoundsParser:
         lo_key, hi_key = JustLen.JustTuple(keys, name=limits_name, length=2)
         values = tuple(limits.values())[0]
         values = (..., ...) if values is ... else values
-        lo_val, hi_val = JustLen.JustTuple(values, name=limits_name, length=2)
+        lo, hi = JustLen.JustTuple(values, name=limits_name, length=2)
 
         def limited_dict(mapping, name: str = None):
             _ = AllLimited(mapping, name=name, all_lo=lo_key, all_hi=hi_key)
-            _ = AllLimited(mapping.values(), name, all_lo=lo_val, all_hi=hi_val)
+            _ = AllLimited(mapping.values(), name=name, all_lo=lo, all_hi=hi)
             return mapping
 
         return limited_dict
