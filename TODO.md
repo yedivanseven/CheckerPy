@@ -1,7 +1,4 @@
 # To Do
-- length in AllLen and JustLen must not be called the same!
-- lo, hi in AllLimited and JustLimited must not be called the same!
-- Write LimitedDict!
 - Let Bounds decorator use BoundsParser!
 - Factor out common methods of parsers into BaseParser!
 - Refactor FunctionTypeMixin to

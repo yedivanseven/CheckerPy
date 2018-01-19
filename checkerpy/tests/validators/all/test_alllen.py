@@ -16,7 +16,7 @@ class TestAllLen(ut.TestCase):
                    ' be an iterable with elements to inspect!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IterError) as err:
-                _ = AllLen(1)
+                _ = AllLen(1, all_len=1)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -27,115 +27,115 @@ class TestAllLen(ut.TestCase):
                    'to be an iterable with elements to inspect!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IterError) as err:
-                _ = AllLen(1, 'test')
+                _ = AllLen(1, 'test', all_len=1)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_tuple(self):
         inputs = ('foo', 'bar', 'baz')
-        output = AllLen(inputs, length=3)
+        output = AllLen(inputs, all_len=3)
         self.assertTupleEqual(output, inputs)
 
-    def test_error_on_wrong_length_element_in_unnamed_tuple(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_tuple(self):
         log_msg = ["ERROR:root:Length of str ba with index 1 in "
                    "tuple ('foo', 'ba', 'baz') must be 3, not 2!"]
         err_msg = ("Length of str ba with index 1 in tuple "
                    "('foo', 'ba', 'baz') must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(('foo', 'ba', 'baz'), length=3)
+                _ = AllLen(('foo', 'ba', 'baz'), all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_length_element_in_named_tuple(self):
+    def test_error_on_wrong_all_len_element_in_named_tuple(self):
         log_msg = ["ERROR:root:Length of str ba with index"
                    " 1 in tuple test must be 3, not 2!"]
         err_msg = ("Length of str ba with index 1 "
                    "in tuple test must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(('foo', 'ba', 'baz'), 'test', length=3)
+                _ = AllLen(('foo', 'ba', 'baz'), 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_list(self):
         inputs = ['foo', 'bar', 'baz']
-        output = AllLen(inputs, length=3)
+        output = AllLen(inputs, all_len=3)
         self.assertListEqual(output, inputs)
 
-    def test_error_on_wrong_length_element_in_unnamed_list(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_list(self):
         log_msg = ["ERROR:root:Length of str ba with index 1 in "
                    "list ['foo', 'ba', 'baz'] must be 3, not 2!"]
         err_msg = ("Length of str ba with index 1 in list "
                    "['foo', 'ba', 'baz'] must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(['foo', 'ba', 'baz'], length=3)
+                _ = AllLen(['foo', 'ba', 'baz'], all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_length_element_in_named_list(self):
+    def test_error_on_wrong_all_len_element_in_named_list(self):
         log_msg = ['ERROR:root:Length of str ba with index'
                    ' 1 in list test must be 3, not 2!']
         err_msg = ('Length of str ba with index 1 '
                    'in list test must be 3, not 2!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(['foo', 'ba', 'baz'], 'test', length=3)
+                _ = AllLen(['foo', 'ba', 'baz'], 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_set(self):
         inputs = {'foo', 'bar', 'baz'}
-        output = AllLen(inputs, length=3)
+        output = AllLen(inputs, all_len=3)
         self.assertSetEqual(output, inputs)
 
-    def test_error_on_wrong_length_element_in_unnamed_set(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_set(self):
         with self.assertLogs(level=logging.ERROR):
             with self.assertRaises(LenError):
-                _ = AllLen({'foo', 'ba', 'baz'}, length=3)
+                _ = AllLen({'foo', 'ba', 'baz'}, all_len=3)
 
-    def test_error_on_wrong_length_element_in_named_set(self):
+    def test_error_on_wrong_all_len_element_in_named_set(self):
         log_msg = ['ERROR:root:Length of str ba in set test must be 3, not 2!']
         err_msg = 'Length of str ba in set test must be 3, not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen({'foo', 'ba', 'baz'}, 'test', length=3)
+                _ = AllLen({'foo', 'ba', 'baz'}, 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict(self):
         inputs = {'foo': 1, 'bar': 2, 'baz': 3}
-        output = AllLen(inputs, length=3)
+        output = AllLen(inputs, all_len=3)
         self.assertDictEqual(output, inputs)
 
-    def test_error_on_wrong_length_element_in_unnamed_dict(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_dict(self):
         log_msg = ["ERROR:root:Length of str key ba in dict {'foo':"
                    " 1, 'ba': 2, 'baz': 3} must be 3, not 2!"]
         err_msg = ("Length of str key ba in dict {'foo': 1,"
                    " 'ba': 2, 'baz': 3} must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen({'foo': 1, 'ba': 2, 'baz': 3}, length=3)
+                _ = AllLen({'foo': 1, 'ba': 2, 'baz': 3}, all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_length_element_in_named_dict(self):
+    def test_error_on_wrong_all_len_element_in_named_dict(self):
         log_msg = ['ERROR:root:Length of str key ba'
                    ' in dict test must be 3, not 2!']
         err_msg = 'Length of str key ba in dict test must be 3, not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen({'foo': 1, 'ba': 2, 'baz': 3}, 'test', length=3)
+                _ = AllLen({'foo': 1, 'ba': 2, 'baz': 3}, 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict_keys(self):
         inputs = {'foo': 1, 'bar': 2, 'baz': 3}
-        output = AllLen(inputs.keys(), length=3)
+        output = AllLen(inputs.keys(), all_len=3)
         self.assertSetEqual(set(output), set(inputs.keys()))
 
-    def test_error_on_wrong_length_element_in_unnamed_dict_keys(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_dict_keys(self):
         inputs = {'foo': 1, 'ba': 2, 'baz': 3}
         log_msg = ["ERROR:root:Length of str key ba in dict_keys"
                    "(['foo', 'ba', 'baz']) must be 3, not 2!"]
@@ -143,27 +143,27 @@ class TestAllLen(ut.TestCase):
                    " 'ba', 'baz']) must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(inputs.keys(), length=3)
+                _ = AllLen(inputs.keys(), all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_length_element_in_named_dict_keys(self):
+    def test_error_on_wrong_all_len_element_in_named_dict_keys(self):
         inputs = {'foo': 1, 'ba': 2, 'baz': 3}
         log_msg = ['ERROR:root:Length of str key ba '
                    'in dict test must be 3, not 2!']
         err_msg = 'Length of str key ba in dict test must be 3, not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(inputs.keys(), 'test', length=3)
+                _ = AllLen(inputs.keys(), 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict_values(self):
         inputs = {1: 'foo', 2: 'bar', 3: 'baz'}
-        output = AllLen(inputs.values(), length=3)
+        output = AllLen(inputs.values(), all_len=3)
         self.assertSetEqual(set(output), set(inputs.values()))
 
-    def test_error_on_wrong_length_element_in_unnamed_dict_values(self):
+    def test_error_on_wrong_all_len_element_in_unnamed_dict_values(self):
         inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
         log_msg = ["ERROR:root:Length of str value ba in dict_values"
                    "(['foo', 'ba', 'baz']) must be 3, not 2!"]
@@ -171,18 +171,18 @@ class TestAllLen(ut.TestCase):
                    " 'ba', 'baz']) must be 3, not 2!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(inputs.values(), length=3)
+                _ = AllLen(inputs.values(), all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_length_element_in_named_dict_values(self):
+    def test_error_on_wrong_all_len_element_in_named_dict_values(self):
         inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
         log_msg = ['ERROR:root:Length of str value ba'
                    ' in dict test must be 3, not 2!']
         err_msg = 'Length of str value ba in dict test must be 3, not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen(inputs.values(), 'test', length=3)
+                _ = AllLen(inputs.values(), 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -210,14 +210,14 @@ class TestAllLen(ut.TestCase):
             type_checker = getattr(AllLen, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
 
-    def test_length_is_passed_through_type_checker(self):
+    def test_all_len_is_passed_through_type_checker(self):
         log_msg = ['ERROR:root:Length of str ba with index'
                    ' 1 in tuple test must be 3, not 2!']
         err_msg = ('Length of str ba with index 1 '
                    'in tuple test must be 3, not 2!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
-                _ = AllLen.AllStr(('foo', 'ba', 'baz'), 'test', length=3)
+                _ = AllLen.AllStr(('foo', 'ba', 'baz'), 'test', all_len=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

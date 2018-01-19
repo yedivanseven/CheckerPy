@@ -15,9 +15,8 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     name : str, optional
         The name of the variable to check the length of the elements of.
         Defaults to None.
-    length : int, tuple(int), optional
+    all_len : int, tuple(int)
         One or more lengths that all elements of `iterable` should have.
-        Defaults to 1.
 
     Returns
     -------
@@ -55,7 +54,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, length=1, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, all_len: int, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__
@@ -65,7 +64,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
             raise IterError(message)
         for index, value in enumerate(iterable):
             value_name = cls.__name_from(index, value)
-            _ = JustLen(value, name=value_name, length=length)
+            _ = JustLen(value, name=value_name, length=all_len)
         return iterable
 
     @classmethod
@@ -75,10 +74,10 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         elif cls._iter_type == 'dict_keys':
             string = f'dict {cls._string}' if cls._name else cls._string
             return f'key {value} in ' + string
-        elif cls._iter_type == 'set':
-            return f'{value} in set {cls._string}'
         elif cls._iter_type == 'dict_values':
             string = f'dict {cls._string}' if cls._name else cls._string
             return f'value {value} in ' + string
+        elif cls._iter_type == 'set':
+            return f'{value} in set {cls._string}'
         return (f'{value} with index {index} in '
                 f'{cls._iter_type} {cls._string}')

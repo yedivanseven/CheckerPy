@@ -14,9 +14,9 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         The iterable for which to check if its elements lie outside limits.
     name : str, optional
         The name of the variable to check the elements of. Defaults to None.
-    lo : optional
+    all_lo : optional
         Lower bound for all elements of `iterable`. Defaults to Ellipsis.
-    hi : optional
+    all_hi : optional
         Upper bound for all elements of `iterable`. Defaults to Ellipsis.
 
     Returns
@@ -55,7 +55,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, lo=..., hi=..., **kwargs):
+    def __new__(cls, iterable, name=None, *, all_lo=..., all_hi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__
@@ -65,7 +65,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
             raise IterError(message)
         for index, value in enumerate(iterable):
             value_name = cls.__name_from(index)
-            _ = Limited(value, name=value_name, lo=lo, hi=hi)
+            _ = Limited(value, name=value_name, lo=all_lo, hi=all_hi)
         return iterable
 
     @classmethod
@@ -74,9 +74,9 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
             return f'dict key in {cls._string}'
         elif cls._iter_type == 'dict_keys':
             return f'key in dict {cls._string}' if cls._name else cls._string
-        elif cls._iter_type == 'set':
-            return f'set {cls._string}'
         elif cls._iter_type == 'dict_values':
             s = f'dict values in {cls._string}' if cls._name else cls._string
             return s
+        elif cls._iter_type == 'set':
+            return f'set {cls._string}'
         return f'{cls._iter_type} {cls._string} with index {index}'

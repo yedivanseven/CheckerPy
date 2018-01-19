@@ -13,8 +13,8 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
         The iterable to check the length of.
     name : str, optional
         The name of the variable to check the length of. Defaults to None.
-    length : int, tuple(int), optional
-        One or more lengths that `iterable` should have. Defaults to 1.
+    length : int, tuple(int)
+        One or more lengths that `iterable` should have.
 
     Returns
     -------
@@ -51,7 +51,7 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, length=1, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, length, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(iterable)
         lengths = length if type(length) in (tuple, list, set) else (length, )
