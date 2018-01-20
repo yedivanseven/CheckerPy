@@ -3,14 +3,14 @@ from ..validators.all import AllLimited, LimitedTuple
 from ..validators.one import JustLen, Limited
 from ..types.one import JustList, JustTuple, JustSet, JustDict
 
-CheckerDict = Dict[type, Callable]
-Specs = Union[tuple, dict]
-Checkers = Union[List[Callable], Dict[str, Callable]]
-SpecID = Union[int, str]
+CheckerDict = Dict[type, Callable]  # same
+Specs = Union[tuple, dict]  # same
+Checkers = Union[List[Callable], Dict[str, Callable]]  # same
+SpecID = Union[int, str]  # same
 Limit = Tuple[Any, Any]
 
 
-def identity(value: Any, name: str = None, **kwargs) -> Any:
+def identity(value: Any, name: str = None, **kwargs) -> Any:  # same
     """Simply return the first argument"""
     return value
 
@@ -18,13 +18,13 @@ def identity(value: Any, name: str = None, **kwargs) -> Any:
 class BoundParser:
     """Takes tuple or dict of limits specs and returns limit checkers"""
     def __init__(self):
-        self.__checker_for: CheckerDict = {type(...): self.ellipsis_checker,
+        self.__checker_for: CheckerDict = {type(...): self.ellipsis_checker,  # same
                                            list: self.list_checker,
                                            set: self.set_checker,
                                            dict: self.dict_checker,
                                            tuple: self.tuple_checker}
 
-    def __call__(self, specs: Specs) -> Checkers:
+    def __call__(self, specs: Specs) -> Checkers:  # same
         specs, checkers = self.__iterators_for(specs)
         for spec_id, spec in specs:
             try:
@@ -35,7 +35,7 @@ class BoundParser:
             checkers[spec_id] = checker_for(spec, spec_id)
         return checkers
 
-    def __iterators_for(self, specs: Specs) -> (Specs, Checkers):
+    def __iterators_for(self, specs: Specs) -> (Specs, Checkers):  # same
         type_of_specs = type(specs)
         if type_of_specs not in (tuple, dict):
             message = self.__wrong_iterable_message_for(specs)
@@ -49,7 +49,7 @@ class BoundParser:
         return specs, checkers
 
     @staticmethod
-    def ellipsis_checker(_, __) -> Callable:
+    def ellipsis_checker(_, __) -> Callable:  # same
         return identity
 
     def list_checker(self, limits: List[Limit], limits_id: SpecID) -> Callable:
@@ -136,7 +136,7 @@ class BoundParser:
         return 'limits specification of {}argument' + f'{postfix} {limits_id}'
 
     @staticmethod
-    def __wrong_iterable_message_for(limits_specs: Specs) -> str:
+    def __wrong_iterable_message_for(limits_specs: Specs) -> str:  # same
         return ('Iterator with limits specifications must be either '
                 'a tuple (if specified in *args format) or a dict '
                 '(if specified in **kwargs format), not a '

@@ -3,13 +3,13 @@ from ..types.all import All, TypedDict, TypedTuple
 from ..types.one import Just
 from ..validators.one import JustLen
 
-CHECKER_DICT = Dict[type, Callable]
-TYPE_SPECS = Union[tuple, dict]
-TYPE_CHECKERS = Union[List[Callable], Dict[str, Callable]]
-TYPE_ID = Union[int, str]
+CHECKER_DICT = Dict[type, Callable]  # same
+TYPE_SPECS = Union[tuple, dict]  # same
+TYPE_CHECKERS = Union[List[Callable], Dict[str, Callable]]  # same
+TYPE_ID = Union[int, str]  # same
 
 
-def identity(value: Any, name: str = None, **kwargs) -> Any:
+def identity(value: Any, name: str = None, **kwargs) -> Any:  # same
     """Simply return the first argument"""
     return value
 
@@ -17,14 +17,14 @@ def identity(value: Any, name: str = None, **kwargs) -> Any:
 class TypeParser:
     """Takes tuple or dict of type specifications and returns type checkers"""
     def __init__(self):
-        self.__checker_for: CHECKER_DICT = {type(...): self.ellipsis_checker,
+        self.__checker_for: CHECKER_DICT = {type(...): self.ellipsis_checker,  # same
                                             tuple: self.tuple_checker,
                                             list: self.list_checker,
                                             set: self.set_checker,
                                             dict: self.dict_checker,
                                             type: self.type_checker}
 
-    def __call__(self, type_specs: TYPE_SPECS) -> TYPE_CHECKERS:
+    def __call__(self, type_specs: TYPE_SPECS) -> TYPE_CHECKERS:  # same
         type_specs, type_checkers = self.__iterators_for(type_specs)
         for type_id, type_spec in type_specs:
             try:
@@ -35,7 +35,7 @@ class TypeParser:
             type_checkers[type_id] = checker_for(type_spec, type_id)
         return type_checkers
 
-    def __iterators_for(self, type_specs: TYPE_SPECS):
+    def __iterators_for(self, type_specs: TYPE_SPECS):  # same
         type_of_type_specs = type(type_specs)
         if type_of_type_specs not in (tuple, dict):
             message = self.__wrong_iterable_message_for(type_specs)
@@ -49,7 +49,7 @@ class TypeParser:
         return type_specs, type_checkers
 
     @staticmethod
-    def ellipsis_checker(_, __) -> Callable:
+    def ellipsis_checker(_, __) -> Callable:  # same
         return identity
 
     @staticmethod
@@ -99,7 +99,7 @@ class TypeParser:
         return f'for type specification of argument{postfix} {type_id}'
 
     @staticmethod
-    def __wrong_iterable_message_for(type_specs: TYPE_SPECS) -> str:
+    def __wrong_iterable_message_for(type_specs: TYPE_SPECS) -> str:  # same
         return ('Iterator with type specifications must be either '
                 'a tuple (if specified in *args format) or a dict '
                 '(if specified in **kwargs format), not a '
