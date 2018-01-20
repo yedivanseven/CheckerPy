@@ -693,9 +693,9 @@ class TestBoundedFunctionTuple(ut.TestCase):
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of for limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of argument'
                    ' at position 0 must be tuple, not list like [4]!']
-        err_msg = ('Type of for limits specification of argument '
+        err_msg = ('Type of limits specification of argument '
                    'at position 0 must be tuple, not list like [4]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -847,9 +847,9 @@ class TestBoundedFunctionList(ut.TestCase):
         self.assertListEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of for limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of argument'
                    ' at position 0 must be tuple, not int like 4!']
-        err_msg = ('Type of for limits specification of argument '
+        err_msg = ('Type of limits specification of argument '
                    'at position 0 must be tuple, not int like 4!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -923,7 +923,7 @@ class TestBoundedFunctionList(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_type_error_on_set_element(self):
+    def test_type_error_on_list_element(self):
         @Bounded([(1, 3)])
         def f(x):
             return x
@@ -951,9 +951,9 @@ class TestBoundedFunctionSet(ut.TestCase):
         self.assertSetEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of for limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of argument'
                    ' at position 0 must be tuple, not int like 4!']
-        err_msg = ('Type of for limits specification of argument '
+        err_msg = ('Type of limits specification of argument '
                    'at position 0 must be tuple, not int like 4!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:

@@ -1,6 +1,7 @@
 from typing import Union, Dict, Callable, List, Set, Any, Tuple
 from ..validators.all import AllLimited, LimitedTuple
 from ..validators.one import JustLen, Limited
+from ..types.one import JustList, JustTuple, JustSet
 
 CheckerDict = Dict[type, Callable]
 Specs = Union[tuple, dict]
@@ -53,8 +54,11 @@ class BoundsParser:
 
     def list_checker(self, limits: List[Limit], limits_id: SpecID) -> Callable:
         limits_name = self.__limits_string_from(limits_id)
-        limits = JustLen.JustList(limits, name=limits_name, length=1)
-        lo, hi = JustLen.JustTuple(limits[0], name=limits_name, length=2)
+        for_limits_name = 'for ' + limits_name
+        limits = JustList(limits, name=limits_name)
+        limits = JustLen(limits, name=for_limits_name, length=1)
+        limits = JustTuple(limits[0], name=limits_name)
+        lo, hi = JustLen(limits, name=for_limits_name, length=2)
 
         def limited_list(value, name: str = None):
             return AllLimited.JustList(value, name=name, all_lo=lo, all_hi=hi)
@@ -63,8 +67,11 @@ class BoundsParser:
 
     def set_checker(self, limits: Set[Limit], limits_id: SpecID) -> Callable:
         limits_name = self.__limits_string_from(limits_id)
-        limits = JustLen.JustSet(limits, name=limits_name, length=1)
-        lo, hi = JustLen.JustTuple(limits.pop(), name=limits_name, length=2)
+        for_limits_name = 'for ' + limits_name
+        limits = JustSet(limits, name=limits_name)
+        limits = JustLen(limits, name=for_limits_name, length=1)
+        limits = JustTuple(limits.pop(), name=limits_name)
+        lo, hi = JustLen(limits, name=for_limits_name, length=2)
 
         def limited_set(value, name: str = None):
             return AllLimited.JustSet(value, name=name, all_lo=lo, all_hi=hi)
@@ -90,10 +97,12 @@ class BoundsParser:
 
     def tuple_checker(self, limits: tuple, limits_id: SpecID) -> Callable:
         limits_name = self.__limits_string_from(limits_id)
+        for_limits_name = 'for ' + limits_name
         if ... in limits:
             limits = tuple(limit for limit in limits if limit is not ...)
-            limits = JustLen(limits, name=limits_name, length=1)
-            lo, hi = JustLen.JustTuple(limits[0], name=limits_name, length=2)
+            limits = JustLen(limits, name=for_limits_name, length=1)
+            limits = JustTuple(limits[0], name=limits_name)
+            lo, hi = JustLen(limits, name=for_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
                 return AllLimited.JustTuple(value, name, all_lo=lo, all_hi=hi)
@@ -104,7 +113,8 @@ class BoundsParser:
                 return LimitedTuple(value, name=name, limits=limits)
 
         else:
-            lo, hi = JustLen.JustTuple(limits, name=limits_name, length=2)
+            limits = JustTuple(limits, name=limits_name)
+            lo, hi = JustLen(limits, name=for_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
                 return Limited(value, name=name, lo=lo, hi=hi)
@@ -113,13 +123,12 @@ class BoundsParser:
 
     def __wrong_spec_message_for(self, spec, spec_id: SpecID) -> str:
         spec_string = self.__limits_string_from(spec_id)
-        return f'Invalid expression {spec} ' + spec_string + '!'
+        return f'Invalid expression {spec} for ' + spec_string + '!'
 
     @staticmethod
     def __limits_string_from(limits_id: SpecID) -> str:
-        prefix = ' at position' if type(limits_id) is int else ''
-        print(type(limits_id))
-        return f'for limits specification of argument{prefix} {limits_id}'
+        postfix = ' at position' if type(limits_id) is int else ''
+        return f'limits specification of argument{postfix} {limits_id}'
 
     @staticmethod
     def __wrong_iterable_message_for(limits_specs: Specs) -> str:
