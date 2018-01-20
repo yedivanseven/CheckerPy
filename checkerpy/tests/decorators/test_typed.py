@@ -25,11 +25,9 @@ class TestTypedFunctionsSingleArgType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be int, not str like foo!']
+                   f'in module {__name__} must be int, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be int, not str like foo!')
+                   f'module {__name__} must be int, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 2.0)
@@ -48,11 +46,9 @@ class TestTypedFunctionsSingleArgType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -71,11 +67,9 @@ class TestTypedFunctionsSingleArgType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -104,11 +98,11 @@ class TestTypedFunctionsTwoArgTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument x to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('int', 'float'), not str like foo!"]
+                   f"in module {__name__} must be one of ('int', 'float')"
+                   ", not str like foo!"]
         err_msg = ("Type of argument x to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('int', 'float'), not str like foo!")
+                   f" {__name__} must be one of ('int', 'float'), not "
+                   "str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 2.0)
@@ -127,11 +121,11 @@ class TestTypedFunctionsTwoArgTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument y to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('float', 'complex'), not str like foo!"]
+                   f"in module {__name__} must be one of ('float', 'complex'),"
+                   " not str like foo!"]
         err_msg = ("Type of argument y to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('float', 'complex'), not str like foo!")
+                   f" {__name__} must be one of ('float', 'complex'), "
+                   "not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -150,11 +144,11 @@ class TestTypedFunctionsTwoArgTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument y to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('float', 'complex'), not str like foo!"]
+                   f"in module {__name__} must be one of ('float', 'complex'),"
+                   " not str like foo!"]
         err_msg = ("Type of argument y to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('float', 'complex'), not str like foo!")
+                   f" {__name__} must be one of ('float', 'complex'), "
+                   "not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -183,11 +177,9 @@ class TestTypedFunctionsMixedArgTypes(ut.TestCase):
         def f(x, y, z):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo', 'bar')
@@ -206,11 +198,9 @@ class TestTypedFunctionsMixedArgTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -229,11 +219,9 @@ class TestTypedFunctionsMixedArgTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -262,11 +250,9 @@ class TestTypedFunctionsMixedArgTypesOptionalArgsKwargs(ut.TestCase):
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo', 3, 4, z=5)
@@ -299,11 +285,9 @@ class TestTypedFunctionsMixedArgTypesOptionalArgsKwargs(ut.TestCase):
         def f(x, y, *, z):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like True!']
+                   f'in module {__name__} must be str, not bool like True!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like True!')
+                   f'module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, z=True)
@@ -325,11 +309,9 @@ class TestTypedFunctionsSingleKwargType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like bar!']
+                   f'in module {__name__} must be float, not str like bar!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like bar!')
+                   f'module {__name__} must be float, not str like bar!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 'bar')
@@ -348,11 +330,9 @@ class TestTypedFunctionsSingleKwargType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -371,11 +351,9 @@ class TestTypedFunctionsSingleKwargType(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo')
@@ -404,11 +382,11 @@ class TestTypedFunctionsTwoKwargTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument y to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('int', 'float'), not str like bar!"]
+                   f"in module {__name__} must be one of ('int', 'float'),"
+                   " not str like bar!"]
         err_msg = ("Type of argument y to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('int', 'float'), not str like bar!")
+                   f" {__name__} must be one of ('int', 'float'), not "
+                   "str like bar!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 'bar')
@@ -427,11 +405,11 @@ class TestTypedFunctionsTwoKwargTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument y to function f defined in"
-                   " module checkerpy.tests.decorators.test_typed must be "
-                   "one of ('int', 'float'), not str like foo!"]
+                   f" module {__name__} must be one of ('int', 'float'), "
+                   "not str like foo!"]
         err_msg = ("Type of argument y to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('int', 'float'), not str like foo!")
+                   f" {__name__} must be one of ('int', 'float'), "
+                   "not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1.0, 'foo')
@@ -450,11 +428,11 @@ class TestTypedFunctionsTwoKwargTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ["ERROR:root:Type of argument y to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('int', 'float'), not str like foo!"]
+                   f"in module {__name__} must be one of ('int', 'float')"
+                   ", not str like foo!"]
         err_msg = ("Type of argument y to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('int', 'float'), not str like foo!")
+                   f" {__name__} must be one of ('int', 'float'), not "
+                   "str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1.0, 'foo')
@@ -483,11 +461,9 @@ class TestTypedFunctionsMixedKwargTypes(ut.TestCase):
         def f(x, y, z):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument y to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument y to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 'foo', 3)
@@ -506,11 +482,9 @@ class TestTypedFunctionsMixedKwargTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 2.0)
@@ -529,11 +503,9 @@ class TestTypedFunctionsMixedKwargTypes(ut.TestCase):
         def f(x, y):
             return x + y
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be float, not str like foo!']
+                   f'in module {__name__} must be float, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be float, not str like foo!')
+                   f'module {__name__} must be float, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo', 2)
@@ -562,11 +534,11 @@ class TestTypedFunctionsMixedKwargTypesOptionalArgsKwargs(ut.TestCase):
         def f(x, y, *args, **kwargs):
             return x + y + sum(args) + kwargs['z']
         log_msg = ["ERROR:root:Type of argument y to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('int', 'str'), not float like 2.0!"]
+                   f"in module {__name__} must be one of ('int', 'str'),"
+                   " not float like 2.0!"]
         err_msg = ("Type of argument y to function f defined in "
-                   "module checkerpy.tests.decorators.test_typed"
-                   " must be one of ('int', 'str'), not float like 2.0!")
+                   f"module {__name__} must be one of ('int', 'str'),"
+                   " not float like 2.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1.0, 2.0, 3, 4, z=5)
@@ -592,11 +564,9 @@ class TestTypedFunctionsMixedKwargTypesOptionalArgsKwargs(ut.TestCase):
         def f(x, y, **kwargs):
             return x + y + kwargs['w'] + kwargs['z']
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like False!']
+                   f'in module {__name__} must be str, not bool like False!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like False!')
+                   f'module {__name__} must be str, not bool like False!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(3, 2.0, w=True, z=False)
@@ -618,11 +588,11 @@ class TestTypedFunctionsArgAndKwargTypes(ut.TestCase):
         def f(x, y, z, u, v):
             return x + y + z + u + v
         log_msg = ["ERROR:root:Type of argument u to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('int', 'str'), not float like 4.0!"]
+                   f"in module {__name__} must be one of ('int', 'str'),"
+                   " not float like 4.0!"]
         err_msg = ("Type of argument u to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('int', 'str'), not float like 4.0!")
+                   f" {__name__} must be one of ('int', 'str'), not "
+                   "float like 4.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1.0, 'foo', 'bar', 4.0, 5.0)
@@ -634,11 +604,9 @@ class TestTypedFunctionsArgAndKwargTypes(ut.TestCase):
         def f(x, y, z):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like True!']
+                   f'in module {__name__} must be str, not bool like True!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like True!')
+                   f'module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, True)
@@ -660,11 +628,9 @@ class TestTypedFunctionsEllipsis(ut.TestCase):
         def f(x, y, z):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like True!']
+                   f'in module {__name__} must be str, not bool like True!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like True!')
+                   f'module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, True)
@@ -683,11 +649,11 @@ class TestTypedFunctionsEllipsis(ut.TestCase):
         def f(x, y, z):
             return x + y + z
         log_msg = ["ERROR:root:Type of argument z to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must"
-                   " be one of ('float', 'tuple'), not bool like True!"]
+                   f"in module {__name__} must be one of ('float', 'tuple'),"
+                   " not bool like True!"]
         err_msg = ("Type of argument z to function f defined in module"
-                   " checkerpy.tests.decorators.test_typed must be one"
-                   " of ('float', 'tuple'), not bool like True!")
+                   f" {__name__} must be one of ('float', 'tuple'), "
+                   "not bool like True!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, True)
@@ -713,11 +679,9 @@ class TestTypedFunctionsDefaults(ut.TestCase):
         def f(x, y, z=3):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like True!']
+                   f'in module {__name__} must be str, not bool like True!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like True!')
+                   f'module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, True)
@@ -729,11 +693,9 @@ class TestTypedFunctionsDefaults(ut.TestCase):
         def f(x, y, z=3):
             return x + y + z
         log_msg = ['ERROR:root:Type of argument z to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be str, not bool like True!']
+                   f'in module {__name__} must be str, not bool like True!']
         err_msg = ('Type of argument z to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be str, not bool like True!')
+                   f'module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(1, 2.0, z=True)
@@ -762,12 +724,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed((int, ...))
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of element 2 in tuple argument x'
-                   ' to function f defined in module checkerpy.tests'
-                   '.decorators.test_typed must be int, not str like foo!']
-        err_msg = ('Type of element 2 in tuple argument x to function f'
-                   ' defined in module checkerpy.tests.decorators.test_'
-                   'typed must be int, not str like foo!')
+        log_msg = ['ERROR:root:Type of element 2 in tuple argument x '
+                   f'to function f defined in module {__name__} must '
+                   'be int, not str like foo!']
+        err_msg = ('Type of element 2 in tuple argument x to function f def'
+                   f'ined in module {__name__} must be int, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f((1, 2, 'foo'))
@@ -786,13 +747,12 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed((int, float, ...))
         def f(x):
             return x
-        log_msg = ["ERROR:root:Type of element 2 in tuple argument x"
-                   " to function f defined in module checkerpy.tests"
-                   ".decorators.test_typed must be one of ('int', "
-                   "'float'), not str like foo!"]
-        err_msg = ("Type of element 2 in tuple argument x to function f"
-                   " defined in module checkerpy.tests.decorators.test_"
-                   "typed must be one of ('int', 'float'), not str like foo!")
+        log_msg = ["ERROR:root:Type of element 2 in tuple argument x "
+                   f"to function f defined in module {__name__} must"
+                   " be one of ('int', 'float'), not str like foo!"]
+        err_msg = ("Type of element 2 in tuple argument x to function f "
+                   f"defined in module {__name__} must be one of ('int',"
+                   " 'float'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f((1, 2, 'foo'))
@@ -804,11 +764,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be tuple, not str like foo!']
+                   f'in module {__name__} must be tuple, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be tuple, not str like foo!')
+                   f'module {__name__} must be tuple, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -828,11 +786,10 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of element 2 in list argument x '
-                   'to function f defined in module checkerpy.tests.'
-                   'decorators.test_typed must be int, not str like foo!']
-        err_msg = ('Type of element 2 in list argument x to function f'
-                   ' defined in module checkerpy.tests.decorators.test'
-                   '_typed must be int, not str like foo!')
+                   f'to function f defined in module {__name__} must'
+                   ' be int, not str like foo!']
+        err_msg = ('Type of element 2 in list argument x to function f def'
+                   f'ined in module {__name__} must be int, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f([1, 2, 'foo'])
@@ -852,12 +809,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of element 2 in list argument x "
-                   "to function f defined in module checkerpy.tests."
-                   "decorators.test_typed must be one of ('int', "
-                   "'float'), not str like foo!"]
+                   f"to function f defined in module {__name__} must"
+                   " be one of ('int', 'float'), not str like foo!"]
         err_msg = ("Type of element 2 in list argument x to function f"
-                   " defined in module checkerpy.tests.decorators.test"
-                   "_typed must be one of ('int', 'float'), not str like foo!")
+                   f" defined in module {__name__} must be one of ('int',"
+                   " 'float'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f([1, 2, 'foo'])
@@ -869,11 +825,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be list, not str like foo!']
+                   f'in module {__name__} must be list, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be list, not str like foo!')
+                   f'module {__name__} must be list, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -893,11 +847,10 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of element in set argument x to'
-                   ' function f defined in module checkerpy.tests.'
-                   'decorators.test_typed must be int, not str like foo!']
-        err_msg = ('Type of element in set argument x to function f '
-                   'defined in module checkerpy.tests.decorators.test'
-                   '_typed must be int, not str like foo!')
+                   f' function f defined in module {__name__} must '
+                   'be int, not str like foo!']
+        err_msg = ('Type of element in set argument x to function f defined'
+                   f' in module {__name__} must be int, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1, 2, 'foo'})
@@ -917,12 +870,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of element in set argument x to"
-                   " function f defined in module checkerpy.tests."
-                   "decorators.test_typed must be one of ('int', "
-                   "'float'), not str like foo!"]
+                   f" function f defined in module {__name__} must "
+                   "be one of ('int', 'float'), not str like foo!"]
         err_msg = ("Type of element in set argument x to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must be "
-                   "one of ('int', 'float'), not str like foo!")
+                   f"in module {__name__} must be one of ('int', 'float'), "
+                   "not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1, 2, 'foo'})
@@ -934,11 +886,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be set, not str like foo!']
+                   f'in module {__name__} must be set, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be set, not str like foo!')
+                   f'module {__name__} must be set, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -983,12 +933,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed({int: ...})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of key in dict argument x to function f '
-                   'defined in module checkerpy.tests.decorators.test_typed '
-                   'must be int, not str like foo!']
+        log_msg = ['ERROR:root:Type of key in dict argument x to '
+                   f'function f defined in module {__name__} must'
+                   ' be int, not str like foo!']
         err_msg = ('Type of key in dict argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must '
-                   'be int, not str like foo!')
+                   f'in module {__name__} must be int, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1: 'one', 2: True, 'foo': (3.0,)})
@@ -1008,11 +957,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of key in dict argument x to function f "
-                   "defined in module checkerpy.tests.decorators.test_typed "
-                   "must be one of ('int', 'float'), not str like foo!"]
+                   f"defined in module {__name__} must be one of ('int', "
+                   "'float'), not str like foo!"]
         err_msg = ("Type of key in dict argument x to function f defined "
-                   "in module checkerpy.tests.decorators.test_typed must "
-                   "be one of ('int', 'float'), not str like foo!")
+                   f"in module {__name__} must be one of ('int', 'float')"
+                   ", not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1: 'one', 2: True, 'foo': (3.0,)})
@@ -1024,11 +973,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be dict, not str like foo!']
+                   f'in module {__name__} must be dict, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be dict, not str like foo!')
+                   f'module {__name__} must be dict, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -1048,11 +995,10 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of entry 3 in dict argument x '
-                   'to function f defined in module checkerpy.tests'
-                   '.decorators.test_typed must be str, not bool like True!']
+                   f'to function f defined in module {__name__} must'
+                   ' be str, not bool like True!']
         err_msg = ('Type of entry 3 in dict argument x to function f defined'
-                   ' in module checkerpy.tests.decorators.test_typed must be'
-                   ' str, not bool like True!')
+                   f' in module {__name__} must be str, not bool like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1: 'one', 2: 'two', 3: True})
@@ -1072,12 +1018,11 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of entry 3 in dict argument x "
-                   "to function f defined in module checkerpy.tests"
-                   ".decorators.test_typed must be one of ('str', "
-                   "'int'), not bool like False!"]
+                   f"to function f defined in module {__name__} must "
+                   "be one of ('str', 'int'), not bool like False!"]
         err_msg = ("Type of entry 3 in dict argument x to function f defined"
-                   " in module checkerpy.tests.decorators.test_typed must be"
-                   " one of ('str', 'int'), not bool like False!")
+                   f" in module {__name__} must be one of ('str', 'int'), "
+                   "not bool like False!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1: 'one', 2: 'two', 3: False})
@@ -1089,11 +1034,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be dict, not str like foo!']
+                   f'in module {__name__} must be dict, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be dict, not str like foo!')
+                   f'module {__name__} must be dict, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -1124,11 +1067,11 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of element 1 in tuple argument x'
-                   ' to function f defined in module checkerpy.tests'
-                   '.decorators.test_typed must be str, not bool like True!']
+                   f' to function f defined in module {__name__} must'
+                   ' be str, not bool like True!']
         err_msg = ('Type of element 1 in tuple argument x to function f'
-                   ' defined in module checkerpy.tests.decorators.test_'
-                   'typed must be str, not bool like True!')
+                   f' defined in module {__name__} must be str, not bool'
+                   ' like True!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f((1, True))
@@ -1148,12 +1091,11 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of element 0 in tuple argument x"
-                   " to function f defined in module checkerpy.tests"
-                   ".decorators.test_typed must be one of ('int', "
-                   "'float'), not str like foo!"]
+                   f" to function f defined in module {__name__} must"
+                   " be one of ('int', 'float'), not str like foo!"]
         err_msg = ("Type of element 0 in tuple argument x to function f"
-                   " defined in module checkerpy.tests.decorators.test_"
-                   "typed must be one of ('int', 'float'), not str like foo!")
+                   f" defined in module {__name__} must be one of ('int',"
+                   " 'float'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(('foo', False))
@@ -1173,12 +1115,11 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         def f(x):
             return x
         log_msg = ["ERROR:root:Type of element 0 in tuple argument x"
-                   " to function f defined in module checkerpy.tests"
-                   ".decorators.test_typed must be one of ('int', "
-                   "'float'), not str like foo!"]
+                   f" to function f defined in module {__name__} must"
+                   " be one of ('int', 'float'), not str like foo!"]
         err_msg = ("Type of element 0 in tuple argument x to function f"
-                   " defined in module checkerpy.tests.decorators.test_"
-                   "typed must be one of ('int', 'float'), not str like foo!")
+                   f" defined in module {__name__} must be one of ('int',"
+                   " 'float'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f(('foo', False))
@@ -1190,11 +1131,9 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   'in module checkerpy.tests.decorators.test_typed must'
-                   ' be tuple, not str like foo!']
+                   f'in module {__name__} must be tuple, not str like foo!']
         err_msg = ('Type of argument x to function f defined in '
-                   'module checkerpy.tests.decorators.test_typed'
-                   ' must be tuple, not str like foo!')
+                   f'module {__name__} must be tuple, not str like foo!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -1206,11 +1145,9 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         def f(x):
             return x
         log_msg = ['ERROR:root:Length of tuple argument x to function f'
-                   ' defined in module checkerpy.tests.decorators.test_'
-                   'typed must be 2, not 3!']
+                   f' defined in module {__name__} must be 2, not 3!']
         err_msg = ('Length of tuple argument x to function f defined'
-                   ' in module checkerpy.tests.decorators.test_typed'
-                   ' must be 2, not 3!')
+                   f' in module {__name__} must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 _ = f((1, 'foo', False))
@@ -1236,11 +1173,11 @@ class TestTypedMethod(ut.TestCase):
                 return x + y + z
         t = Test()
         log_msg = ["ERROR:root:Type of argument z to method m defined"
-                   " in module checkerpy.tests.decorators.test_typed "
-                   "must be one of ('float', 'str'), not int like 3!"]
+                   f" in module {__name__} must be one of ('float', "
+                   "'str'), not int like 3!"]
         err_msg = ("Type of argument z to method m defined in module"
-                   " checkerpy.tests.decorators.test_typed must be"
-                   " one of ('float', 'str'), not int like 3!")
+                   f" {__name__} must be one of ('float', 'str'),"
+                   " not int like 3!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = t.m(1, 'foo', 3)
