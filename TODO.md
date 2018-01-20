@@ -1,6 +1,8 @@
 # To Do
+- Put values back into error messages of the All validators!
 - Write tests for Bounded decorator
 - Write docstring for bounded decorator!
+- Replace actual module name with {__name__} in test for Typed decorator!
 - Factor out common methods of parsers into BaseParser!
 - Refactor FunctionTypeMixin to
   - provide the variable names from signature of decorated function or from varnames attribute of decorated function

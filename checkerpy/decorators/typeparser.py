@@ -95,8 +95,8 @@ class TypeParser:
 
     @staticmethod
     def __arg_types_string_from(type_id: TYPE_ID) -> str:
-        prefix = ' at position' if type(type_id) is int else ''
-        return f'for type specification of argument{prefix} {type_id}'
+        postfix = ' at position' if type(type_id) is int else ''
+        return f'for type specification of argument{postfix} {type_id}'
 
     @staticmethod
     def __wrong_iterable_message_for(type_specs: TYPE_SPECS) -> str:

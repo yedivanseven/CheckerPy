@@ -1044,5 +1044,183 @@ class TestBoundedFunctionSet(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
 
+class TestBoundedFunctionDict(ut.TestCase):
+
+    def test_works_with_dict(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        inputs = {1: 'a', 2: 'b', 3: 'c'}
+        output = f(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_works_with_dict_keys_ellipsis(self):
+        @Bounded({...: ('a', 'c')})
+        def f(x):
+            return x
+        inputs = {1: 'a', 2: 'b', 3: 'c'}
+        output = f(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_works_with_dict_values_ellipsis(self):
+        @Bounded({(1, 3): ...})
+        def f(x):
+            return x
+        inputs = {1: 'a', 2: 'b', 3: 'c'}
+        output = f(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_limits_spec_for_keys_not_tuple(self):
+        log_msg = ['ERROR:root:Type of limits specification of argument'
+                   ' at position 0 must be tuple, not int like 1!']
+        err_msg = ('Type of limits specification of argument '
+                   'at position 0 must be tuple, not int like 1!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                @Bounded({1: ('a', ...)})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limits_spec_for_keys_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of '
+                   'argument at position 0 must be 2, not 3!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded({(1, 3, 5): ('a', ...)})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limits_spec_for_values_not_tuple(self):
+        log_msg = ['ERROR:root:Type of limits specification of argument'
+                   ' at position 0 must be tuple, not str like a!']
+        err_msg = ('Type of limits specification of argument '
+                   'at position 0 must be tuple, not str like a!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                @Bounded({(1, 3): 'a'})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_limits_spec_for_values_wrong_length(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of argument at position 0 must be 2, not 1!']
+        err_msg = ('Length of tuple for limits specification of '
+                   'argument at position 0 must be 2, not 1!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded({(..., ...): ('a',)})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_more_than_one_limits_spec(self):
+        log_msg = ['ERROR:root:Length of dict for limits specification'
+                   ' of argument at position 0 must be 1, not 2!']
+        err_msg = ('Length of dict for limits specification of '
+                   'argument at position 0 must be 1, not 2!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                @Bounded({(1, 3): ('a', 'c'), (5, 7): ('e', 'g')})
+                def f(x):
+                    return x
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_empty_dict(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        inputs = {}
+        output = f(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_not_a_dict(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Type of argument x to function f defined in '
+                   f'module {__name__} must be dict, not list like [1, 5]!']
+        err_msg = ('Type of argument x to function f defined in '
+                   f'module {__name__} must be dict, not list like [1, 5]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f([1, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_dict_key(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value 5 of dict key in argument x to function '
+                   f'f defined in module {__name__} lies outside the allowed'
+                   ' interval [1, 3]!']
+        err_msg = ('Value 5 of dict key in argument x to function'
+                   f' f defined in module {__name__} lies outside'
+                   ' the allowed interval [1, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f({5: 'b'})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_dict_key(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type str of dict key in argument'
+                   f' x to function f defined in module {__name__} with limits'
+                   ' of types int and int!']
+        err_msg = ('Cannot compare type str of dict key in argument x'
+                   f' to function f defined in module {__name__} with'
+                   ' limits of types int and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f({'a': 'b'})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_limit_error_on_dict_value(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Value d of dict values in argument x to '
+                   f'function f defined in module {__name__} lies outside'
+                   ' the allowed interval [a, c]!']
+        err_msg = ('Value d of dict values in argument x to function'
+                   f' f defined in module {__name__} lies outside'
+                   ' the allowed interval [a, c]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = f({2: 'd'})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_type_error_on_dict_value(self):
+        @Bounded({(1, 3): ('a', 'c')})
+        def f(x):
+            return x
+        log_msg = ['ERROR:root:Cannot compare type int of dict values'
+                   ' in argument x to function f defined in module '
+                   f'{__name__} with limits of types str and str!']
+        err_msg = ('Cannot compare type int of dict values in argument '
+                   f'x to function f defined in module {__name__} with'
+                   f' limits of types str and str!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = f({2: 3})
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
 if __name__ == '__main__':
     ut.main()
