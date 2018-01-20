@@ -9,43 +9,53 @@ Func = Union[FunctionType, MethodType]
 class Bounded(FunctionTypeMixin):
     """Decorator checks if arguments of functions or methods are within limits.
 
+    Parameters
+    ----------
+    *arg_limits
+        Limits specification for function or method arguments by position. May
+        be ellipsis, a 2-tuple, or an iterable of 2-tuples. See Examples.
+    **kwarg_limits
+        Limits specification for function or method arguments by name. May
+        be ellipsis, a 2-tuple, or an iterable of 2-tuples. See Examples.
+
     Examples
     --------
-    If all or only the first couple of arguments of a function or method are
-    to be checked for limits, then these limits may be passed to the decorator
-    like so:
+    To arguments to lie between, above, or below given limits, specify bounds
+    as 2-tuple (lo, hi). Use the ellipsis literal ... to skip lo or hi.
 
-    >>> @Bounded((1, 3), (4, 6))
-    >>> def f(x, y=6, *args, **kwargs):
-    ...     return x + y + sum(args) + kwargs['z']
-    ...
-    >>> f(1, 5, 3, 4, z=2)
-    15
+    >>> @Bounded((1, ...), (4, 6), (..., 'z'))
+    >>> def f(x, y=6, z='foo'):
+    ...     return x + y, z
 
-    If no check is desired for, say, the second of three arguments, it may be
-    skipped like so:
-    >>> @Bounded((1, 3), ..., (4, 6))
+    Use the ellipsis literal also to skip checking an argument.
+    >>> @Bounded((1, 3), ..., ('a', 'z'))
     >>> def f(x, y, z):
-    ...     return x + y + z
-    ...
-    >>> f(2, True, 5.0)
-    8.0
+    ...     return x + y, z
 
-    If, however, only one or a few arguments of a function of method are to be
-    checked for limits, then directly assigning the limits to these arguments
-    by `name` might be more convenient.
+    To ensure an argument is an iterable with all elements between, above, or
+    below given limits, specify the desired iterable containing a 2-tuple
+    (lo, hi) with the desired bounds. To skip checking dictionary keys or
+    values, pass the ellipsis literal ... one of the two.
 
-    >>> class Test:
-    ...     @Bounded((1, 3), v=(4, 6), z=(7, ...))
-    ...     def m(self, x, y, z, u, v):
-    ...         return x + y + z + u + v
-    ...
-    >>> t = Test()
-    >>> t.m(2, 1, 8, 3, 5)
-    19
+    >>> @Bounded({(1, 3)}, [(4, ...)] , {('a', 'z'): ...})
+    >>> def f(x, y, z):
+    ...     return sum(x) + sum(y), z['c']
 
-    Here, argument `x` must lie in the (closed) interval [1, 3], `v` in [4, 6],
-    and `z` must be greater of equal than 7.
+    To check that an argument is a tuple of arbitrary length and that all its
+    elements are between, above, or blow given bounds, specify a 2-tuple
+    containing the 2-tuple (lo, hi) and the ellipsis literal ...
+
+    >>> @Bounded(((1, 3), ...), ('a', 'z'))
+    >>> def f(x, y):
+    ...     return sum(x), y
+
+    To check that an argument is a tuple of fixed length, specify 2-tuples
+    (lo, hi) for all its elements. Use (..., ...) to skip checking an element.
+
+    >>> @Bounded(((1, 3), (..., ...), (4, 6)), y=('a', 'z'))
+    >>> def f(x, y):
+    ...     return x[0] + x[1] + x[2]
+
 
     Notes
     -----
@@ -59,19 +69,19 @@ class Bounded(FunctionTypeMixin):
     Raises
     ------
     TypeError
-        If one or more limits are not specified as tuples.
-    ValueError
+        If one or more limits are not specified as tuple, list, set, or dict.
+    LenError
         If one or more of the tuples specifying limits are not of length 2.
     WrongTypeError
-        If a function or method argument cannot be compared with the limits
-        specified for that argument.
+        If (an element of) a function or method argument cannot be compared
+        with the limits specified for that argument.
     LimitError
-        If an argument of a function or method lies above, below, or outside
-        the limit(s) specified for it.
+        If (an element of) an argument of a function or method lies on the
+        wrong side or outside the limit(s) specified for it.
 
     See Also
     --------
-    Limited
+    Limited, AllLimited, Just, LimitedTuple
 
     """
 

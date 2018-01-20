@@ -20,7 +20,7 @@ class Typed(FunctionTypeMixin):
 
     Examples
     --------
-    To arguments for a single type each, simply specify that type.
+    To check arguments for a single type each, simply specify that type.
 
     >>> @Typed(int, z=str, y=float)
     >>> def f(x, y, z):
@@ -65,8 +65,8 @@ class Typed(FunctionTypeMixin):
 
     Notes
     -----
-    The first argument of (class) methods must be called `self`, `cls`, or
-    `mcs`. Also, specifying types for more arguments than present in the
+    The first argument of (class) methods must be called `self`, `cls`, `mcs`,
+    or `mcls`. Also, specifying types for more arguments than present in the
     function or method call is never a problem and neither is specifying types
     for named keyword arguments that do not actually occur in the function or
     method signature. Specifying types per named keyword argument takes

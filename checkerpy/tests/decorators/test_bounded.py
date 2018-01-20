@@ -6,10 +6,10 @@ from ...exceptions import LimitError, WrongTypeError, LenError
 
 class TestBoundedInstantiation(ut.TestCase):
 
-    def test_error_on_limit_specification_not_tuple(self):
+    def test_error_on_limit_specification_not_an_iterable(self):
         err_msg = ('Invalid expression 1 for limits specification'
                    ' of argument at position 0!')
-        with self.assertRaises(ValueError) as err:
+        with self.assertRaises(TypeError) as err:
             @Bounded(1)
             def f(x, y):
                 return x + y

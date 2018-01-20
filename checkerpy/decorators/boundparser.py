@@ -31,7 +31,7 @@ class BoundParser:
                 checker_for = self.__checker_for[type(spec)]
             except KeyError as error:
                 message = self.__wrong_spec_message_for(spec, spec_id)
-                raise ValueError(message) from error
+                raise TypeError(message) from error
             checkers[spec_id] = checker_for(spec, spec_id)
         return checkers
 
