@@ -4,7 +4,7 @@ from ...functional.mixins import CompositionClassMixin
 from ...exceptions import CallableError
 
 
-class Call(CompositionClassMixin):
+class JustCall(CompositionClassMixin):
     """Class for checking if an object is callable.
 
     Parameters
@@ -36,7 +36,7 @@ class Call(CompositionClassMixin):
 
     """
 
-    def __new__(cls, callbl: Callable, name: str = None, **kwargs):
+    def __new__(cls, callbl: Callable, name: str = None, **kwargs) -> Callable:
         if name is not None:
             cls._name = str(name)
         elif hasattr(callbl, '__name__'):

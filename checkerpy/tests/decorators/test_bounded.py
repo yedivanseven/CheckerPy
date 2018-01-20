@@ -693,9 +693,9 @@ class TestBoundedFunctionTuple(ut.TestCase):
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of tuple argument'
                    ' at position 0 must be tuple, not list like [4]!']
-        err_msg = ('Type of limits specification of argument '
+        err_msg = ('Type of limits specification of tuple argument '
                    'at position 0 must be tuple, not list like [4]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -707,9 +707,9 @@ class TestBoundedFunctionTuple(ut.TestCase):
 
     def test_error_on_limit_specs_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of argument at position 0 must be 2, not 3!']
+                   ' of tuple argument at position 0 must be 2, not 3!']
         err_msg = ('Length of tuple for limits specification of'
-                   ' argument at position 0 must be 2, not 3!')
+                   ' tuple argument at position 0 must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 @Bounded(((1, 2, 3), ...))
@@ -847,9 +847,9 @@ class TestBoundedFunctionList(ut.TestCase):
         self.assertListEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of list argument'
                    ' at position 0 must be tuple, not int like 4!']
-        err_msg = ('Type of limits specification of argument '
+        err_msg = ('Type of limits specification of list argument '
                    'at position 0 must be tuple, not int like 4!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -861,9 +861,9 @@ class TestBoundedFunctionList(ut.TestCase):
 
     def test_error_on_limit_specs_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of argument at position 0 must be 2, not 3!']
+                   ' of list argument at position 0 must be 2, not 3!']
         err_msg = ('Length of tuple for limits specification of'
-                   ' argument at position 0 must be 2, not 3!')
+                   ' list argument at position 0 must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 @Bounded([(1, 2, 3)])
@@ -951,9 +951,9 @@ class TestBoundedFunctionSet(ut.TestCase):
         self.assertSetEqual(output, inputs)
 
     def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of set argument'
                    ' at position 0 must be tuple, not int like 4!']
-        err_msg = ('Type of limits specification of argument '
+        err_msg = ('Type of limits specification of set argument '
                    'at position 0 must be tuple, not int like 4!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -965,9 +965,9 @@ class TestBoundedFunctionSet(ut.TestCase):
 
     def test_error_on_limit_specs_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of argument at position 0 must be 2, not 3!']
+                   ' of set argument at position 0 must be 2, not 3!']
         err_msg = ('Length of tuple for limits specification of'
-                   ' argument at position 0 must be 2, not 3!')
+                   ' set argument at position 0 must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 @Bounded({(1, 2, 3)})
@@ -1015,12 +1015,12 @@ class TestBoundedFunctionSet(ut.TestCase):
         @Bounded({(1, 3)})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Value 5 of set argument x to function f '
-                   f'defined in module {__name__} lies outside'
-                   ' the allowed interval [1, 3]!']
-        err_msg = ('Value 5 of set argument x to function f defined in '
-                   f'module {__name__} lies outside the allowed'
-                   ' interval [1, 3]!')
+        log_msg = ['ERROR:root:Value 5 of element in set argument x '
+                   f'to function f defined in module {__name__} lies'
+                   ' outside the allowed interval [1, 3]!']
+        err_msg = ('Value 5 of element in set argument x to function '
+                   f'f defined in module {__name__} lies outside the '
+                   f'allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
                 _ = f({2, 5})
@@ -1031,12 +1031,12 @@ class TestBoundedFunctionSet(ut.TestCase):
         @Bounded({(1, 3)})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Cannot compare type str of set argument x '
-                   f'to function f defined in module {__name__} '
-                   'with limits of types int and int!']
-        err_msg = ('Cannot compare type str of set argument x to function'
-                   f' f defined in module {__name__} with limits'
-                   ' of types int and int!')
+        log_msg = ['ERROR:root:Cannot compare type str of element in'
+                   ' set argument x to function f defined in module '
+                   f'{__name__} with limits of types int and int!']
+        err_msg = ('Cannot compare type str of element in set argument '
+                   f'x to function f defined in module {__name__} with '
+                   f'limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1, 'a', 2})
@@ -1071,9 +1071,9 @@ class TestBoundedFunctionDict(ut.TestCase):
         self.assertDictEqual(output, inputs)
 
     def test_error_on_limits_spec_for_keys_not_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of dict argument'
                    ' at position 0 must be tuple, not int like 1!']
-        err_msg = ('Type of limits specification of argument '
+        err_msg = ('Type of limits specification of dict argument '
                    'at position 0 must be tuple, not int like 1!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -1085,9 +1085,9 @@ class TestBoundedFunctionDict(ut.TestCase):
 
     def test_error_on_limits_spec_for_keys_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of argument at position 0 must be 2, not 3!']
+                   ' of dict argument at position 0 must be 2, not 3!']
         err_msg = ('Length of tuple for limits specification of '
-                   'argument at position 0 must be 2, not 3!')
+                   'dict argument at position 0 must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 @Bounded({(1, 3, 5): ('a', ...)})
@@ -1097,9 +1097,9 @@ class TestBoundedFunctionDict(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_limits_spec_for_values_not_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of argument'
+        log_msg = ['ERROR:root:Type of limits specification of dict argument'
                    ' at position 0 must be tuple, not str like a!']
-        err_msg = ('Type of limits specification of argument '
+        err_msg = ('Type of limits specification of dict argument '
                    'at position 0 must be tuple, not str like a!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
@@ -1111,9 +1111,9 @@ class TestBoundedFunctionDict(ut.TestCase):
 
     def test_error_on_limits_spec_for_values_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of argument at position 0 must be 2, not 1!']
+                   ' of dict argument at position 0 must be 2, not 1!']
         err_msg = ('Length of tuple for limits specification of '
-                   'argument at position 0 must be 2, not 1!')
+                   'dict argument at position 0 must be 2, not 1!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 @Bounded({(..., ...): ('a',)})
@@ -1193,10 +1193,10 @@ class TestBoundedFunctionDict(ut.TestCase):
         @Bounded({(1, 3): ('a', 'c')})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Value d of dict values in argument x to '
+        log_msg = ['ERROR:root:Value d of dict value in argument x to '
                    f'function f defined in module {__name__} lies outside'
                    ' the allowed interval [a, c]!']
-        err_msg = ('Value d of dict values in argument x to function'
+        err_msg = ('Value d of dict value in argument x to function'
                    f' f defined in module {__name__} lies outside'
                    ' the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
@@ -1209,10 +1209,10 @@ class TestBoundedFunctionDict(ut.TestCase):
         @Bounded({(1, 3): ('a', 'c')})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Cannot compare type int of dict values'
+        log_msg = ['ERROR:root:Cannot compare type int of dict value'
                    ' in argument x to function f defined in module '
                    f'{__name__} with limits of types str and str!']
-        err_msg = ('Cannot compare type int of dict values in argument '
+        err_msg = ('Cannot compare type int of dict value in argument '
                    f'x to function f defined in module {__name__} with'
                    f' limits of types str and str!')
         with self.assertLogs(level=logging.ERROR) as log:

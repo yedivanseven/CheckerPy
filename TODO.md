@@ -1,6 +1,4 @@
 # To Do
-- Put values back into error messages of the All validators!
-- Write tests for Bounded decorator
 - Write docstring for bounded decorator!
 - Replace actual module name with {__name__} in test for Typed decorator!
 - Factor out common methods of parsers into BaseParser!
@@ -8,7 +6,7 @@
   - provide the variable names from signature of decorated function or from varnames attribute of decorated function
   - to transfer attributes from decorated function
   - to attach varnames attribute to decorator
-- Write tests and docstring for parser!
+- Write tests and docstring for parsers!
 - Check _*args_ and _**kwargs_ with decorators!
 - Add type and bounds inspection for general iterator in decorators with iter()!
 - Check what exactly is an iterable that works with map and for!

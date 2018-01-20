@@ -175,7 +175,6 @@ class TestTypedFunctionsMixedArgTypes(ut.TestCase):
         @Typed((int, str), float)
         def f(x, y, z):
             return x + y
-
         output = f(1, 2.0, 'bar')
         self.assertEqual(output, 3.0)
 
@@ -183,7 +182,6 @@ class TestTypedFunctionsMixedArgTypes(ut.TestCase):
         @Typed((int, str), float)
         def f(x, y, z):
             return x + y
-
         log_msg = ['ERROR:root:Type of argument y to function f defined '
                    'in module checkerpy.tests.decorators.test_typed must'
                    ' be float, not str like foo!']

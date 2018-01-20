@@ -123,9 +123,9 @@ class TestAllLimited(ut.TestCase):
                 _ = AllLimited({1, 2, 4}, all_lo=1, all_hi=3)
 
     def test_error_on_out_of_bounds_element_in_named_set(self):
-        log_msg = ['ERROR:root:Value 4 of set test lies '
+        log_msg = ['ERROR:root:Value 4 of element in set test lies '
                    'outside the allowed interval [1, 3]!']
-        err_msg = ('Value 4 of set test lies outside'
+        err_msg = ('Value 4 of element in set test lies outside'
                    ' the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
@@ -210,9 +210,9 @@ class TestAllLimited(ut.TestCase):
 
     def test_error_on_out_of_bounds_element_in_named_dict_values(self):
         inputs = {'one': 1, 'two': 2, 'three': 4}
-        log_msg = ['ERROR:root:Value 4 of dict values in test '
+        log_msg = ['ERROR:root:Value 4 of dict value in test '
                    'lies outside the allowed interval (-inf, 3]!']
-        err_msg = ('Value 4 of dict values in test lies '
+        err_msg = ('Value 4 of dict value in test lies '
                    'outside the allowed interval (-inf, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:

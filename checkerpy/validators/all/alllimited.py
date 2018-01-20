@@ -75,8 +75,8 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         elif cls._iter_type == 'dict_keys':
             return f'key in dict {cls._string}' if cls._name else cls._string
         elif cls._iter_type == 'dict_values':
-            s = f'dict values in {cls._string}' if cls._name else cls._string
+            s = f'dict value in {cls._string}' if cls._name else cls._string
             return s
         elif cls._iter_type == 'set':
-            return f'set {cls._string}'
+            return f'element in set {cls._string}'
         return f'{cls._iter_type} {cls._string} at index {index}'

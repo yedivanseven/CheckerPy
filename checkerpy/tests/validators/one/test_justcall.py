@@ -1,14 +1,14 @@
 import logging
 import unittest as ut
-from ....validators.one import Call
+from ....validators.one import JustCall
 from ....exceptions import CallableError
 
 
-class TestCall(ut.TestCase):
+class TestJustCall(ut.TestCase):
 
     def test_works_with_sane_callable(self):
         inp = lambda x: x
-        out = Call(inp)
+        out = JustCall(inp)
         self.assertIs(out, inp)
 
     def test_error_on_unnamed_object_without_name_attr(self):
@@ -16,7 +16,7 @@ class TestCall(ut.TestCase):
         err_msg = 'Object foo of type str is not callable!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(CallableError) as err:
-                _ = Call('foo')
+                _ = JustCall('foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -25,7 +25,7 @@ class TestCall(ut.TestCase):
         err_msg = 'Object test of type int is not callable!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(CallableError) as err:
-                _ = Call(1, 'test')
+                _ = JustCall(1, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -38,7 +38,7 @@ class TestCall(ut.TestCase):
         err_msg = 'Object test of type Test is not callable!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(CallableError) as err:
-                _ = Call(t)
+                _ = JustCall(t)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -51,7 +51,7 @@ class TestCall(ut.TestCase):
         err_msg = 'Object name of type Test is not callable!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(CallableError) as err:
-                _ = Call(t, 'name')
+                _ = JustCall(t, 'name')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
