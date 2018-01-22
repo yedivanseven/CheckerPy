@@ -23,7 +23,7 @@ pip install checkerpy
 ```
 
 #### Testing
-To run the test suit, clone this repository, change into the top-level
+To run the test suite, clone this repository, change into the top-level
 directory `CheckerPy`, and open a terminal there. Then, if you have `numpy`
 installed, simply run
 ```
