@@ -575,8 +575,8 @@ where `(..., ...)` indicates that the first element of the tuple is not going
 to be checked at all.
 ###### Dictionaries
 Likewise, you can specify a separate 2-tuple of limits for the keys
-and the values of a dictionary to check if an argument is dictionary and if
-all its elements adhere to the respective limits. Use the ellipsis literal
+and the values of a dictionary to check that an argument is a dictionary and
+that all its elements adhere to the respective limits. Use the ellipsis literal
 `...` or the 2-tuple `(..., ...)` to skip checking for either keys or values.
 ```python
 @Bounded({...: (1, 120)})
@@ -587,20 +587,20 @@ def show_age(persons):
  
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
-first argument is called _self_, _cls_ , or _mcs_ (static methods are
+first argument is called _self_, _cls_ , _mcs_, or _mcls_ (static methods are
 obviously unaffected by this). If you insist on not sticking to this naming
-convention, either use named keyword arguments to specify types or bounds or
+convention, either use named keyword arguments to specify types or bounds, or
 skip checking the first argument by passing the ellipsis literal `...` at
 the first position.
 
 #### 5.4 Considerations
 When using the decorators just introduced, be aware of the following:
-1. The two decorators `Typed` and `Bounded` can be combined in any order.
-2. `Typed` and `Bounded` should always be the _first_ decorators you apply to
+1. The two decorators `Typed` and `Bounded` can be combined in any order,
+__but__ the should always be the _first_ decorators you apply to
 a function or method, that is, they should be at the _lowest_ position,
 directly above the function definition. This is particularly true also for
 _class methods_ and _static methods_.
-3. Optional _*args_ and _**kwargs_ are currently not checked.
+2. Optional _*args_ and _**kwargs_ are currently not checked.
 -------------------------------------------------------------------------------
 
 [Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
