@@ -177,7 +177,7 @@ out = JustCall(cheese_shop, name='silly function')
 ```
 
 ### 2. Iterables <a name=chapter2></a>
-[Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
+[Single Values](#chapter1) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
 
 This sections assumes that you have already read section [(1)](#chapter1)
 because the validators for iterables simply extend what has been introduced
@@ -248,7 +248,7 @@ in question does not pass the test and if you try to check something that is
 not an iterable.
 
 ### 3. Numpy Support <a name=chapter3></a>
-[Single Values](#chapter1) | [Iterables](#chapter2) | **Numpy Support** | [Combining Validators](#chapter4) | [Decorators](#chapter5)
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
 
 You don't need to have `numpy` installed to use `CheckerPy`. If you
 nevertheless try to import something from a _numpy_ subpackage, you'll simply
@@ -353,7 +353,7 @@ passed to the validator does not have a `shape` attribute, and error is raised
 and logged.
 
 ### 4. Combining Validators <a name=chapter4></a>
-[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | **Combining Validators** | [Decorators](#chapter5)
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Decorators](#chapter5)
 
 What if you want to check for more than one property, for example, type _and_
 value? The simplest thing you could do would be to call the second validator
@@ -425,7 +425,7 @@ Simply use tab-completion to find out which validator-methods are already set
 before you chain them using the `o` method.
 
 ### 5. Decorators <a name=chapter5></a>
-[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | **Decorators**
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4)
 
 For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
