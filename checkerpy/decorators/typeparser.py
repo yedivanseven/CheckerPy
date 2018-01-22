@@ -2,7 +2,7 @@ from typing import Callable, List, Set
 from ..types.all import All, TypedDict, TypedTuple
 from ..types.one import Just
 from ..validators.one import JustLen
-from .mixin import ParserMixin, SpecID, identity
+from .mixin import ParserMixin, SpecID
 
 
 class TypeParser(ParserMixin):

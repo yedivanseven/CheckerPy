@@ -6,7 +6,7 @@ Checkers = Union[List[Callable], Dict[str, Callable]]
 SpecID = Union[int, str]
 
 
-def identity(value: Any, name: str = None, **kwargs) -> Any:  # same
+def identity(value: Any, name: str = None, **kwargs) -> Any:
     """Simply return the first argument"""
     return value
 

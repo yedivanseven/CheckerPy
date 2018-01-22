@@ -2,7 +2,7 @@ from typing import Callable, List, Set, Any, Tuple
 from ..validators.all import AllLimited, LimitedTuple
 from ..validators.one import JustLen, Limited
 from ..types.one import JustList, JustTuple, JustSet, JustDict
-from .mixin import ParserMixin, SpecID, identity
+from .mixin import ParserMixin, SpecID
 
 Limit = Tuple[Any, Any]
 
