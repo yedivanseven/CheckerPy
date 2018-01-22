@@ -226,7 +226,7 @@ t = TypedTuple((1, 'foo', True), types=(int, str, bool))
 ```
 You can specify more than one type for each element py passing a tuple of
 types at the position of the desired element. To _not_ check a specific
-element, enter the `Ellipsis` literal `...` at the desired position.
+element, enter the ellipsis literal `...` at the desired position.
 ```python
 t = TypedTuple((1.0, 2.0, True), types=((int, float), ..., bool))
 ```
@@ -433,7 +433,7 @@ provides two dedicated decorators.
 from checkerpy.decorators import Typed, Bounded
 ```
 
-#### 5.1 Typed
+#### 5.1 Typed 
 ##### 5.1.1 Arguments
 There are two ways in which you can specify one or more types that each
 argument of a function should have. The first is:
@@ -454,7 +454,7 @@ def show_age(name, age):
 ```
 What, however, if you don't want to check the type of only the first, but only
 of the _second_ argument? In that case, you either skip type checking of the
-first argument by passing the `Ellipsis` literal `...`,
+first argument by passing the ellipsis literal `...`,
 ```python
 @Typed(..., (int, float))
 def show_age(name, age):
@@ -504,7 +504,7 @@ def show_age(specs):
     print(f'{name} is {age} years old.')
 ```
 To skip checking one of the tuple elements for type, pass a tuple containing
-the `Ellipsis` literal `...` at the position of the element in question.
+the ellipsis literal `...` at the position of the element in question.
 ```python
 @Typed((..., (int, float)))
 def show_age(specs):
@@ -512,9 +512,19 @@ def show_age(specs):
     print(f'{name} is {age} years old.')
 ```
 ###### Dictionaries
-
+Finally, to check that an argument is a dictionary with its keys and/or values
+having (one of) the given type(s), you specify:
+```python
+@Typed({str: (int, float)})
+def show_age(persons):
+    for name, age in persons.items():
+        print(f'{name} is {age} years old.')
+```
+Use the ellipsis literal `...` instead of a (tuple of) type(s) to skip
+checking either keys or values.
 
 #### 5.2 Bounded
+##### 5.2.1 Arguments
 To check if one or more arguments of a function (or method) are above, below,
 or outside given bounds, you can write
 ```python
@@ -525,40 +535,36 @@ def show_age(name, age):
 Here, the argument `name` must be equal or greater than 'aaa' and `age` must
 be anywhere between 1 and 99 (including the interval boundaries). The
 ellipsis literal `...` is used to indicated the absence of a lower or upper
-bound. As with the `Typed` decorator introduced above in subsection (5.1), you
-can pass as many or as few limits to the decorator as you like, both named
-and unnamed, but
+bound. As with the `Typed` decorator introduced above in subsection
+[(5.1)}(#chapter5), you can pass as many or as few limits to the decorator
+as you like, both named and unnamed, but
 
 **Note**: _Limits must strictly be given as_ tuples _of length 2!_
 
-If a checked argument lies outside the specified bounds, then _two_ errors are
-raised and logged. Calling, for example, the function just defined with,
-```python
-show_age('Methusalem', 120)
-```
-will get you both a `LimitError: Value 120 of age lies outside the allowed
-interval [1, 99]!` and a `LimitError: An argument of function show_age defined
-in module __main__ is out of bounds!` raised and logged. Likewise, calling
-```python
-show_age('Terry Gilliam', age='None of your business')
-```
-gets you both a `WrongTypeError: Cannot compare type str of age with limits of
-types int and int!` and a `WrongTypeError: An argument of function show_age
-defined in module __main__ cannot be compared with the corresponding limits!`
-raised and logged.
+If a checked argument lies outside the specified bounds or if it cannot be
+meaningfully compared to the type of the given bounds, an error is raised
+and logged.
+
+##### 5.1.2 Elements in iterable arguments
+###### Lists and sets
+
+###### Tuples
+
+###### Dictionaries
 
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
 first argument is called _self_, _cls_ , or _mcs_ (static methods are
 obviously unaffected by this). If you insist on not sticking to this naming
-convention, use named keyword arguments to specify types or bounds.
+convention, either use named keyword arguments to specify types or bounds or
+skip checking the first argument by passing the ellipsis literal `...` at
+the first position.
 
-#### 5.4 Limitations
-When using the decorators just introduced, be aware of the following
-limitations:
-1. The two decorators `Typed` and `Bounded` cannot be combined on the same
-function or method.
+#### 5.4 Considerations
+When using the decorators just introduced, be aware of the following:
+1. The two decorators `Typed` and `Bounded` can be combined in any order.
 2. `Typed` and `Bounded` should always be the _first_ decorators you apply to
 a function or method, that is, they should be at the _lowest_ position,
-directly above the function definition.
-3. Optional _*args_ and _**kwargs_ are not checked.
+directly above the function definition. This is particularly true also for
+_class methods_ and _static methods_.
+3. Optional _*args_ and _**kwargs_ are currently not checked.
