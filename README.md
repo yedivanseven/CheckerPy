@@ -109,7 +109,7 @@ inp = MySecond()
 out = JustMyTypes(inp, 'the ultimate object')
 ```
 
-#### 1.2 Value checking
+#### 1.2 Value checking <a name=section1_2></a>
 Other than checking for type, `CheckerPy` also comes with validators for 
 bounds and membership of a set as well as emptiness and length of iterables.
 ```python
@@ -179,7 +179,6 @@ out = JustCall(cheese_shop, name='silly function')
 ### 2. Iterables <a name=chapter2></a>
 [Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
 
-
 This sections assumes that you have already read section (1) because the
 validators for iterables simply extend what has been introduced there to all
 elements of an iterable.
@@ -233,8 +232,8 @@ t = TypedTuple((1.0, 2.0, True), types=((int, float), ..., bool))
 ```
 
 #### 2.2 Value Checking
-With the exception of `OneOf`, all value checkers introduced in subsection
-(1.2) are also available for the elements of an iterable.
+Some of the value checkers introduced in subsection [(1.2)](#section1_2)
+are also available for the elements of an iterable.
 ```python
 from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen 
 ```
@@ -242,33 +241,11 @@ If, for example, you want to check a list of 2-tuples, use:
 ```python
 out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], name='short')
 out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', length=2)
-out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', lo=(1, 1))
+out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', lo=(1, 1), hi=(6, 6))
 ```
-Again, you get two errors raised (and logged) if an iterable does not pass the
-test.
-```
->>> out = AllNonEmpty([(), (3, 4), (5, 6)], name='short')
-...
-EmptyError: Tuple must not be empty!
-...
-EmptyError: An element of the list short is empty!
-```
-```
->>> out = AllLen([(1,), (3, 4), (5, 6)], 'short', length=2)
-...
-LenError: Length of tuple (1,) must be 2, not 1!
-...
-LenError: An element of the list short has the wrong length!
-```
-```
->>> out = AllLimited([(0, 1), (3, 4), (5, 6)], 'short', lo=(1, 1))
-...
-LimitError: Value (0, 1) lies outside the allowed interval [(1, 1), Ellipsis)!
-...
-LimitError: An element of the list short is out of bounds!
-```
-If you try to check something that is not an iterable, the `IterError`
-introduced in subsection (2.1) is raised and logged.
+Again, you get an error raised (and logged) if just one element of the iterable
+in question does not pass the test and if you try to check something that is
+not an iterable.
 
 ### 3. Numpy Support <a name=chapter3></a>
 You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
