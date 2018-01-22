@@ -38,23 +38,18 @@ class CompositionOf:
     CallableError
         If the arguments passed to the constructor are not callable or if,
         when calling the returned object, they turn out not to support the
-        call signature specified in the Parameters section.
+        call signature specified in the `Parameters` section.
 
     """
 
     def __init__(self, first: Callable, second: Callable) -> None:
         self.__first = self.__callable(first)
         self.__second = self.__callable(second)
+        self.__copy_attributes('__doc__', '__annotations__', '__module__')
         if hasattr(self.__second, '__name__'):
             self.__name__ = self.__second.__name__
         else:
             self.__name__ = 'Composition'
-        if hasattr(self.__second, '__doc__'):
-            self.__doc__ = self.__second.__doc__
-        if hasattr(self.__second, '__annotations__'):
-            self.__annotations__ = self.__second.__annotations__
-        if hasattr(self.__second, '__module__'):
-            self.__module__ = self.__second.__module__
         if hasattr(self.__second, '__dict__'):
             for attr_name, attr in self.__second.__dict__.items():
                 if attr_name[0].isupper() and callable(attr):
@@ -110,3 +105,8 @@ class CompositionOf:
         return (f'{name} must be a callable that accepts (i) '
                 'a value, (ii) an optional name for that value,'
                 ' and (iii) any number of keyword arguments!')
+
+    def __copy_attributes(self, *attributes: str) -> None:
+        for attribute in attributes:
+            if hasattr(self, attribute):
+                setattr(self, attribute, getattr(self.__second, attribute))
