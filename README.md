@@ -177,8 +177,8 @@ out = JustCall(cheese_shop, name='silly function')
 ```
 
 ### 2. Iterables <a name=chapter2></a>
-####### [Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
----
+[Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
+
 
 This sections assumes that you have already read section (1) because the
 validators for iterables simply extend what has been introduced there to all
