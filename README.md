@@ -564,13 +564,15 @@ def spending(amount, purpose):
     print(f'You may only spend {amount} on {purpose}, respectively.')
 ```
 If, however, you want to check for a tuple of _defined_ length and specify
-separate limits for each one of them, you would do:
+separate limits for each one of them, you would do
 ```python
 @Bounded(((..., ...), (1, 120)))
 def show_age(specs):
     name, age = specs
     print(f'{name} is {age} years old.')
 ```
+where `(..., ...)` indicates that the first element of the tuple is not going
+to be checked at all.
 ###### Dictionaries
 Likewise, you can specify a separate 2-tuple of limits for the keys
 and the values of a dictionary to check if an argument is dictionary and if
