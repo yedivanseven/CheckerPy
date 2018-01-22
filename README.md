@@ -211,7 +211,26 @@ types, or if the variable passed to the validator is not, in fact, an iterable,
 an informative error is raised and logged.
 
 ##### 2.1.2 TypedDict
-In the example
+In the example above, only the _keys_ of the dictionary `{1: 'one', 2.0: 'two'}`
+are type checked. To check either its keys or its _values_ (or both), use:
+```python
+d = TypedDict({1: 'one', 2.0: 'two'}, keys=(int, float), values=str)
+```
+Simply skip the according keyword if you don't what to check one of them.
+
+##### 2.1.3 TypedTuple
+In the example above, the tuple `(1, 2, 3)` may be of _arbitrary_ length and
+_all_ of its elements have to be of type `int`. If you want to check for a
+tuple of _defined_ length and specify a separate type for each element, use:
+```python
+t = TypedTuple((1, 'foo', True), types=(int, str, bool))
+```
+You can specify more than one type for each element py passing a tuple of
+types at the position of the desired element. To _not_ check a specific
+element, enter the `Ellipsis` literal `...` at the desired position.
+```python
+t = TypedTuple((1.0, 2.0, True), types=((int, float), ..., bool))
+```
 
 #### 2.2 Value Checking
 With the exception of `OneOf`, all value checkers introduced in subsection
