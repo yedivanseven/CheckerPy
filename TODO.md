@@ -1,5 +1,4 @@
 # To Do
-- Write tests for parsers!
 - Check _*args_ and _**kwargs_ with decorators!
 - Update docstring of decorators with _*args_ and _**kwargs_ behaviour.
 - Test combining decorators!
@@ -12,3 +11,4 @@
 - Add JustIterable to validators?
 - Rename JustIter to JustCollection!
 - Factor out setting names and __argnames__ to function_to_decorate!
+- Write tests for parsers!

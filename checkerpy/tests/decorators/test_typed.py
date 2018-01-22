@@ -13,6 +13,16 @@ class TestTypedFunctionsSingleArgType(ut.TestCase):
         output = f(1, 2.0)
         self.assertEqual(output, 3.0)
 
+    def test_error_on_invalid_type_specification(self):
+        err_msg = ('Invalid expression 1 of type int for type specification'
+                   ' of argument at position 0! Must be one of type, tuple,'
+                   ' list, set, dict, or ellipsis.')
+        with self.assertRaises(TypeError) as err:
+            @Typed(1)
+            def f(x, y):
+                return x + y
+        self.assertEqual(str(err.exception), err_msg)
+
     def test_works_with_single_arg_type_too_few_types(self):
         @Typed(int)
         def f(x, y):

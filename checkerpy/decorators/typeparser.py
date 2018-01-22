@@ -49,8 +49,8 @@ class TypeParser(ParserMixin):
         return Just(type_)
 
     def _wrong_spec_message_for(self, types, type_id: SpecID) -> str:
-        types_type = type(types)
-        prefix = f'Invalid expression {types} of type {types_type} for '
+        types_type = type(types).__name__
+        prefix = f'Invalid expression {types} of type {types_type} '
         type_string = self.__types_string_from(type_id)
         postfix = '! Must be one of type, tuple, list, set, dict, or ellipsis.'
         return prefix + type_string + postfix

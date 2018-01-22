@@ -7,8 +7,9 @@ from ...exceptions import LimitError, WrongTypeError, LenError
 class TestBoundedInstantiation(ut.TestCase):
 
     def test_error_on_limit_specification_not_an_iterable(self):
-        err_msg = ('Invalid expression 1 for limits specification'
-                   ' of argument at position 0!')
+        err_msg = ('Invalid expression 1 of type int for limits specification'
+                   ' of argument at position 0! Must be one of tuple, list, '
+                   'set, dict, or ellipsis.')
         with self.assertRaises(TypeError) as err:
             @Bounded(1)
             def f(x, y):
