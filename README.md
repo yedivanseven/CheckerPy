@@ -434,6 +434,7 @@ from checkerpy.decorators import Typed, Bounded
 ```
 
 #### 5.1 Typed
+##### 5.1.1 Simple type of argument
 There are two ways in which you can specify one or more types that each
 argument of a function should have. The first is:
 ```python
@@ -442,24 +443,25 @@ def show_age(name, age):
     print(f'{name} is {age} years old.')
 ```
 Here, argument `name` is checked for being of type `str` and the type of
-argument `age` must be either `int` or `float`.
-
-**Note**: _Specifying `(int, float)` for the second argument does_ not
-_mean that `age` must be a 2-tuple of an integer and a float!_
-
-You can always specify more types in the decorator than there are arguments
-to the function. The extra types at the end are simply ignored. Also, you
-don't have to specify types for all arguments. In the example above, you might
-be happy with just:
+argument `age` must be either `int` or `float`. You can always specify more
+(tuples of) types in the decorator than there are arguments to the function.
+The extra types at the end are simply ignored. Also, you don't have to specify
+types for all arguments. In the example above, you might be happy with just:
 ```python
 @Typed(str)
 def show_age(name, age):
     print(f'{name} is {age} years old.')
 ```
 What, however, if you don't want to check the type of only the first, but only
-of the _second_ argument? In that case, you can pass the types to check for
-as _named_ arguments to the decorators using, of course, the name of the
-argument to check.
+of the _second_ argument? In that case, you either skip type checking of the
+first argument by passing the `Ellipsis` literal `...`,
+```python
+@Typed(..., (int, float))
+def show_age(name, age):
+    print(f'{name} is {age} years old.')
+```
+or you can pass the types to check for as _named_ arguments to the decorators
+using, of course, the name of the argument to check.
 ```python
 @Typed(age=(int, float))
 def show_age(name, age):
@@ -472,14 +474,26 @@ of the function, it will be ignored. So, there is nothing wrong with:
 def show_age(name, age):
     print(f'{name} is {age} years old.')
 ```
-Should a checked argument be of the wrong type, then _two_ errors are raised
-and logged. Calling, for example, the function just defined as
+Of course, you can also check for types you defined yourself by simply passing
+the respective class name(s).
+
+##### 5.2 Type of elements in iterables
+If you want to check that an argument to a function is either a `list` or
+a `set` _and_ specify one more types that their elements can have, you do:
 ```python
-show_age('Terry Gilliam', age='None of your business')
+@Typed([int, float], {str})
+def list_coins(denom, currencies):
+    print(f'There are coins of {denom} for the currencies {currencies}.')
+``` 
+For a `tuple`, you have two options. If the length of the tuple does not
+matter and you simply want to be sure that all its elements have one 
+(of several) type(s), use:
+```python
+@Typed((int, float, ...), (str, ...))
+def spend(amount, purpose):
+    print(f'You may only spend {amount} on {purpose}, respectively.')
 ```
-will get you both a `WrongTypeError: Type of age must be int, not str like 
-None of your business!` and a `WrongTypeError: An argument of function 
-show_age defined in module __main__ is of wrong type!` raised and logged.
+
 
 #### 5.2 Bounded
 To check if one or more arguments of a function (or method) are above, below,
