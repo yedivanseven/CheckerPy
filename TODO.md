@@ -1,8 +1,4 @@
 # To Do
-- Refactor FunctionTypeMixin to
-  - provide the variable names from signature of decorated function or from varnames attribute of decorated function
-  - to transfer attributes from decorated function
-  - to attach varnames attribute to decorator
 - Write tests and docstring for parsers!
 - Check _*args_ and _**kwargs_ with decorators!
 - Add type and bounds inspection for general iterator in decorators with iter()!

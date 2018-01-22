@@ -51,6 +51,10 @@ class CompositionOf:
             self.__name__ = 'Composition'
         if hasattr(self.__second, '__doc__'):
             self.__doc__ = self.__second.__doc__
+        if hasattr(self.__second, '__annotations__'):
+            self.__annotations__ = self.__second.__annotations__
+        if hasattr(self.__second, '__module__'):
+            self.__module__ = self.__second.__module__
         if hasattr(self.__second, '__dict__'):
             for attr_name, attr in self.__second.__dict__.items():
                 if attr_name[0].isupper() and callable(attr):

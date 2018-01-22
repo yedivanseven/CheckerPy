@@ -7,7 +7,7 @@ from .mixin import ParserMixin, SpecID, identity
 Limit = Tuple[Any, Any]
 
 
-class BoundParser(ParserMixin):
+class BoundsParser(ParserMixin):
     """Takes tuple or dict of limits specs and returns limit checkers"""
 
     def list_checker(self, limits: List[Limit], limits_id: SpecID) -> Callable:

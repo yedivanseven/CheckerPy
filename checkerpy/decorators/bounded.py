@@ -1,7 +1,7 @@
 from types import FunctionType, MethodType
 from typing import Union, Callable
 from .mixins import FunctionTypeMixin, TO_DECORATE, DECORATED
-from .boundparser import BoundParser, identity
+from .boundsparser import BoundsParser, identity
 
 Func = Union[FunctionType, MethodType]
 
@@ -86,7 +86,7 @@ class Bounded(FunctionTypeMixin):
     """
 
     def __init__(self, *arg_limits, **kwarg_limits) -> None:
-        parsed = BoundParser()
+        parsed = BoundsParser()
         self.arg_limits = parsed(arg_limits)
         self.n_arg_limits = len(self.arg_limits)
         self.kwarg_limits = parsed(kwarg_limits)

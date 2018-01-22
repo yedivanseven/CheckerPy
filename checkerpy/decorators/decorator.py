@@ -2,6 +2,7 @@ from types import FunctionType, MethodType
 from typing import Union, Callable, Tuple, Any, Dict
 from .mixin import identity
 from .typeparser import TypeParser
+from .boundsparser import BoundsParser
 
 Func = Union[FunctionType, MethodType]
 FuncSpecs = Tuple[int, Tuple[str, str, str], tuple]
@@ -39,14 +40,16 @@ class Decorator:
         return self.transfer_attributes(function_to_decorate, typed_function)
 
     def type_of(self, function_to_decorate: Func) -> FuncSpecs:
+        func_name = function_to_decorate.__name__
+        module = function_to_decorate.__module__
         if hasattr(function_to_decorate, '__varnames__'):
             arg_names = function_to_decorate.__varnames__
         else:
             arg_names = self.arg_names_from(function_to_decorate)
+        if len(arg_names) == 0:
+            return 0, ('function', func_name, module), ()
         type_code = 1 if arg_names[0] in ('cls', 'self', 'mcs', 'mcls') else 0
         func_type = 'method' if type_code else 'function'
-        func_name = function_to_decorate.__name__
-        module = function_to_decorate.__module__
         return type_code, (func_type, func_name, module), arg_names
 
     @staticmethod
@@ -74,4 +77,10 @@ class Decorator:
 class Typed(Decorator):
     def __init__(self, *arg_specs, **kwarg_specs) -> None:
         self.parsed = TypeParser()
+        super().__init__(*arg_specs, **kwarg_specs)
+
+
+class Bounded(Decorator):
+    def __init__(self, *arg_specs, **kwarg_specs) -> None:
+        self.parsed = BoundsParser()
         super().__init__(*arg_specs, **kwarg_specs)
