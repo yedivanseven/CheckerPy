@@ -44,9 +44,7 @@ missed your favorite package in this list.
 5. [Decorators](#chapter5)
 -----------------------
 
-### 1. Single Values
-
-<a name=chapter1></a>
+### 1. Single Values <a name=chapter1></a>
 #### 1.1 Type checking
 Type checkers are created by instantiating the class `Just`. To, for example,
 create one for integers, you would do:
@@ -179,10 +177,8 @@ out = JustCall(cheese_shop, name='silly function')
 ```
 
 ### 2. Iterables <a name=chapter2></a>
-
----
-[Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | 
-[Combining Validators](#chapter4) | [Decorators](#chapter5)
+###### [Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) 
+###### | [Combining Validators](#chapter4) | [Decorators](#chapter5)
 ---
 
 This sections assumes that you have already read section (1) because the
