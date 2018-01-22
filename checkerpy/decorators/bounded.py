@@ -24,6 +24,7 @@ class Bounded(Decorator):
     ...     return x + y, z
 
     Use the ellipsis literal also to skip checking an argument.
+
     >>> @Bounded((1, 3), ..., ('a', 'z'))
     >>> def f(x, y, z):
     ...     return x + y, z

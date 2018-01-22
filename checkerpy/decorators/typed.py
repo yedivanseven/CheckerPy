@@ -24,6 +24,7 @@ class Typed(Decorator):
 
     Pass the ellipsis literal ... to skip checking the type of the argument
     at that position.
+
     >>> @Typed(int, ..., str)
     >>> def f(x, y, z):
     ...     return x + y, z

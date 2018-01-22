@@ -32,8 +32,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     o(callable) : CompositionOf
         Daisy-chains the tuple length and value to another `callable`,
         returning the functional composition of both. The argument `limits` is
-        passed through to `LimitedTuple` checker when when calling the
-        composition.
+        passed through to `LimitedTuple` when when calling the composition.
 
     Notes
     -----
