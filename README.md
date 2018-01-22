@@ -45,6 +45,7 @@ missed your favorite package in this list.
 -----------------------
 
 ### 1. Single Values
+
 <a name=chapter1></a>
 #### 1.1 Type checking
 Type checkers are created by instantiating the class `Just`. To, for example,
