@@ -179,9 +179,9 @@ out = JustCall(cheese_shop, name='silly function')
 ### 2. Iterables <a name=chapter2></a>
 [Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
 
-This sections assumes that you have already read section (1) because the
-validators for iterables simply extend what has been introduced there to all
-elements of an iterable.
+This sections assumes that you have already read section [(1)](#chapter1)
+because the validators for iterables simply extend what has been introduced
+there to all elements of an iterable.
 #### 2.1 Type checking
 ##### 2.1.1 Simple iterables
 Type checkers for all elements of an iterable are created by instantiating the
@@ -240,18 +240,20 @@ from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen
 If, for example, you want to check a list of 2-tuples, use:
 ```python
 out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], name='short')
-out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', length=2)
-out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', lo=(1, 1), hi=(6, 6))
+out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', all_len=2)
+out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', all_lo=(1, 1), all_hi=(6, 6))
 ```
 Again, you get an error raised (and logged) if just one element of the iterable
 in question does not pass the test and if you try to check something that is
 not an iterable.
 
 ### 3. Numpy Support <a name=chapter3></a>
-You don't need to have `numpy` installed to use `CheckerPy`. If you nevertheless try
-to import something from a _numpy_ subpackage, you'll simply get an
-`ImportError`. If, however, you do have `numpy` installed, then you have a
-couple of additional validators available to you.
+[Single Values](#chapter1) | [Iterables](#chapter2) | **Numpy Support** | [Combining Validators](#chapter4) | [Decorators](#chapter5)
+
+You don't need to have `numpy` installed to use `CheckerPy`. If you
+nevertheless try to import something from a _numpy_ subpackage, you'll simply
+get an `ImportError`. If, however, you do have `numpy` installed, then you
+have a couple of additional validators available to you.
 
 #### 3.1 Simple type checking
 You can, of course, simply use `Just` to check for the type of numpy _scalars_.
@@ -278,9 +280,9 @@ from checkerpy.types.numpy import JustNdarray
 
 #### 3.2 Dtype checking
 Both numpy scalars and arrays have a `dtype` that you can check for. In full
-analogy to the `Just` class introduced in subsection (1.1), `CheckerPy`
-provides a just `JustDtype` class that you can use to create dtype checkers 
-for numpy arrays.
+analogy to the `Just` class introduced in subsection [(1.1)](#chapter1),
+`CheckerPy` provides a just `JustDtype` class that you can use to create 
+dtype checkers for numpy arrays.
 ```python
 from checkerpy.types.numpy import JustDtype
 
@@ -290,25 +292,25 @@ a = np.array([1, 2, 3], dtype='uint8')
 out = JustUint8(a, name='small ints')
 ```
 Again, you don't have to do this manually because `CheckerPy` comes with
-type checkers for many of the numeric numpy dtypes predefined. The dtypes
-they check for are stored in their `dtypes` property.
+type checkers for many of the numeric numpy dtypes predefined.
+```python
+from checkerpy.types.numpy import *
+
+uint8 = JustUint8(np.uint8(12))
+int16 = JustIn16(np.int16(34))
+float32 = JustFloat64(np.float32(56))
+complex64 = JustComplex64(np.complex64(78))
+...
+```
+The respective dtypes they check for are stored in their `dtypes` property.
 ```python
 >>> JustUint8.dtypes
 (dtype('uint8'),)
 ```
 
-If the numpy array or scalar to be checked does not have (one of) the required
-dtypes, the same `WrongTypeError` as introduced in subsection (1.1) is raised
-and logged. The only difference is that _Type_ is replaced by _Dtype_ in the
-error and log messages.
-
-If you pass something that doesn't have a `dtype` attribute to these dtype
-checkers,
-```python
-out = JustUint8(4)
-```
-you get a `DtypeError: Variable 4 of type int has no attribute dtype!` raised
-and logged.
+An error is raised and (and logged) not only if the numpy array or scalar to 
+be checked does not have (one of) the required dtypes, but also if you pass
+something that doesn't have a `dtype` attribute.
 
 #### 3.3 Checking the number of dimensions
 The dimensionality of numpy arrays is stored in their `ndim` attribute. If you
@@ -324,18 +326,8 @@ or just:
 ```python
 out = JustNdim(a, name='numbers', ndim=2)
 ```
-If the number of dimensions is not among the permitted dimensions,
-```python
-a = np.array([1, 2, 3])
-out = JustNdim(a, ndim=2)
-```
-you get a `NdimError: The number of dimensions of array [1 2 3] must be 2,
-not 1!` raised and logged and, if the value to be checked is not a numpy array,
-```python
-out = JustNdim('foo', ndim=2)
-```
-yout get a `NdimError: Cannot determine the number of dimensions of variable
-foo with type str because it has no attribute ndim!` raised and logged.
+An error is raised and logged and, if the value to be checked is not a numpy
+array or if the dimensions of the array are not among those permitted.
 
 #### 3.4 Checking for shape
 The actual shape of numpy arrays is stored in their `shape` attribute. To
@@ -356,21 +348,13 @@ the others open. Specifying, for example,
 out = JustShape(a, shape=[(..., 3), (2, ...)])
 ```
 checks that array _a_ either has 3 columns and an arbitrary number of rows, or
-2 rows and an arbitrary number of columns. If it does not,
-```python
-a = np.array([1, 2, 3])
-out = JustShape(a, shape=[(..., 3), (2, ...)])
-```
-you get a `ShapeError: Shape of array [1 2 3] must be one of ((Ellipsis, 3),
-(2, Ellipsis)), not (3,)!` raised and logged. If the value passed to the
-validator does not have a `shape` attribute,
-```python
-out = JustShape(1, shape=[(..., 3), (2, ...)])
-```
-you get a `ShapeError: Cannot determine shape of variable 1 with type int
-because it has no attribute shape!` raised and logged.
+2 rows and an arbitrary number of columns. If it does not or if the value
+passed to the validator does not have a `shape` attribute, and error is raised
+and logged.
 
 ### 4. Combining Validators <a name=chapter4></a>
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | **Combining Validators** | [Decorators](#chapter5)
+
 What if you want to check for more than one property, for example, type _and_
 value? The simplest thing you could do would be to call the second validator
 on the result of the first.
@@ -412,16 +396,16 @@ same way. When calling, for example,
 ```python
 from checkerpy.validators.all import AllLimited
 
-out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, lo='aaa', hi='zzz')
+out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, all_lo='aaa', all_hi='zzz')
 ```
-the keyword arguments `lo` and `hi` are passed all the way through to
+the keyword arguments `all_lo` and `all_hi` are passed all the way through to
 `AllLimited`.
 
 In order to further save you some typing, some useful functional compositions
 are already attached to most validators as methods. The example above, for
 instance, can also be written as:
 ```python
-out = AllLimited.AllStr.NonEmpty.JustList(inp, lo='aaa', hi='zzz')
+out = AllLimited.AllStr.NonEmpty.JustList(inp, all_lo='aaa', all_hi='zzz')
 ```
 
 The same is true for the `numpy` validators. Provided you have imported
@@ -437,9 +421,12 @@ and equivalent to calling
 ```python
 out = JustNdim.JustInt64.JustNdarray(a, 'once', ndim=1)
 ```
-Just use tab-completion to find out which validator-methods are already set
+Simply use tab-completion to find out which validator-methods are already set
 before you chain them using the `o` method.
+
 ### 5. Decorators <a name=chapter5></a>
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | **Decorators**
+
 For checking the values and types of function (or method) arguments, `CheckerPy`
 provides two dedicated decorators.
 ```python
