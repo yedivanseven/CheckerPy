@@ -22,6 +22,18 @@ To install, open a terminal and simply type:
 pip install checkerpy
 ```
 
+#### Testing
+To run the test suit, clone this repository, change into the top-level
+directory `CheckerPy`, and open a terminal there. Then, if you have `numpy`
+installed, simply run
+```
+python -m unittest -v
+```
+from the command line. If you do not have `numpy` installed, run instead:
+```
+python -m unittest discover -v -s checkerpy.tests
+```
+
 #### Related work
 You might want to consider also
 [pycheck](https://pypi.python.org/pypi/pycheck/0.1), 
