@@ -506,7 +506,7 @@ def show_age(specs):
 To skip checking one of the tuple elements for type, pass a tuple containing
 the ellipsis literal `...` at the position of the element in question.
 ```python
-@Typed((..., (int, float)))
+@Typed(((...,) (int, float)))
 def show_age(specs):
     name, age = specs
     print(f'{name} is {age} years old.')
@@ -547,11 +547,42 @@ and logged.
 
 ##### 5.1.2 Elements in iterable arguments
 ###### Lists and sets
-
+Combining the virtues of type and value checking, you can specify that an
+argument be a list or a set with all their elements bounded by the
+same limits:
+```python
+@Bounded([(1, ...)], currencies={('aaa', 'zzz')})
+def list_coins(denom, currencies):
+    print(f'There are coins of {denom} for the currencies {currencies}.')
+``` 
 ###### Tuples
-
+To check for an argument being a tuple of _arbitrary_ length with all its
+elements bounded by the same limits, specify:
+```python
+@Bounded(((1, 100), ...), ((..., 'zzz'), ...))
+def spending(amount, purpose):
+    print(f'You may only spend {amount} on {purpose}, respectively.')
+```
+If, however, you want to check for a tuple of _defined_ length and specify
+separate limits for each one of them, you would do:
+```python
+@Bounded(((..., ...), (1, 120)))
+def show_age(specs):
+    name, age = specs
+    print(f'{name} is {age} years old.')
+```
 ###### Dictionaries
-
+Likewise, you can specify a separate 2-tuple of limits for the keys
+and the values of a dictionary to check if an argument is dictionary and if
+all its elements adhere to the respective limits. Use the ellipsis literal
+`...` or the 2-tuple `(..., ...)` to skip checking for either keys or values.
+```python
+@Bounded({...: (1, 120)})
+def show_age(persons):
+    for name, age in persons.items():
+        print(f'{name} is {age} years old.')
+```
+ 
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
 first argument is called _self_, _cls_ , or _mcs_ (static methods are
