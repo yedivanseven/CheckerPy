@@ -26,7 +26,7 @@ class TestBoundedInstantiation(ut.TestCase):
                 @Bounded((1, 2, 3))
                 def f(x, y):
                     return x + y
-            self.assertEqual(log.output, log_msg)
+        self.assertEqual(log.output, log_msg)
         self.assertEqual(str(err.exception), err_msg)
 
 

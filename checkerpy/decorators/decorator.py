@@ -32,8 +32,8 @@ class Decorator:
             for i_arg in i_args:
                 named_args.update({names[i_arg]: args[first_arg + i_arg]})
             for arg_name, arg_value in named_args.items():
-                arg_type = self.kwarg_checks.get(arg_name, identity)
-                _ = arg_type(arg_value, arg_string.format(arg_name))
+                arg_check = self.kwarg_checks.get(arg_name, identity)
+                _ = arg_check(arg_value, arg_string.format(arg_name))
             return function_to_decorate(*args, **kwargs)
 
         return self.transfer_attributes(function_to_decorate, typed_function)
