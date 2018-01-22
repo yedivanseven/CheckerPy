@@ -568,3 +568,6 @@ a function or method, that is, they should be at the _lowest_ position,
 directly above the function definition. This is particularly true also for
 _class methods_ and _static methods_.
 3. Optional _*args_ and _**kwargs_ are currently not checked.
+-------------------------------------------------------------------------------
+
+[Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Combining Validators](#chapter4) | [Decorators](#chapter5)
