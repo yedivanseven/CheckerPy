@@ -434,7 +434,7 @@ from checkerpy.decorators import Typed, Bounded
 ```
 
 #### 5.1 Typed
-##### 5.1.1 Simple type of argument
+##### 5.1.1 Arguments
 There are two ways in which you can specify one or more types that each
 argument of a function should have. The first is:
 ```python
@@ -477,14 +477,16 @@ def show_age(name, age):
 Of course, you can also check for types you defined yourself by simply passing
 the respective class name(s).
 
-##### 5.2 Type of elements in iterables
+##### 5.1.2 Elements in iterable arguments
+###### Lists and sets
 If you want to check that an argument to a function is either a `list` or
 a `set` _and_ specify one more types that their elements can have, you do:
 ```python
-@Typed([int, float], {str})
+@Typed([int, float], currencies={str})
 def list_coins(denom, currencies):
     print(f'There are coins of {denom} for the currencies {currencies}.')
 ``` 
+###### Tuples
 For a `tuple`, you have two options. If the length of the tuple does not
 matter and you simply want to be sure that all its elements have one 
 (of several) type(s), use:
@@ -493,6 +495,23 @@ matter and you simply want to be sure that all its elements have one
 def spend(amount, purpose):
     print(f'You may only spend {amount} on {purpose}, respectively.')
 ```
+If, however, you want to check for a tuple of defined length and specify one
+(or more) separate types for each element, you would do:
+```python
+@Typed(((str,), (int, float)))
+def show_age(specs):
+    name, age = specs
+    print(f'{name} is {age} years old.')
+```
+To skip checking one of the tuple elements for type, pass a tuple containing
+the `Ellipsis` literal `...` at the position of the element in question.
+```python
+@Typed((..., (int, float)))
+def show_age(specs):
+    name, age = specs
+    print(f'{name} is {age} years old.')
+```
+###### Dictionaries
 
 
 #### 5.2 Bounded
