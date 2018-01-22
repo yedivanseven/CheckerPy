@@ -1,6 +1,7 @@
 # To Do
-- Write tests and docstring for parsers!
+- Write tests for parsers!
 - Check _*args_ and _**kwargs_ with decorators!
+- Update docstring of decorators with _*args_ and _**kwargs_ behaviour.
 - Test combining decorators!
 - Adapt README!
 

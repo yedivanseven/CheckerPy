@@ -49,8 +49,8 @@ class ParserMixin:
         return identity
 
     @staticmethod
-    def _wrong_iterable_message_for(limits_specs: Specs) -> str:
-        return ('Iterator with limits specifications must be either '
-                'a tuple (if specified in *args format) or a dict '
-                '(if specified in **kwargs format), not a '
-                f'{type(limits_specs).__name__} like {limits_specs}!')
+    def _wrong_iterable_message_for(check_specs: Specs) -> str:
+        return ('Iterator with specifications for argument checkers must'
+                ' be a tuple (if specified in *args format) or a dict '
+                '(if specified in **kwargs format), not '
+                f'{type(check_specs).__name__} like {check_specs}!')
