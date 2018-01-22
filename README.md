@@ -7,10 +7,17 @@ The purpose of this package is provide a series of type and value checkers.
 They all work in the same way:
 - A variable or literal is passed as argument to the checker.
 - If it passes the check(s), it is returned unaltered in type and value.
-- If it does _not_ pass the checks, an informative error is raised and logged. 
+- If it does _not_ pass the checks, an informative error is raised and logged.
+To make the error messages more expressive, an optional variable name can be
+passed to all checkers.
+
+Some of these type and value checkers are bundled in _decorators_ to
+conveniently check the arguments of functions or methods. 
 
 #### Installation
-This package is available on `PyPi`. Simply type:
+This package is available on the
+[Python Package Index](https://pypi.python.org/pypi/checkerpy) `PyPI`.
+To install, open a terminal and simply type:
 ```
 pip install checkerpy
 ```
@@ -63,31 +70,27 @@ or a variable.
 inp = 2
 out = JustInt(inp)
 ```
-If the passed-in variable of literal is not of type `int`, a `WrongTypeError:
-Type must be int, not str like foo!` is raised and logged to the default
-logger.
-
-To make the error message more expressive, you can optionally pass a name for
-the value in question,
-```python
-out = JustInt(2.0, name='level')
-```
-which will result in `WrongTypeError: Type of level must be int, not float
-like 2.0!`
-
 As a matter of fact, `CheckerPy` already comes with type checkers for all
 built-in types predefined. So you could just do
 ```python
-from checkerpy.types.one import JustInt, JustList, JustDict
-```
-and the same for `str`, `float`, `tuple`, etc.
+from checkerpy.types.one import * 
 
+i = JustInt(1)
+s = JustStr('foo')
+l = JustList(['foo', 'bar', 'egg'])
+... 
+```
 You can also be less restrictive and, for example, allow a variable to be
 either a `list` or a `tuple`. In this case, you would instantiate and use the
 type checker like so:
 ```python
 JustListTuple = Just(list, tuple)
 out = JustListTuple(['foo', 'bar', 'egg'])
+```
+Some of these combined types are already predefined in `CheckerPy`. To check 
+for `int` _or_ `float`, for example, you could do:
+```python
+n = JustNum(2.0)
 ```
 Moreover, you can easily build checkers for your own types.
 ```python
@@ -110,7 +113,7 @@ out = JustMyTypes(inp, 'the ultimate object')
 Other than checking for type, `CheckerPy` also comes with validators for 
 bounds and membership of a set as well as emptiness and length of iterables.
 ```python
-from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen, Call
+from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen, JustCall
 ```
 ##### 1.2.1 NonEmpty
 As the name implies, `NonEmpty` raises and logs an error if an (optionally
@@ -123,13 +126,13 @@ out = NonEmpty(('foo', 'bar', 'egg'))
 ```python
 out = NonEmpty({}, name='of cheeses')
 ```
-will raise and log `EmptyError: Dict of cheeses must not be empty!` Likewise,
+will raise and log an `EmptyError: Dict of cheeses must not be empty!` Likewise,
 an error is raised and logged if the emptiness of the value passed to the
 validator cannot be determined, that is,
 ```python
 out = NonEmpty(1, 'brain')
 ```
-will result in `EmptyError: Emptiness of brain with type int cannot be
+will result in an `EmptyError: Emptiness of brain with type int cannot be
 determined!`
 
 ##### 1.2.2 JustLen
@@ -140,19 +143,11 @@ out = JustLen({'foo', 'bar', 'egg'}, length=3)
 ```
 or:
 ```python
-out = JustLen({1: 'one', 2: 'two'}, name='numerals', length=(2, 3))
-```
-If the length of the iterable is not among the specified lengths,
-```python
 out = JustLen(('Stilton', 'Camembert'), name='cheeses', length=(3, 5))
 ```
-you will get `LenError: Length of tuple cheeses must be one of (3, 5), not 2!`
-raised and logged. If the value passed in is not, in fact, an iterable,
-```python
-out = JustLen(4, length=1)
-```
-you will get `LenError: Length of 4 with type int cannot be determined!`
-raised and logged.
+An error is not only logged and raised if the length of the iterable is not 
+among the specified lengths, but also if the value passed in is not, in fact,
+an iterable.
 
 ##### 1.2.3 Limited
 To check if an (optionally named) value is above, below or outside given
@@ -164,54 +159,33 @@ Note that the limits are inclusive and, therefore, both 1 and 5 would pass the
 test. If you want to check for a lower limit only or for an upper bound only,
 just don't specify the respective other limit.
 
-If a value lies outside the specified interval or on the wrong side of a given
-bound,
-```python
-out = Limited(-1, lo=0)
-```
-you get `LimitError: Value -1 lies outside the allowed interval [0, Ellipsis)!`
-raised and logged. If the value in question cannot be compared to the limits
-you have specified (because it is, for example, of a wrong type),
-```python
-out = Limited(3, 'the level of detail', lo='a', hi='z')
-```
-you get a `WrongTypeError: Cannot compare type int of the level of detail with
-limits of types str and str!` raised and logged.
-
 ##### 1.2.4 OneOf
 If you want to make sure that an (optionally named) variable has one of a given
 set of values, you simply do:
 ```python
 out = OneOf('medium', name='steak', items=('rare', 'medium', 'well done'))
 ```
-If it does not,
-```python
-out = OneOf('bloody', name='steak', items=('rare', 'medium', 'well done'))
-```
-you get an `ItemError: Value bloody of steak with type str is not one of 
-('rare', 'medium', 'well done')!` raised and logged.
 
-##### 1.2.5 Call
+##### 1.2.5 JustCall
 If you want ot make sure that an (optionally named) object is callable, you
 can write:
 ```python
-def inp(x):
-    return f'No, sorry, we are out of {x}'
+def cheese_shop(x):
+    return f'No, sorry, we are out of {x} ...'
     
-out = Call(inp, name='silly function')
+out = JustCall(cheese_shop, name='silly function')
 ```
-If it is not,
-```python
-out = Call('gouda')
-```
-you get a `CallableError: Object gouda of type str is not callable!` raised
-and logged.
 
 ### 2. Iterables <a name=chapter2></a>
+[Single Values](#chapter1) | **Iterables** | [Numpy Support](#chapter3) | 
+[Combining Validators](#chapter4) | [Decorators](#chapter5)
+-------------------------------------------------------------------------------
+
 This sections assumes that you have already read section (1) because the
 validators for iterables simply extend what has been introduced there to all
 elements of an iterable.
 #### 2.1 Type checking
+##### 2.1.1 Simple iterables
 Type checkers for all elements of an iterable are created by instantiating the
 class `All`. To, for example, create one for integers, you would do:
 ```python
@@ -220,27 +194,25 @@ from checkerpy.types.all import All
 AllInt = All(int, identifier='AllInt')
 ```
 As for single values, you don't actually have to do this, because checkers for
-all built-in types are predefined. You would probably use `All` only to create
-type checkers for you own types or for custom combination of types.
+all built-in types are predefined.
+```python
+from checkerpy.types.all import *
+
+i = AllInt((1, 2, 3))
+f = AllFloat([4.0, 5.0, 6.0])
+n = AllNum({1: 'one', 2.0: 'two'})
+s = AllStr({'foo', 'bar', 'egg'})
+...
+```
+You would probably use `All` only to create type checkers for you own types
+or for custom combination of types.
 
 If just one element of the iterable in question is not of one of the allowed
-types, you now get _two_ errors raised and logged with the first being the
-direct cause of the second. For example,
-```python
-out = AllInt((1, 2.0, 3), 'integers')
-```
-will get you both `WrongTypeError: Type must be int, not float like 2.0!` and
-`WrongTypeError: An element of the tuple integers has wrong type!` raised and
-logged.
+types, or if the variable passed to the validator is not, in fact, an iterable,
+an informative error is raised and logged.
 
-If the variable passed to the validator is not, in fact, an iterable,
-```python
-out = AllInt(1, 'single integer')
-```
-you get an `IterError: Variable single integer with type int does not seem to
-be an iterable with elements to inspect!` raised and logged.
-
-**Note**: *This is a common feature of all iterable validators.*
+##### 2.1.2 TypedDict
+In the example
 
 #### 2.2 Value Checking
 With the exception of `OneOf`, all value checkers introduced in subsection
