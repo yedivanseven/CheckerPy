@@ -28,16 +28,16 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
     -------
     o(callable) : CompositionOf
         Daisy-chains the limits checker to another `callable`, returning the
-        functional composition of both. If `lo` and/or `hi` is specified when
-        calling the composition, it (or they) are passed through to the limits
-        checker.
+        functional composition of both. If `all_lo` and/or `all_hi` is
+        specified when calling the composition, it (or they) are passed
+        through to the limits checker.
 
     Notes
     -----
     For convenience, type checkers for built-in comparables (i.e., everything
     but dict) and iterables as well as an emptiness checker for `iterable`
-    are attached as methods. If `lo` and/or `hi` is specified in calls to these
-    methods, it (or they) are passed through to the limits checker.
+    are attached as methods. If `all_lo` and/or `all_hi` is specified in calls
+    to these methods, it (or they) are passed through to the limits checker.
 
     Raises
     ------

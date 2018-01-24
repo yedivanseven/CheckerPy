@@ -1,4 +1,5 @@
 import logging as log
+from typing import Any
 from .registrars import AllIterableRegistrar
 from ..one import JustLen
 from ...functional.mixins import CompositionClassMixin
@@ -27,7 +28,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     -------
     o(callable) : CompositionOf
         Daisy-chains the length checker to another `callable`, returning the
-        functional composition of both. If the optional argument `length` is
+        functional composition of both. If the optional argument `all_len` is
         specified when calling the composition, it is passed through to the
         length checker.
 
@@ -35,7 +36,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     -----
     For convenience, type checkers for built-in iterables (str, tuple, list,
     set, and dict) and an emptiness checker for `iterable` are attached as
-    methods as well. If the optional argument `length` is specified in calls
+    methods as well. If the optional argument `all_len` is specified in calls
     to these methods, it is passed through to the length checker.
 
     Raises
@@ -68,7 +69,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         return iterable
 
     @classmethod
-    def __name_from(cls, index: int, value) -> str:
+    def __name_from(cls, index: int, value: Any) -> str:
         if cls._iter_type == 'dict':
             return f'key {value} in dict {cls._string}'
         elif cls._iter_type == 'dict_keys':

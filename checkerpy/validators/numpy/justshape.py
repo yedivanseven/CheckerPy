@@ -1,10 +1,11 @@
 import logging as log
-from typing import Union
+from typing import Union, Any
+from numpy import ndarray
 from .registrar import Registrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ShapeError, IntError
 
-SHAPE = Union[tuple, list]
+Shape = Union[tuple, list]
 
 
 class JustShape(CompositionClassMixin, metaclass=Registrar):
@@ -64,7 +65,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
 
     """
 
-    def __new__(cls, array, name=None, *, shape: SHAPE = (...,), **kwargs):
+    def __new__(cls, array, name=None, *, shape: Shape = (...,), **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(array)
         cls._shapes = cls.__validated(shape)
@@ -86,7 +87,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
         return array
 
     @classmethod
-    def __validated(cls, shapes: SHAPE) -> SHAPE:
+    def __validated(cls, shapes: Shape) -> Shape:
         type_of_shape = type(shapes)
         if type_of_shape not in (tuple, list):
             message = cls.__wrong_shape_spec_message_for(shapes)
@@ -100,7 +101,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
         return tuple(shapes)
 
     @classmethod
-    def __type_converted(cls, shape) -> tuple:
+    def __type_converted(cls, shape: Shape) -> tuple:
         list_shape = list(shape)
         for i_size, size in enumerate(list_shape):
             if size is not Ellipsis:
@@ -121,20 +122,20 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
         return there_are_shapes_of_matching_length and any(shape_matches)
 
     @staticmethod
-    def __compare_sizes_in(array_shape, possible_shape: tuple) -> bool:
+    def __compare_sizes_in(array_shape: tuple, possible_shape: tuple) -> bool:
         sizes_match = ()
         for i_size, size in enumerate(possible_shape):
             sizes_match += (array_shape[i_size] == size) or (size is Ellipsis),
         return all(sizes_match)
 
     @staticmethod
-    def __wrong_shape_spec_message_for(value) -> str:
+    def __wrong_shape_spec_message_for(value: Any) -> str:
         type_of_value = type(value).__name__
         return ('Shape argument must be either a single tuple or a list of'
                 f' tuples of integers, not a {type_of_value} like {value}!')
 
     @classmethod
-    def __has_no_shape_message_for(cls, variable) -> str:
+    def __has_no_shape_message_for(cls, variable: Any) -> str:
         variable_type = type(variable).__name__
         return (f'Cannot determine shape of variable {cls.__string} with '
                 f'type {variable_type} because it has no attribute shape!')

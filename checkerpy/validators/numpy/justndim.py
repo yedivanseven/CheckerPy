@@ -1,10 +1,11 @@
 import logging as log
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Any
+from numpy import ndarray
 from .registrar import Registrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IntError, NdimError
 
-NDIM_TYPE = Union[int, Tuple[int, ...], List[int]]
+NdimType = Union[int, Tuple[int, ...], List[int]]
 
 
 class JustNdim(CompositionClassMixin, metaclass=Registrar):
@@ -54,7 +55,7 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
 
     """
 
-    def __new__(cls, array, name=None, *, ndim: NDIM_TYPE = 1, **kwargs):
+    def __new__(cls, array, name: str = None, *, ndim: NdimType = 1, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(array)
         ndims = ndim if type(ndim) in (tuple, list, set) else (ndim,)
@@ -81,20 +82,20 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
         return ndim
 
     @staticmethod
-    def __invalid_ndim_message_for(value) -> str:
+    def __invalid_ndim_message_for(value: Any) -> str:
         type_name = type(value).__name__
         return (f'Could not convert given ndim {value} of'
                 f' type {type_name} to required type int!')
 
     @classmethod
-    def __has_no_ndim_message_for(cls, variable) -> str:
+    def __has_no_ndim_message_for(cls, variable: Any) -> str:
         variable_type = type(variable).__name__
         return ('Cannot determine the number of dimensions of variable'
                 f' {cls.__string} with type {variable_type} because it'
                 ' has no attribute ndim!')
 
     @classmethod
-    def __error_message_for(cls, array) -> str:
+    def __error_message_for(cls, array: ndarray) -> str:
         if len(cls._ndims) == 1:
             of_ndims = cls._ndims[0]
         else:

@@ -13,15 +13,13 @@ class TestLimitedTuple(ut.TestCase):
         self.assertTupleEqual(out, ())
 
     def test_error_on_limits_no_length(self):
-        err_msg = ('Length of limits argument 1 with '
-                   'type int cannot be determined!')
-        with self.assertRaises(LenError) as err:
+        err_msg = 'Type of limits argument must be tuple, not int like 1!'
+        with self.assertRaises(TypeError) as err:
             _ = LimitedTuple((1, 3, 4), limits=1)
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_limit_not_tuple(self):
-        err_msg = ('Type of limits on argument 1 '
-                   'must be tuple, not int like 2!')
+        err_msg = 'Type of limits on argument 1 must be tuple, not int like 2!'
         with self.assertRaises(TypeError) as err:
             _ = LimitedTuple((1, 2), limits=((0, 3), 2))
         self.assertEqual(str(err.exception), err_msg)

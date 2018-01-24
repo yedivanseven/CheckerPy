@@ -1,5 +1,6 @@
 import logging as log
 from .nonempty import NonEmpty
+from .justlen import JustLen
 from ...functional.mixins import CompositionClassMixin
 from ...functional import CompositionOf
 from ...types.one import _COMPARABLES
@@ -13,6 +14,7 @@ class ComparableRegistrar(type):
         for comparable in _COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
+        setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
 
 
 class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
@@ -88,8 +90,8 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     @classmethod
     def __value_out_of_bounds_message_for(cls, value, lo, hi) -> str:
-        left = '(-inf' if lo in (float('-inf'), Ellipsis) else f'[{lo}'
-        right = 'inf)' if hi in (float('+inf'), Ellipsis) else f'{hi}]'
+        left = '(-inf' if lo in (float('-inf'), Ellipsis, None) else f'[{lo}'
+        right = 'inf)' if hi in (float('+inf'), Ellipsis, None) else f'{hi}]'
         value_name = ' of '+cls._name if cls._name else ''
         return (f'Value {value}{value_name} lies outside the'
                 f' allowed interval {left}, {right}!')

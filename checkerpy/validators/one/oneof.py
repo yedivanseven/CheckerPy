@@ -58,7 +58,7 @@ class OneOf(CompositionClassMixin):
 
     @staticmethod
     def __formatted(items):
-        if type(items) in (tuple, list, set):
+        if type(items) in (tuple, list, set, frozenset):
             if len(items) == 0:
                 return items,
             else:

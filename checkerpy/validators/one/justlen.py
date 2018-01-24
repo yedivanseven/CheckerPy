@@ -1,3 +1,4 @@
+from typing import Any, Sized
 import logging as log
 from .registrar import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
@@ -40,7 +41,7 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
     ------
     LenError
         If the length of the argument cannot be determined or if the length
-        of `iterable` is not among the allowed length.
+        of `iterable` is not among the allowed lengths.
     IntError
         If the specified length(s) cannot be converted to required type int.
 
@@ -78,19 +79,19 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
         return length
 
     @staticmethod
-    def __invalid_type_message_for(value) -> str:
+    def __invalid_type_message_for(value: Any) -> str:
         type_name = type(value).__name__
         return (f'Could not convert given length {value} of'
                 f' type {type_name} to required type int!')
 
     @classmethod
-    def __has_no_length_message_for(cls, variable) -> str:
+    def __has_no_length_message_for(cls, variable: Any) -> str:
         var_name = cls.__string + ' with'
         type_name = type(variable).__name__
         return f'Length of {var_name} type {type_name} cannot be determined!'
 
     @classmethod
-    def __wrong_length_message_for(cls, iterable) -> str:
+    def __wrong_length_message_for(cls, iterable: Sized) -> str:
         if len(cls._lengths) == 1:
             of_length = cls._lengths[0]
         else:

@@ -2,9 +2,8 @@ from typing import Tuple, Any
 from .registrars import CustomRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, Limited
-from ...exceptions import LenError
 
-LIMITS = Tuple[Tuple[Any, Any], ...]
+Limits = Tuple[Tuple[Any, Any], ...]
 
 
 class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
@@ -43,14 +42,15 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     Raises
     ------
     WrongTypeError
-        If an element of `value` cannot be compared to its limit(s).
+        If `value` is not a tuple or if an element of `value` cannot be
+        compared to its limit(s).
     LimitError
         If an element of `value` lies on the wrong side or outside its
         respective limit(s).
     LenError
-        If the length of the object passed as `limits` cannot be determined.
+        If `value` is not of the same lenth as `limits`.
     TypeError
-        If one or more limits are not specified as tuples.
+        If `limits` is not a tuple or any of its elements are not tuples.
     ValueError
         If one or more of the tuples specifying limits are not of length 2.
 
@@ -72,10 +72,10 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         return value
 
     @classmethod
-    def __length_of(cls, limits: LIMITS) -> Tuple[LIMITS, int]:
+    def __length_of(cls, limits: Limits) -> Tuple[Limits, int]:
         if type(limits) not in (tuple, list):
             message = cls.__has_no_length_message_for(limits)
-            raise LenError(message)
+            raise TypeError(message)
         limits = [(..., ...) if limit is ... else limit for limit in limits]
         for index, limit in enumerate(limits):
             type_of_limit = type(limit)
@@ -91,7 +91,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         return tuple(limits), len(limits)
 
     @staticmethod
-    def __has_no_length_message_for(limits) -> str:
+    def __has_no_length_message_for(limits: Limits) -> str:
         type_name = type(limits).__name__
-        return (f'Length of limits argument {limits} with'
-                f' type {type_name} cannot be determined!')
+        return ('Type of limits argument must be tuple,'
+                f' not {type_name} like {limits}!')
