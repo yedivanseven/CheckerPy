@@ -243,7 +243,7 @@ element, enter the ellipsis literal `...` at the desired position.
 t = TypedTuple((1.0, 2.0, True), types=((int, float), ..., bool))
 ```
 
-#### 2.2 Value Checking
+#### 2.2 Value checking
 Some of the value checkers introduced in subsection [(1.2)](#section1_2)
 are also available for the elements of an iterable.
 ```python
