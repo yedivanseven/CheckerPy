@@ -7,7 +7,7 @@ from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import IterError
 
-TYPES = Union[type, Iterable[type]]
+Types = Union[type, Iterable[type]]
 
 
 class All(CompositionMixin):
@@ -39,7 +39,7 @@ class All(CompositionMixin):
 
     """
 
-    def __init__(self, *types: TYPES, identifier: str = 'All') -> None:
+    def __init__(self, *types: Types, identifier: str = 'All') -> None:
         self.__just = Just(*types)
         self.__types = self.__just.types
         self.__doc__ = self.__doc_string()
@@ -72,7 +72,16 @@ class All(CompositionMixin):
     def __name_from(self, index: int) -> str:
         if self.__iter_type == 'dict':
             return f'key in dict {self.__string}'
-        elif self.__iter_type == 'set':
+        elif self.__iter_type == 'dict_keys':
+            string = f'dict {self.__string}' if self._name else self.__string
+            return f'key in ' + string
+        elif self.__iter_type == 'dict_values':
+            string = f'dict {self.__string}' if self._name else self.__string
+            return f'value in ' + string
+        elif self.__iter_type == 'frozenset':
+            s = f'frozenset {self.__string}' if self._name else self.__string
+            return f'element in ' + s
+        elif self.__iter_type in 'set':
             return f'element in set {self.__string}'
         return f'element {index} in {self.__iter_type} {self.__string}'
 

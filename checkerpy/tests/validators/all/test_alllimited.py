@@ -33,7 +33,7 @@ class TestAllLimited(ut.TestCase):
 
     def test_works_with_sane_str(self):
         inputs = 'abc'
-        output = AllLimited(inputs, all_lo='a', all_hi='c')
+        output = AllLimited(inputs, alo='a', ahi='c')
         self.assertEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_str(self):
@@ -43,7 +43,7 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited('abd', all_lo='a', all_hi='c')
+                _ = AllLimited('abd', alo='a', ahi='c')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -54,13 +54,13 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [a, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited('abd', 'test', all_lo='a', all_hi='c')
+                _ = AllLimited('abd', 'test', alo='a', ahi='c')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_tuple(self):
         inputs = (1, 2, 3)
-        output = AllLimited(inputs, all_lo=1, all_hi=3)
+        output = AllLimited(inputs, alo=1, ahi=3)
         self.assertTupleEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_tuple(self):
@@ -70,7 +70,7 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited((1, 2, 4), all_lo=1, all_hi=3)
+                _ = AllLimited((1, 2, 4), alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -81,13 +81,13 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited((1, 2, 4), 'test', all_lo=1, all_hi=3)
+                _ = AllLimited((1, 2, 4), 'test', alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_list(self):
         inputs = [1, 2, 3]
-        output = AllLimited(inputs, all_lo=1, all_hi=3)
+        output = AllLimited(inputs, alo=1, ahi=3)
         self.assertListEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_list(self):
@@ -97,7 +97,7 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited([1, 2, 4], all_lo=1, all_hi=3)
+                _ = AllLimited([1, 2, 4], alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -108,19 +108,19 @@ class TestAllLimited(ut.TestCase):
                    ' outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited([1, 2, 4], 'test', all_lo=1, all_hi=3)
+                _ = AllLimited([1, 2, 4], 'test', alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_set(self):
         inputs = {1, 2, 3}
-        output = AllLimited(inputs, all_lo=1, all_hi=3)
+        output = AllLimited(inputs, alo=1, ahi=3)
         self.assertSetEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_set(self):
         with self.assertLogs(level=logging.ERROR):
             with self.assertRaises(LimitError):
-                _ = AllLimited({1, 2, 4}, all_lo=1, all_hi=3)
+                _ = AllLimited({1, 2, 4}, alo=1, ahi=3)
 
     def test_error_on_out_of_bounds_element_in_named_set(self):
         log_msg = ['ERROR:root:Value 4 of element in set test lies '
@@ -129,13 +129,34 @@ class TestAllLimited(ut.TestCase):
                    ' the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited({1, 2, 4}, 'test', all_lo=1, all_hi=3)
+                _ = AllLimited({1, 2, 4}, 'test', alo=1, ahi=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_frozenset(self):
+        inputs = frozenset({1, 2, 3})
+        output = AllLimited(inputs, alo=1, ahi=3)
+        self.assertSetEqual(output, inputs)
+
+    def test_error_on_out_of_bounds_element_in_unnamed_frozenset(self):
+        with self.assertLogs(level=logging.ERROR):
+            with self.assertRaises(LimitError):
+                _ = AllLimited(frozenset({1, 2, 4}), alo=1, ahi=3)
+
+    def test_error_on_out_of_bounds_element_in_named_frozenset(self):
+        log_msg = ['ERROR:root:Value 4 of element in frozenset test lies '
+                   'outside the allowed interval (-inf, 3]!']
+        err_msg = ('Value 4 of element in frozenset test lies outside'
+                   ' the allowed interval (-inf, 3]!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(frozenset({1, 2, 4}), 'test', ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict(self):
         inputs = {1: 'one', 2: 'two', 3: 'three'}
-        output = AllLimited(inputs, all_lo=1, all_hi=3)
+        output = AllLimited(inputs, alo=1, ahi=3)
         self.assertDictEqual(output, inputs)
 
     def test_error_on_out_of_bounds_element_in_unnamed_dict(self):
@@ -146,7 +167,7 @@ class TestAllLimited(ut.TestCase):
                    "'four'} lies outside the allowed interval [1, 3]!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs, all_lo=1, all_hi=3)
+                _ = AllLimited(inputs, alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -158,13 +179,13 @@ class TestAllLimited(ut.TestCase):
                    ' the allowed interval (-inf, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs, 'test', all_hi=3)
+                _ = AllLimited(inputs, 'test', ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict_keys(self):
         inputs = {1: 'one', 2: 'two', 3: 'three'}
-        output = AllLimited(inputs.keys(), all_lo=1, all_hi=3)
+        output = AllLimited(inputs.keys(), alo=1, ahi=3)
         self.assertSetEqual(set(output), set(inputs.keys()))
 
     def test_error_on_out_of_bounds_element_in_unnamed_dict_keys(self):
@@ -175,7 +196,7 @@ class TestAllLimited(ut.TestCase):
                    'outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs.keys(), all_lo=1, all_hi=3)
+                _ = AllLimited(inputs.keys(), alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -187,13 +208,13 @@ class TestAllLimited(ut.TestCase):
                    ' the allowed interval (-inf, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs.keys(), 'test', all_hi=3)
+                _ = AllLimited(inputs.keys(), 'test', ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_works_with_sane_dict_values(self):
         inputs = {'one': 1, 'two': 2, 'three': 3}
-        output = AllLimited(inputs.values(), all_lo=1, all_hi=3)
+        output = AllLimited(inputs.values(), alo=1, ahi=3)
         self.assertSetEqual(set(output), set(inputs.values()))
 
     def test_error_on_out_of_bounds_element_in_unnamed_dict_values(self):
@@ -204,7 +225,7 @@ class TestAllLimited(ut.TestCase):
                    'outside the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs.values(), all_lo=1, all_hi=3)
+                _ = AllLimited(inputs.values(), alo=1, ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -216,7 +237,7 @@ class TestAllLimited(ut.TestCase):
                    'outside the allowed interval (-inf, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited(inputs.values(), 'test', all_hi=3)
+                _ = AllLimited(inputs.values(), 'test', ahi=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -235,14 +256,20 @@ class TestAllLimited(ut.TestCase):
     def test_attribute_NonEmpty_is_type_CompositionOf(self):
         self.assertIsInstance(AllLimited.NonEmpty, CompositionOf)
 
-    def test_all_hi_and_lo_are_passed_through_type_and_non_empty_checker(self):
+    def test_has_attribute_JustLen(self):
+        self.assertTrue(hasattr(AllLimited, 'JustLen'))
+
+    def test_attribute_JustLen_is_type_CompositionOf(self):
+        self.assertIsInstance(AllLimited.JustLen, CompositionOf)
+
+    def test_ahi_and_lo_are_passed_through_type_and_non_empty_checker(self):
         log_msg = ['ERROR:root:Value d of str test at index 2'
                    ' lies outside the allowed interval (-inf, c]!']
         err_msg = ('Value d of str test at index 2 lies'
                    ' outside the allowed interval (-inf, c]!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LimitError) as err:
-                _ = AllLimited.AllStr.NonEmpty('abd', 'test', all_hi='c')
+                _ = AllLimited.AllStr.NonEmpty('abd', 'test', ahi='c')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

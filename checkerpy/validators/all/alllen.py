@@ -16,7 +16,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     name : str, optional
         The name of the variable to check the length of the elements of.
         Defaults to None.
-    all_len : int, tuple(int)
+    alen : int, tuple(int)
         One or more lengths that all elements of `iterable` should have.
 
     Returns
@@ -28,7 +28,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     -------
     o(callable) : CompositionOf
         Daisy-chains the length checker to another `callable`, returning the
-        functional composition of both. If the optional argument `all_len` is
+        functional composition of both. If the optional argument `alen` is
         specified when calling the composition, it is passed through to the
         length checker.
 
@@ -36,7 +36,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     -----
     For convenience, type checkers for built-in iterables (str, tuple, list,
     set, and dict) and an emptiness checker for `iterable` are attached as
-    methods as well. If the optional argument `all_len` is specified in calls
+    methods as well. If the optional argument `alen` is specified in calls
     to these methods, it is passed through to the length checker.
 
     Raises
@@ -55,7 +55,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, all_len: int, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, alen: int, **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__
@@ -65,7 +65,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
             raise IterError(message)
         for index, value in enumerate(iterable):
             value_name = cls.__name_from(index, value)
-            _ = JustLen(value, name=value_name, length=all_len)
+            _ = JustLen(value, name=value_name, length=alen)
         return iterable
 
     @classmethod
@@ -78,7 +78,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         elif cls._iter_type == 'dict_values':
             string = f'dict {cls._string}' if cls._name else cls._string
             return f'value {value} in ' + string
-        elif cls._iter_type == 'set':
-            return f'{value} in set {cls._string}'
+        elif cls._iter_type in ('set', 'frozenset'):
+            return f'{value} in {cls._iter_type} {cls._string}'
         return (f'{value} with index {index} in '
                 f'{cls._iter_type} {cls._string}')

@@ -100,6 +100,25 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_frozenset(self):
+        inputs = frozenset({'f', 'o', 'o'})
+        output = AllNonEmpty(inputs)
+        self.assertSetEqual(output, inputs)
+
+    def test_error_on_empty_element_in_unnamed_frozenset(self):
+        with self.assertLogs(level=logging.ERROR):
+            with self.assertRaises(EmptyError):
+                _ = AllNonEmpty(frozenset({'f', 'o', ''}))
+
+    def test_error_on_empty_element_in_named_frozenset(self):
+        log_msg = ['ERROR:root:Str in frozenset test must not be empty!']
+        err_msg = 'Str in frozenset test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(frozenset({'f', 'o', ''}), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_works_with_sane_dict(self):
         inputs = {'f': 1, 'o': 2}
         output = AllNonEmpty(inputs)
@@ -190,6 +209,12 @@ class TestAllNonEmpty(ut.TestCase):
 
     def test_attribute_NonEmpty_is_type_CompositionOf(self):
         self.assertIsInstance(AllNonEmpty.NonEmpty, CompositionOf)
+
+    def test_has_attribute_JustLen(self):
+        self.assertTrue(hasattr(AllNonEmpty, 'JustLen'))
+
+    def test_attribute_JustLen_is_type_CompositionOf(self):
+        self.assertIsInstance(AllNonEmpty.JustLen, CompositionOf)
 
     def test_has_all_iterable_type_checker_attributes(self):
         for iterable in _ALL_ITERABLES:

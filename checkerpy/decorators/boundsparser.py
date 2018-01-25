@@ -18,7 +18,7 @@ class BoundsParser(ParserMixin):
         lo, hi = JustLen(limits, name='for '+list_limits_name, length=2)
 
         def limited_list(value, name: str = None):
-            return AllLimited.JustList(value, name=name, all_lo=lo, all_hi=hi)
+            return AllLimited.JustList(value, name=name, alo=lo, ahi=hi)
 
         return limited_list
 
@@ -30,7 +30,7 @@ class BoundsParser(ParserMixin):
         lo, hi = JustLen(limits, name='for '+set_limits_name, length=2)
 
         def limited_set(value, name: str = None):
-            return AllLimited.JustSet(value, name=name, all_lo=lo, all_hi=hi)
+            return AllLimited.JustSet(value, name=name, alo=lo, ahi=hi)
 
         return limited_set
 
@@ -49,8 +49,8 @@ class BoundsParser(ParserMixin):
 
         def limited_dict(mapping, name: str = None):
             mapping = JustDict(mapping, name=name)
-            _ = AllLimited(mapping, name=name, all_lo=lo_key, all_hi=hi_key)
-            _ = AllLimited(mapping.values(), name=name, all_lo=lo, all_hi=hi)
+            _ = AllLimited(mapping, name=name, alo=lo_key, ahi=hi_key)
+            _ = AllLimited(mapping.values(), name=name, alo=lo, ahi=hi)
             return mapping
 
         return limited_dict
@@ -65,7 +65,7 @@ class BoundsParser(ParserMixin):
             lo, hi = JustLen(limits, name='for '+tup_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
-                return AllLimited.JustTuple(value, name, all_lo=lo, all_hi=hi)
+                return AllLimited.JustTuple(value, name, alo=lo, ahi=hi)
 
         elif all(type(limit) is tuple for limit in limits):
 

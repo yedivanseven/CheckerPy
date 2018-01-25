@@ -1,10 +1,10 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Any
 from ..one import Just
 from ...validators.one import JustLen
 from ...exceptions import LenError
 from ...functional.mixins import CompositionClassMixin
 
-TYPES = Union[Tuple[type, ...], List[type]]
+Types = Union[Tuple[type, ...], List[type]]
 
 
 class TypedTuple(CompositionClassMixin):
@@ -65,14 +65,14 @@ class TypedTuple(CompositionClassMixin):
         return value
 
     @classmethod
-    def __length_of(cls, types: TYPES) -> Tuple[TYPES, int]:
+    def __length_of(cls, types: Types) -> Tuple[Types, int]:
         if type(types) not in (tuple, list):
             message = cls.__has_no_length_message_for(types)
             raise LenError(message)
         return types, len(types)
 
     @staticmethod
-    def __has_no_length_message_for(types) -> str:
+    def __has_no_length_message_for(types: Any) -> str:
         type_name = type(types).__name__
         return (f'Length of types argument {types} with '
                 f'type {type_name} cannot be determined!')

@@ -1,10 +1,10 @@
 import logging as log
-from typing import Tuple, Union, Iterable
+from typing import Tuple, Union, Iterable, Any
 from .docstring import DOC_HEADER, DOC_BODY
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError
 
-TYPES = Union[type, Iterable[type]]
+Types = Union[type, Iterable[type]]
 
 
 class Just(CompositionMixin):
@@ -32,7 +32,7 @@ class Just(CompositionMixin):
 
     """
 
-    def __init__(self, *types: TYPES, identifier: str = 'Just') -> None:
+    def __init__(self, *types: Types, identifier: str = 'Just') -> None:
         self._name = None
         self.__types = self.__registered(types)
         self.__doc__ = self.__doc_string()
@@ -42,7 +42,7 @@ class Just(CompositionMixin):
     def types(self) -> Tuple[type, ...]:
         return self.__types
 
-    def __call__(self, value, name=None, **kwargs):
+    def __call__(self, value: Any, name: str = None, **kwargs):
         value_type = type(value)
         self._name = str(name) if name is not None else ''
         if value_type not in self.__types:
@@ -51,7 +51,7 @@ class Just(CompositionMixin):
             raise WrongTypeError(message)
         return value
 
-    def __error_message_for(self, value, value_type: str) -> str:
+    def __error_message_for(self, value: Any, value_type: str) -> str:
         name = ' of '+self._name if self._name else ''
         types = tuple(type_.__name__ for type_ in self.__types)
         of_type = types[0] if len(types) == 1 else f'one of {types}'
@@ -79,7 +79,7 @@ class Just(CompositionMixin):
         return type_
 
     @staticmethod
-    def __invalid_type_message_for(type_) -> str:
+    def __invalid_type_message_for(type_: Any) -> str:
         name = type_.__name__ if hasattr(type_, '__name__') else type_
         type_name = type(type_).__name__
         return f'Type of type specifier {name} must be type, not {type_name}!'

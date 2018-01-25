@@ -40,7 +40,7 @@ class TestJustDtypeInstatiation(ut.TestCase):
 
     def test_has_default_name(self):
         JustInt16 = JustDtype(int16)
-        self.assertEqual(JustInt16.__name__, 'JustDtype')
+        self.assertEqual(JustInt16.__name__, 'JustD')
 
     def test_identifier_sets_name_attribute(self):
         JustInt16 = JustDtype(int16, identifier='JustInt16')

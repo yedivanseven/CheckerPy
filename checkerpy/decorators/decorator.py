@@ -15,10 +15,10 @@ class Decorator:
         self.kwarg_checks = self.parsed(kwarg_specs)
 
     def __call__(self, function_to_decorate: Func) -> Decorated:
-        first_arg, func_specs, names = self.type_of(function_to_decorate)
+        first_index, func_specs, names = self.type_of(function_to_decorate)
         arg_string = self.arg_string_from(func_specs)
         function_to_decorate.__argnames__ = names
-        names = names[first_arg:]
+        names = names[first_index:]
         n_names = len(names)
         arg_range = range(min(n_names, self.n_arg_specs))
         for arg in arg_range:
@@ -28,12 +28,12 @@ class Decorator:
         def typed_function(*args, **kwargs):
             named_args = kwargs.copy()
             n_args = len(args)
-            i_args = range(min(n_args-first_arg, n_names))
+            i_args = range(min(n_args-first_index, n_names))
             for i_arg in i_args:
-                named_args.update({names[i_arg]: args[first_arg + i_arg]})
+                named_args.update({names[i_arg]: args[first_index + i_arg]})
             for arg_name, arg_value in named_args.items():
-                arg_check = self.kwarg_checks.get(arg_name, identity)
-                _ = arg_check(arg_value, arg_string.format(arg_name))
+                kwarg_check = self.kwarg_checks.get(arg_name, identity)
+                _ = kwarg_check(arg_value, arg_string.format(arg_name))
             return function_to_decorate(*args, **kwargs)
 
         return self.transfer_attributes(function_to_decorate, typed_function)

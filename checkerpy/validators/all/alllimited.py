@@ -14,9 +14,9 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         The iterable for which to check if its elements lie outside limits.
     name : str, optional
         The name of the variable to check the elements of. Defaults to None.
-    all_lo : optional
+    alo : optional
         Lower bound for all elements of `iterable`. Defaults to Ellipsis.
-    all_hi : optional
+    ahi : optional
         Upper bound for all elements of `iterable`. Defaults to Ellipsis.
 
     Returns
@@ -28,7 +28,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
     -------
     o(callable) : CompositionOf
         Daisy-chains the limits checker to another `callable`, returning the
-        functional composition of both. If `all_lo` and/or `all_hi` is
+        functional composition of both. If `alo` and/or `ahi` is
         specified when calling the composition, it (or they) are passed
         through to the limits checker.
 
@@ -36,7 +36,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
     -----
     For convenience, type checkers for built-in comparables (i.e., everything
     but dict) and iterables as well as an emptiness checker for `iterable`
-    are attached as methods. If `all_lo` and/or `all_hi` is specified in calls
+    are attached as methods. If `alo` and/or `ahi` is specified in calls
     to these methods, it (or they) are passed through to the limits checker.
 
     Raises
@@ -55,7 +55,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, *, all_lo=..., all_hi=..., **kwargs):
+    def __new__(cls, iterable, name=None, *, alo=..., ahi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._iter_type = type(iterable).__name__
@@ -65,7 +65,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
             raise IterError(message)
         for index, value in enumerate(iterable):
             value_name = cls.__name_from(index)
-            _ = Limited(value, name=value_name, lo=all_lo, hi=all_hi)
+            _ = Limited(value, name=value_name, lo=alo, hi=ahi)
         return iterable
 
     @classmethod
@@ -77,6 +77,6 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         elif cls._iter_type == 'dict_values':
             s = f'dict value in {cls._string}' if cls._name else cls._string
             return s
-        elif cls._iter_type == 'set':
-            return f'element in set {cls._string}'
+        elif cls._iter_type in ('set', 'frozenset'):
+            return f'element in {cls._iter_type} {cls._string}'
         return f'{cls._iter_type} {cls._string} at index {index}'
