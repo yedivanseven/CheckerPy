@@ -252,8 +252,8 @@ from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen
 If, for example, you want to check a list of 2-tuples, use:
 ```python
 out = AllNonEmpty([(1, 2), (3, 4), (5, 6)], name='short')
-out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', all_len=2)
-out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', all_lo=(1, 1), all_hi=(6, 6))
+out = AllLen([(1, 2), (3, 4), (5, 6)], 'short', alen=2)
+out = AllLimited([(1, 2), (3, 4), (5, 6)], 'short', alo=(1, 1), ahi=(6, 6))
 ```
 Again, you get an error raised (and logged) if just one element of the iterable
 in question does not pass the test and if you try to check something that is
@@ -408,16 +408,16 @@ same way. When calling, for example,
 ```python
 from checkerpy.validators.all import AllLimited
 
-out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, all_lo='aaa', all_hi='zzz')
+out = AllLimited.o(AllStr).o(NonEmpty).o(JustList)(inp, alo='aaa', ahi='zzz')
 ```
-the keyword arguments `all_lo` and `all_hi` are passed all the way through to
+the keyword arguments `alo` and `ahi` are passed all the way through to
 `AllLimited`.
 
 In order to further save you some typing, some useful functional compositions
 are already attached to most validators as methods. The example above, for
 instance, can also be written as:
 ```python
-out = AllLimited.AllStr.NonEmpty.JustList(inp, all_lo='aaa', all_hi='zzz')
+out = AllLimited.AllStr.NonEmpty.JustList(inp, alo='aaa', ahi='zzz')
 ```
 
 The same is true for the `numpy` validators. Provided you have imported
