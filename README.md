@@ -134,7 +134,7 @@ case of,
 ```python
 out = NonEmpty(('foo', 'bar', 'egg'))
 ```
-`out` will be the tuple `('foo', 'bar', 'egg'')`, whereas
+`out` will be the tuple `('foo', 'bar', 'egg')`, whereas
 ```python
 out = NonEmpty({}, name='of cheeses')
 ```
@@ -155,7 +155,7 @@ out = JustLen({'foo', 'bar', 'egg'}, length=3)
 ```
 or:
 ```python
-out = JustLen(('Stilton', 'Camembert'), name='cheeses', length=(3, 5))
+out = JustLen(('Stilton', 'Camembert'), name='cheeses', length=(2, 3))
 ```
 An error is not only logged and raised if the length of the iterable is not 
 among the specified lengths, but also if the value passed in is not, in fact,
@@ -179,7 +179,7 @@ out = OneOf('medium', name='steak', items=('rare', 'medium', 'well done'))
 ```
 
 ##### 1.2.5 JustCall
-If you want ot make sure that an (optionally named) object is callable, you
+If you want to make sure that an (optionally named) object is callable, you
 can write:
 ```python
 def cheese_shop(x):
