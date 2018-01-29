@@ -2,7 +2,7 @@ v0.9.4, 01/25/2018 -- Minor revision
 * Renamed "all_len" keyword in AllLen validator to "alen"
 * Renamed "all_hi" and "all_lo" keywords in AllLimited to "alo" and "ahi"
 * Fixed various docstring
-* refined various error messages
+* Refined various error messages
 
 v0.9.3, 01/22/2018 -- Minor revision
 * Fixed various docstrings
