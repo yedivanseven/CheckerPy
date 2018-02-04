@@ -608,7 +608,7 @@ the first position.
 #### 5.4 Considerations
 When using the decorators just introduced, be aware of the following:
 1. The two decorators `Typed` and `Bounded` can be combined in any order,
-__but__ the should always be the _first_ decorators you apply to
+__but__ they should always be the _first_ decorators you apply to
 a function or method, that is, they should be at the _lowest_ position,
 directly above the function definition. This is particularly true also for
 _class methods_ and _static methods_.
