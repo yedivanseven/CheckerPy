@@ -56,5 +56,6 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
 
     @classmethod
     def __not_idenitfier_message_for(cls, value: Any) -> str:
-        type_name = type(value).__name__
-        return f'{cls.__string} of type {type_name} is not a valid identifier!'
+        type_of_value = type(value).__name__
+        of_type = '' if type_of_value == 'str' else f' of type {type_of_value}'
+        return f'{cls.__string}{of_type} is not a valid identifier!'
