@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='checkerpy',
-      version='0.9.4',
+      version='0.9.5',
       description='Type and value checkers both as callables and decorators',
       url='https://github.com/yedivanseven/CheckerPy',
       download_url='https://pypi.python.org/pypi/checkerpy',
