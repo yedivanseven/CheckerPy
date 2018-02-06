@@ -1,6 +1,6 @@
 __all__ = ['WrongTypeError', 'CallableError', 'DtypeError', 'LenError',
            'EmptyError', 'IntError', 'LimitError', 'IterError', 'NdimError',
-           'ShapeError', 'IterError']
+           'ShapeError', 'IterError', 'IdentifierError']
 
 
 class WrongTypeError(Exception):
@@ -44,4 +44,7 @@ class ShapeError(Exception):
 
 
 class ItemError(Exception):
+    pass
+
+class IdentifierError(Exception):
     pass

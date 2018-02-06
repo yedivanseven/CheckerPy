@@ -49,7 +49,6 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
     --------
     CompositionOf
 
-
     """
 
     def __new__(cls, iterable, name: str = None, *, length: int, **kwargs):
