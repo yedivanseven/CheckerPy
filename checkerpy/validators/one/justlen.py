@@ -4,6 +4,13 @@ from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
 
+dict_keys = type({}.keys())
+dict_values = type({}.values())
+dict_items = type({}.items())
+named_types = (frozenset, dict_keys, dict_values, dict_items)
+
+Iterables = (tuple, list, set, dict) + named_types
+
 
 class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
     """Checks if the length of an iterable is one of the specified lengths.
@@ -51,10 +58,10 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, length: int, **kwargs):
+    def __new__(cls, iterable, name=None, *, length, **kwargs) -> Sized:
         cls._name = str(name) if name is not None else ''
         cls.__string = cls._name or str(iterable)
-        lengths = length if type(length) in (tuple, list, set) else (length, )
+        lengths = length if type(length) in Iterables else (length,)
         cls._lengths = tuple(map(cls.__validate, lengths))
         try:
             length_of_iterable = len(iterable)
@@ -96,6 +103,13 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
         else:
             of_length = f'one of {cls._lengths}'
         actual_len = len(iterable)
-        type_name = type(iterable).__name__
-        return (f'Length of {type_name} {cls.__string} must'
+        type_of = cls.__type_name_of(iterable)
+        return (f'Length of {type_of}{cls.__string} must'
                 f' be {of_length}, not {actual_len}!')
+
+    @classmethod
+    def __type_name_of(cls, iterable: Sized) -> str:
+        type_of_iterable = type(iterable)
+        if type_of_iterable in named_types and not cls._name:
+            return ''
+        return type_of_iterable.__name__ + ' '

@@ -43,7 +43,7 @@ class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, **kwargs):
+    def __new__(cls, iterable, name: str = None, **kwargs) -> Iterable:
         cls._name = str(name) if name is not None else ''
         try:
             length_of_iterable = len(iterable)

@@ -241,6 +241,37 @@ class TestAllLimited(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_dict_items(self):
+        inputs = {'one': 1, 'two': 2, 'three': 3}
+        output = AllLimited(inputs.items(), alo=('aaa', 1), ahi=('zzzz', 3))
+        self.assertSetEqual(set(output), set(inputs.items()))
+
+    def test_error_on_out_of_bounds_element_in_unnamed_dict_items(self):
+        inputs = {'one': 1, 'two': 2, 'three': 4}
+        log_msg = ["ERROR:root:Value ('one', 1) of dict_items([('one', 1),"
+                   " ('two', 2), ('three', 4)]) lies outside the allowed "
+                   "interval [('zzz', 2), ('zzzz', 3)]!"]
+        err_msg = ("Value ('one', 1) of dict_items([('one', 1), "
+                   "('two', 2), ('three', 4)]) lies outside the "
+                   "allowed interval [('zzz', 2), ('zzzz', 3)]!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.items(), alo=('zzz', 2), ahi=('zzzz', 3))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_out_of_bounds_element_in_named_dict_items(self):
+        inputs = {'one': 1, 'two': 2, 'three': 4}
+        log_msg = ["ERROR:root:Value ('one', 1) of item in dict test lies "
+                   "outside the allowed interval [('zzz', 2), inf)!"]
+        err_msg = ("Value ('one', 1) of item in dict test lies outside"
+                   " the allowed interval [('zzz', 2), inf)!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LimitError) as err:
+                _ = AllLimited(inputs.items(), 'test', alo=('zzz', 2))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(AllLimited, iterable.__name__))

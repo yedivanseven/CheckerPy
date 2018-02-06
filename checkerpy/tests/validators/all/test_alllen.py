@@ -206,6 +206,35 @@ class TestAllLen(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_dict_items(self):
+        inputs = {1: 'foo', 2: 'bar', 3: 'baz'}
+        output = AllLen(inputs.items(), alen=2)
+        self.assertSetEqual(set(output), set(inputs.items()))
+
+    def test_error_on_wrong_alen_element_in_unnamed_dict_items(self):
+        inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
+        log_msg = ["ERROR:root:Length of tuple item (1, 'foo') in dict_items"
+                   "([(1, 'foo'), (2, 'ba'), (3, 'baz')]) must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo') in dict_items([(1, 'foo'),"
+                   " (2, 'ba'), (3, 'baz')]) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.items(), alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_dict_items(self):
+        inputs = {1: 'foo', 2: 'ba', 3: 'baz'}
+        log_msg = ["ERROR:root:Length of tuple item (1, 'foo')"
+                   " in dict test must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo') "
+                   "in dict test must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.items(), 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(AllLen, iterable.__name__))

@@ -1,6 +1,10 @@
+v0.9.6, 02/7/2018 -- Minor Revision
+* OneOf now accepts dict, dict_keys, dict_values, and dict_items as items
+* JustLen now accepts lengths also as frozenset, dict, dict_keys, and dict_values
+* Some fixes to error and log messages
+
 v0.9.5, 02/7/2018 -- Minor Revision
 * Added the validator Identifier
-
 
 v0.9.4, 01/25/2018 -- Minor revision
 * Renamed "all_len" keyword in AllLen validator to "alen"

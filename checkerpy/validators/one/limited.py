@@ -1,4 +1,5 @@
 import logging as log
+from typing import Any
 from .nonempty import NonEmpty
 from .justlen import JustLen
 from ...functional.mixins import CompositionClassMixin
@@ -64,13 +65,13 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     """
 
-    def __new__(cls, value, name: str = None, *, lo=..., hi=..., **kwargs):
+    def __new__(cls, value, name=None, *, lo=..., hi=..., **kwargs) -> Any:
         cls._name = str(name) if name is not None else ''
         try:
             value_too_small = False if lo is Ellipsis else value < lo
             value_too_large = False if hi is Ellipsis else value > hi
         except TypeError as error:
-            message = cls.__uncomparabel_type_message_for(value, lo, hi)
+            message = cls.__uncomparable_type_message_for(value, lo, hi)
             log.error(message)
             raise WrongTypeError(message) from error
         if value_too_small or value_too_large:
@@ -80,7 +81,7 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
         return value
 
     @classmethod
-    def __uncomparabel_type_message_for(cls, value, lo, hi) -> str:
+    def __uncomparable_type_message_for(cls, value, lo, hi) -> str:
         lo_type = type(lo).__name__
         hi_type = type(hi).__name__
         value_type = type(value).__name__

@@ -1,6 +1,14 @@
 import logging as log
+from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
+
+dict_keys = type({}.keys())
+dict_values = type({}.values())
+dict_items = type({}.items())
+
+Iterables = (tuple, list, set, frozenset, dict,
+             dict_keys, dict_values, dict_items)
 
 
 class OneOf(CompositionClassMixin):
@@ -47,7 +55,7 @@ class OneOf(CompositionClassMixin):
 
     """
 
-    def __new__(cls, value, name: str = None, *, items=(), **kwargs) -> None:
+    def __new__(cls, value, name: str = None, *, items=(), **kwargs) -> Any:
         cls._name = str(name) if name is not None else ''
         cls._items = cls.__formatted(items)
         if value not in cls._items:
@@ -57,8 +65,8 @@ class OneOf(CompositionClassMixin):
         return value
 
     @staticmethod
-    def __formatted(items):
-        if type(items) in (tuple, list, set, frozenset):
+    def __formatted(items: Any) -> Any:
+        if type(items) in Iterables:
             if len(items) == 0:
                 return items,
             else:
@@ -66,7 +74,7 @@ class OneOf(CompositionClassMixin):
         return items,
 
     @classmethod
-    def __not_one_of_items_message_for(cls, value) -> str:
+    def __not_one_of_items_message_for(cls, value: Any) -> str:
         name = ' of '+cls._name if cls._name else ''
         with_type = 'with type ' + type(value).__name__
         if len(cls._items) == 1:

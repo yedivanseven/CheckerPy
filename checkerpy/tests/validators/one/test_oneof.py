@@ -44,6 +44,30 @@ class TestOneOf(ut.TestCase):
         output = OneOf(inputs, items={2, 3})
         self.assertEqual(output, inputs)
 
+    def test_works_with_multiple_items_as_dict(self):
+        inputs = 2
+        items = {1: 'one', 2: 'two'}
+        output = OneOf(inputs, items=items)
+        self.assertEqual(output, inputs)
+
+    def test_works_with_multiple_items_as_dict_keys(self):
+        inputs = 2
+        items = {1: 'one', 2: 'two'}
+        output = OneOf(inputs, items=items.keys())
+        self.assertEqual(output, inputs)
+
+    def test_works_with_multiple_items_as_dict_values(self):
+        inputs = 'one'
+        items = {1: 'one', 2: 'two'}
+        output = OneOf(inputs, items=items.values())
+        self.assertEqual(output, inputs)
+
+    def test_works_with_multiple_items_as_items(self):
+        inputs = (2, 'two')
+        items = {1: 'one', 2: 'two'}
+        output = OneOf(inputs, items=items.items())
+        self.assertTupleEqual(output, inputs)
+
     def test_error_on_unnamed_value_multiple_items(self):
         log_msg = ['ERROR:root:Value 1 with type int is not one of (2, 3)!']
         err_msg = 'Value 1 with type int is not one of (2, 3)!'
@@ -66,22 +90,27 @@ class TestOneOf(ut.TestCase):
     def test_works_with_empty_item_tuple(self):
         inputs = ()
         output = OneOf(inputs, items=())
-        self.assertEqual(output, inputs)
+        self.assertTupleEqual(output, inputs)
 
     def test_works_with_empty_item_list(self):
         inputs = []
         output = OneOf(inputs, items=[])
-        self.assertEqual(output, inputs)
+        self.assertListEqual(output, inputs)
 
-    def test_works_with_empty_item_set(self):
+    def test_works_with_empty_item_dict(self):
         inputs = {}
         output = OneOf(inputs, items={})
-        self.assertEqual(output, inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_works_with_empty_item_set(self):
+        inputs = set()
+        output = OneOf(inputs, items=set())
+        self.assertSetEqual(output, inputs)
 
     def test_works_with_item_tuple_of_empty_iterables(self):
         inputs = ()
         output = OneOf(inputs, items=((), [], {}))
-        self.assertEqual(output, inputs)
+        self.assertTupleEqual(output, inputs)
 
     def test_works_with_non_empty_tuple(self):
         inputs = (1, 2, 3)

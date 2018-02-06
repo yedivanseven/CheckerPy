@@ -62,14 +62,13 @@ class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     @classmethod
     def __name_from(cls, index: int) -> str:
+        dict_types_string = f'dict {cls._string}' if cls._name else cls._string
         if cls._iter_type == 'dict':
             return f'key in dict {cls._string}'
         if cls._iter_type == 'dict_keys':
-            string = f'dict {cls._string}' if cls._name else cls._string
-            return 'key in ' + string
+            return 'key in ' + dict_types_string
         elif cls._iter_type == 'dict_values':
-            string = f'dict {cls._string}' if cls._name else cls._string
-            return 'value in ' + string
+            return 'value in ' + dict_types_string
         elif cls._iter_type in ('set', 'frozenset'):
             return f'in {cls._iter_type} {cls._string}'
         return f'with index {index} in {cls._iter_type} {cls._string}'
