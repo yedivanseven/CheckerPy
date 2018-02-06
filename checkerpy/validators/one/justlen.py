@@ -1,6 +1,6 @@
 from typing import Any, Sized
 import logging as log
-from .registrar import IterableRegistrar
+from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
 

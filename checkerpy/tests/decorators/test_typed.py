@@ -879,17 +879,9 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed({int, float})
         def f(x):
             return x
-        log_msg = ["ERROR:root:Type of element in set argument x to"
-                   f" function f defined in module {__name__} must "
-                   "be one of ('int', 'float'), not str like foo!"]
-        err_msg = ("Type of element in set argument x to function f defined "
-                   f"in module {__name__} must be one of ('int', 'float'), "
-                   "not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f({1, 2, 'foo'})
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
 
     def test_not_set_error_with_set_two_types(self):
         @Typed({int, float})

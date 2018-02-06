@@ -1,3 +1,7 @@
+v0.9.5, 02/7/2018 -- Minor Revision
+* Added JustIdentifier and AllIdentifier
+
+
 v0.9.4, 01/25/2018 -- Minor revision
 * Renamed "all_len" keyword in AllLen validator to "alen"
 * Renamed "all_hi" and "all_lo" keywords in AllLimited to "alo" and "ahi"
