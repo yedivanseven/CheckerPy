@@ -1,5 +1,4 @@
 # To Do
-- Fix bug in Bounded decorator with @Bounded((1, ...))! 
 - Add Contains validator to see if an item is in the container that we want to check!
 - Update Readme with new validators Identifier and Contains
 

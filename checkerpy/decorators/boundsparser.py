@@ -58,11 +58,9 @@ class BoundsParser(ParserMixin):
     def tuple_checker(self, limits: tuple, limits_id: SpecID) -> Callable:
         limits_name = 'for ' + self.__limits_string_from(limits_id).format('')
         tup_limits_name = self.__limits_string_from(limits_id).format('tuple ')
-        if ... in limits:
-            limits = tuple(limit for limit in limits if limit is not ...)
-            limits = JustLen(limits, name=limits_name, length=1)
-            limits = JustTuple(limits[0], name=tup_limits_name)
-            lo, hi = JustLen(limits, name='for '+tup_limits_name, length=2)
+        if type(limits[0]) is tuple and limits[1] is ...:
+            limits = JustLen(limits, name='for '+tup_limits_name, length=2)
+            lo, hi = JustLen(limits[0], name='for '+tup_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
                 return AllLimited.JustTuple(value, name, alo=lo, ahi=hi)

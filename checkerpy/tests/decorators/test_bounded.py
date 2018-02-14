@@ -693,14 +693,14 @@ class TestBoundedFunctionTuple(ut.TestCase):
         output = f(inputs)
         self.assertTupleEqual(output, inputs)
 
-    def test_error_on_limit_specs_not_a_tuple(self):
-        log_msg = ['ERROR:root:Type of limits specification of tuple argument'
-                   ' at position 0 must be tuple, not list like [4]!']
-        err_msg = ('Type of limits specification of tuple argument '
-                   'at position 0 must be tuple, not list like [4]!')
+    def test_error_on_limit_specs_too_many_tuples(self):
+        log_msg = ['ERROR:root:Length of tuple for limits specification'
+                   ' of tuple argument at position 0 must be 2, not 3!']
+        err_msg = ('Length of tuple for limits specification of'
+                   ' tuple argument at position 0 must be 2, not 3!')
         with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(WrongTypeError) as err:
-                @Bounded((..., [4]))
+            with self.assertRaises(LenError) as err:
+                @Bounded(((1, 2), ..., (3, 4)))
                 def f(x):
                     return x
         self.assertEqual(str(err.exception), err_msg)
@@ -734,7 +734,7 @@ class TestBoundedFunctionTuple(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_limit_error_on_tuple_element(self):
-        @Bounded((..., (4, 6)))
+        @Bounded(((4, 6), ...))
         def f(x):
             return x
         log_msg = ['ERROR:root:Value 2 of tuple argument x to function f '
