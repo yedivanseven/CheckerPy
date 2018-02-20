@@ -1,3 +1,6 @@
+v0.9.7, 02/20/2018 -- Minor Revision
+*
+
 v0.9.6, 02/7/2018 -- Minor Revision
 * Added Contains validator
 * Fixed bug in Bounded decorator
