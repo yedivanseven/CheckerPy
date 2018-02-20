@@ -52,7 +52,8 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
     Raises
     ------
     ItemError
-        If `iterable` does not contain any or all of the given items.
+        If `iterable` does not contain any or all of the given items, or if
+        the items are not specified as lists.
     IterError
         If `iterable` is not, in fact, an iterable.
 

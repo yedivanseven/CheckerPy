@@ -3,6 +3,7 @@ import unittest as ut
 from ....validators.one import Contains
 from ....exceptions import ItemError, IterError, CallableError
 from ....functional import CompositionOf
+from ....types.one import _ITERABLES
 
 
 class TestContainsParameterSpecification(ut.TestCase):
@@ -65,6 +66,29 @@ class TestContainsGeneral(ut.TestCase):
                 _ = Contains(1, 'test', some=[1])
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_has_iterable_type_checker_attributes(self):
+        for iterable in _ITERABLES:
+            self.assertTrue(hasattr(Contains, iterable.__name__))
+
+    def test_iterable_type_checkers_are_type_CompositionOf(self):
+        for iterable in _ITERABLES:
+            type_checker = getattr(Contains, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+
+    def test_some_is_passed_through_to_contains(self):
+        err_msg = ('Item(s) to check must be given as'
+                   ' a list, not as str like test!')
+        with self.assertRaises(ItemError) as err:
+            _ = Contains.JustTuple((1, 2, 3), some='test', every=(1, 2))
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_every_is_passed_through_to_contains(self):
+        err_msg = ('Item(s) to check must be given as'
+                   ' a list, not as int like 1!')
+        with self.assertRaises(ItemError) as err:
+            _ = Contains.JustTuple((1, 2, 3), some=(3, 4), every=1)
+        self.assertEqual(str(err.exception), err_msg)
 
     def test_has_attribute_o(self):
         self.assertTrue(hasattr(Contains, 'o'))
