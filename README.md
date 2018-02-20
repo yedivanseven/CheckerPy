@@ -186,7 +186,7 @@ _all_ from a list of given items, you use:
 ```python
 out = Contains(('foo', 'bar', 'egg'), every=['foo', 'bar'])
 ```
-If, however, you are already happy when _at least one_ item from given list
+If, however, you are already happy when _at least one_ item from a given list
 is contained in the iterable in question, you should do:
  ```python
 out = Contains('worcestershire', some=['woo', 'ster'])
