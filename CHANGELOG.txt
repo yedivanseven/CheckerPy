@@ -1,4 +1,5 @@
 v0.9.6, 02/7/2018 -- Minor Revision
+* Added Contains validator
 * Fixed bug in Bounded decorator
 * OneOf now accepts dict, dict_keys, dict_values, and dict_items as items
 * JustLen now accepts lengths also as frozenset, dict, dict_keys, and dict_values

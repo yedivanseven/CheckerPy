@@ -123,9 +123,11 @@ out = JustMyTypes(inp, 'the ultimate object')
 
 #### 1.2 Value checking <a name=section1_2></a>
 Other than checking for type, `CheckerPy` also comes with validators for 
-bounds and membership of a set as well as emptiness and length of iterables.
+bounds, membership of a set,  string properties, as well as emptiness and
+length of iterables.
 ```python
-from checkerpy.validators.one import Limited, OneOf, NonEmpty, JustLen, JustCall
+from checkerpy.validators.one import Limited, OneOf, Contains, NonEmpty
+from checkerpy.validators.one import JustLen, JustCall, Identifier
 ```
 ##### 1.2.1 NonEmpty
 As the name implies, `NonEmpty` raises and logs an error if an (optionally
@@ -178,7 +180,23 @@ set of values, you simply do:
 out = OneOf('medium', name='steak', items=('rare', 'medium', 'well done'))
 ```
 
-##### 1.2.5 JustCall
+##### 1.2.5 Contains
+If you want to make sure that an (optionally named) iterable contains
+_all_ from a list of given items, you use:
+```python
+out = Contains(('foo', 'bar', 'egg'), every=['foo', 'bar'])
+```
+If, however, you are already happy when _at least one_ item from given list
+is contained in the iterable in question, you should do:
+ ```python
+out = Contains('worcestershire', some=['woo', 'ster'])
+```
+You can, of course, combine the two and specify both keyword arguments:
+ ```python
+out = Contains({'foo', 'bar', 'egg'}, every=['foo'], some=['bar', 'baz'])
+```
+
+##### 1.2.6 JustCall
 If you want to make sure that an (optionally named) object is callable, you
 can write:
 ```python
@@ -186,6 +204,13 @@ def cheese_shop(x):
     return f'No, sorry, we are out of {x} ...'
     
 out = JustCall(cheese_shop, name='silly function')
+```
+
+##### 1.2.7 Identifier
+If you want to make sure that an (optionally named) object is not only a string
+but also a valid python identifier, try this:
+```python
+out = Identifier('valid', name='method name')
 ```
 
 ### 2. Iterables <a name=chapter2></a>

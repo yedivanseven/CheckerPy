@@ -58,8 +58,11 @@ class BoundsParser(ParserMixin):
     def tuple_checker(self, limits: tuple, limits_id: SpecID) -> Callable:
         limits_name = 'for ' + self.__limits_string_from(limits_id).format('')
         tup_limits_name = self.__limits_string_from(limits_id).format('tuple ')
-        if type(limits[0]) is tuple and limits[1] is ...:
+        contains_ellipsis = ... in limits
+        contains_tuples = any(type(limit) is tuple for limit in limits)
+        if contains_ellipsis and contains_tuples:
             limits = JustLen(limits, name='for '+tup_limits_name, length=2)
+            limits = tuple(limit for limit in limits if limit is not ...)
             lo, hi = JustLen(limits[0], name='for '+tup_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
