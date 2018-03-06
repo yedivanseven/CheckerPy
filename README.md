@@ -123,8 +123,8 @@ out = JustMyTypes(inp, 'the ultimate object')
 
 #### 1.2 Value checking <a name=section1_2></a>
 Other than checking for type, `CheckerPy` also comes with validators for 
-bounds, membership of a set,  string properties, as well as emptiness and
-length of iterables.
+bounds, set membership,  string and function properties, as well as emptiness
+and length of iterables.
 ```python
 from checkerpy.validators.one import Limited, OneOf, Contains, NonEmpty
 from checkerpy.validators.one import JustLen, JustCall, Identifier
@@ -252,7 +252,7 @@ are type checked. To check either its keys or its _values_ (or both), use:
 ```python
 d = TypedDict({1: 'one', 2.0: 'two'}, keys=(int, float), values=str)
 ```
-Simply skip the according keyword if you don't what to check one of them.
+Simply skip the according keyword if you don't want to check one of them.
 
 ##### 2.1.3 TypedTuple
 In the example above, the tuple `(1, 2, 3)` may be of _arbitrary_ length and
@@ -318,7 +318,7 @@ from checkerpy.types.numpy import JustNdarray
 #### 3.2 Dtype checking
 Both numpy scalars and arrays have a `dtype` that you can check for. In full
 analogy to the `Just` class introduced in subsection [(1.1)](#chapter1),
-`CheckerPy` provides a just `JustDtype` class that you can use to create 
+`CheckerPy` provides a `JustDtype` class that you can use to create 
 dtype checkers for numpy arrays.
 ```python
 from checkerpy.types.numpy import JustDtype
@@ -363,7 +363,7 @@ or just:
 ```python
 out = JustNdim(a, name='numbers', ndim=2)
 ```
-An error is raised and logged and, if the value to be checked is not a numpy
+An error is raised and logged if the value to be checked is not a numpy
 array or if the dimensions of the array are not among those permitted.
 
 #### 3.4 Checking for shape
@@ -517,7 +517,7 @@ the respective class name(s).
 ##### 5.1.2 Elements in iterable arguments
 ###### Lists and sets
 If you want to check that an argument to a function is either a `list` or
-a `set` _and_ specify one more types that their elements can have, you do:
+a `set` _and_ specify one or more types that their elements can have, you do:
 ```python
 @Typed([int, float], currencies={str})
 def list_coins(denom, currencies):
@@ -573,7 +573,7 @@ Here, the argument `name` must be equal or greater than 'aaa' and `age` must
 be anywhere between 1 and 99 (including the interval boundaries). The
 ellipsis literal `...` is used to indicated the absence of a lower or upper
 bound. As with the `Typed` decorator introduced above in subsection
-[(5.1)}(#chapter5), you can pass as many or as few limits to the decorator
+[(5.1)](#chapter5), you can pass as many or as few limits to the decorator
 as you like, both named and unnamed, but
 
 **Note**: _Limits must strictly be given as_ tuples _of length 2!_
