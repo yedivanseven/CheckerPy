@@ -18,28 +18,28 @@ class TestJustShape(ut.TestCase):
 
     def test_error_on_shape_wrong_type(self):
         err_msg = ('Shape argument must be either a single tuple or a'
-                   ' list of tuples of integers, not a str like foo!')
+                   ' list of tuples of integers, not str like foo!')
         with self.assertRaises(ShapeError) as err:
             _ = JustShape(array([1, 2, 3]), shape='foo')
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_dimension_of_shape_wrong_type(self):
         err_msg = ("Shape argument must be either a single tuple or a list"
-                   " of tuples of integers, not a tuple like (1, 2, 'bar')!")
+                   " of tuples of integers, not tuple like (1, 2, 'bar')!")
         with self.assertRaises(IntError) as err:
             _ = JustShape(array([1, 2, 3]), shape=(1, 2, 'bar'))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_shape_of_shapes_wrong_type(self):
         err_msg = ("Shape argument must be either a single tuple or a list of"
-                   " tuples of integers, not a tuple like ((1, 2), 'three')!")
+                   " tuples of integers, not tuple like ((1, 2), 'three')!")
         with self.assertRaises(IntError) as err:
             _ = JustShape(array([1, 2, 3]), shape=((1, 2), 'three'))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_shape_of_shapes_contains_wrong_type(self):
         err_msg = ("Shape argument must be either a single tuple or a list"
-                   " of tuples of integers, not a tuple like (3, 'baz')!")
+                   " of tuples of integers, not tuple like (3, 'baz')!")
         with self.assertRaises(IntError) as err:
             _ = JustShape(array([1, 2, 3]), shape=((1, 2), (3, 'baz')))
         self.assertEqual(str(err.exception), err_msg)

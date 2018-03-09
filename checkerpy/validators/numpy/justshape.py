@@ -132,7 +132,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
     def __wrong_shape_spec_message_for(value: Any) -> str:
         type_of_value = type(value).__name__
         return ('Shape argument must be either a single tuple or a list of'
-                f' tuples of integers, not a {type_of_value} like {value}!')
+                f' tuples of integers, not {type_of_value} like {value}!')
 
     @classmethod
     def __has_no_shape_message_for(cls, variable: Any) -> str:
