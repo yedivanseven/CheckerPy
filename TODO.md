@@ -1,4 +1,5 @@
 # To Do
+- Add AllTypedDict and AllTypedTuple?
 - Add boolean option to query if checked variable fulfills requirements?
 - Add type and bounds inspection for general iterator in decorators with iter()?
 - Add JustIterator to types?
