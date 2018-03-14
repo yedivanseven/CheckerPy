@@ -1,5 +1,6 @@
 v0.9.7, 02/20/2018 -- Minor Revision
 * Fixed docstring in Contains
+* Removed np.int16 and np.float16 from JustNpNum
 
 v0.9.6, 02/7/2018 -- Minor Revision
 * Added Contains validator
