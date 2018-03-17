@@ -1,10 +1,10 @@
 # To Do
-- Make Iterable and Sizeable return types more general!
+- Continue to review JustLen
 - Add numpy JustSize validator?
+- Add validator for checking if object has attributes
+  - Add validators for all attributes of the Collections abstract base classes?
+  - Add validators for types in the typing package
+  - Redo JustSequence and JustIter
 - Add AllTypedDict and AllTypedTuple?
-- Add boolean option to query if checked variable fulfills requirements?
 - Add type and bounds inspection for general iterator in decorators with iter()?
-- Add JustIterator to types?
-- Add JustIterable to validators?
-- Rename JustIter to JustCollection or JustContainer?
 - Write tests for parsers?

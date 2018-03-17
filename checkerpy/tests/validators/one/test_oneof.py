@@ -1,7 +1,8 @@
 import logging
 import unittest as ut
+from ....functional import CompositionOf
 from ....validators.one import OneOf
-from ....exceptions import ItemError
+from ....exceptions import ItemError, CallableError
 
 
 class TestOneOf(ut.TestCase):
@@ -146,6 +147,26 @@ class TestOneOf(ut.TestCase):
                 _ = OneOf(42, 'test', items='foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_has_attribute_o(self):
+        self.assertTrue(hasattr(OneOf, 'o'))
+
+    def test_attribute_o_is_callable(self):
+        self.assertTrue(callable(OneOf.o))
+
+    def test_o_returns_composition(self):
+        def f(x):
+            return x
+        composition = OneOf.o(f)
+        self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = OneOf.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
 
 if __name__ == '__main__':

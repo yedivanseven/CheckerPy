@@ -65,8 +65,8 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     """
 
-    def __new__(cls, value, name=None, *, lo=..., hi=..., **kwargs) -> Any:
-        cls._name = str(name) if name is not None else ''
+    def __new__(cls, value, name: str = None, *, lo=..., hi=..., **kwargs):
+        cls.__name = str(name) if name is not None else ''
         try:
             value_too_small = False if lo is Ellipsis else value < lo
             value_too_large = False if hi is Ellipsis else value > hi
@@ -85,7 +85,7 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
         lo_type = type(lo).__name__
         hi_type = type(hi).__name__
         value_type = type(value).__name__
-        value_name = cls._name or str(value)
+        value_name = cls.__name or str(value)
         return (f'Cannot compare type {value_type} of {value_name}'
                 f' with limits of types {lo_type} and {hi_type}!')
 
@@ -93,6 +93,6 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
     def __value_out_of_bounds_message_for(cls, value, lo, hi) -> str:
         left = '(-inf' if lo in (float('-inf'), Ellipsis) else f'[{lo}'
         right = 'inf)' if hi in (float('+inf'), Ellipsis) else f'{hi}]'
-        value_name = ' of '+cls._name if cls._name else ''
+        value_name = ' of '+cls.__name if cls.__name else ''
         return (f'Value {value}{value_name} lies outside the'
                 f' allowed interval {left}, {right}!')

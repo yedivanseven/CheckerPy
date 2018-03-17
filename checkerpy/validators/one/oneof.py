@@ -3,13 +3,6 @@ from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
 
-dict_keys = type({}.keys())
-dict_values = type({}.values())
-dict_items = type({}.items())
-
-Iterables = (tuple, list, set, frozenset, dict,
-             dict_keys, dict_values, dict_items)
-
 
 class OneOf(CompositionClassMixin):
     """Class for checking if a value is one of the given items.
@@ -56,8 +49,8 @@ class OneOf(CompositionClassMixin):
 
     """
 
-    def __new__(cls, value, name: str = None, *, items=(), **kwargs) -> Any:
-        cls.__name = ' of '+str(name) if name is not None else ''
+    def __new__(cls, value, name: str = None, *, items=(), **kwargs):
+        cls.__name = ' of '+str(name) if name not in ['', None] else ''
         cls.__items = cls.__valid(items)
         try:
             value_not_in_items = value not in cls.__items

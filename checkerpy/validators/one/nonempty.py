@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Sized
 import logging as log
 from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
@@ -43,28 +43,28 @@ class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name: str = None, **kwargs) -> Iterable:
-        cls._name = str(name) if name is not None else ''
+    def __new__(cls, sizable: Sized, name: str = None, **kwargs) -> Sized:
+        cls.__name = str(name) if name is not None else ''
         try:
-            length_of_iterable = len(iterable)
+            length_of_sizable = len(sizable)
         except TypeError as error:
-            message = cls.__cannot_be_empty_message_for(iterable)
+            message = cls.__cannot_be_empty_message_for(sizable)
             log.error(message)
             raise EmptyError(message) from error
-        if length_of_iterable == 0:
-            message = cls.__is_empty_message_for(iterable)
+        if length_of_sizable == 0:
+            message = cls.__is_empty_message_for(sizable)
             log.error(message)
             raise EmptyError(message)
-        return iterable
+        return sizable
 
     @classmethod
     def __cannot_be_empty_message_for(cls, variable) -> str:
-        var_name = (cls._name or str(variable)) + ' with '
+        var_name = (cls.__name or str(variable)) + ' with '
         type_name = type(variable).__name__
         return f'Emptiness of {var_name}type {type_name} cannot be determined!'
 
     @classmethod
-    def __is_empty_message_for(cls, iterable: Iterable) -> str:
-        iter_name = ' '+cls._name if cls._name else ''
-        type_name = type(iterable).__name__
+    def __is_empty_message_for(cls, sizable: Sized) -> str:
+        iter_name = ' '+cls.__name if cls.__name else ''
+        type_name = type(sizable).__name__
         return type_name.capitalize() + iter_name + ' must not be empty!'
