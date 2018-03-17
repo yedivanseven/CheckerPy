@@ -1,4 +1,4 @@
-from types import FunctionType, MethodType
+from types import FunctionType, MethodType, GeneratorType
 from .just import Just
 
 JustType = Just(type, identifier='JustType')
@@ -14,3 +14,4 @@ JustFrozen = Just(frozenset, identifier='JustFrozen')
 JustDict = Just(dict, identifier='JustDict')
 JustFunc = Just(FunctionType, identifier='JustFunc')
 JustMeth = Just(MethodType, identifier='JustMeth')
+JustGen = Just(GeneratorType, identifier='JustGen')
