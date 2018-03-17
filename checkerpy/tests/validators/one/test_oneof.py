@@ -118,21 +118,32 @@ class TestOneOf(ut.TestCase):
         self.assertEqual(output, inputs)
 
     def test_error_on_unnamed_iterable_single_item(self):
-        log_msg = ['ERROR:root:Value (1, 2, 3) with type tuple is not foo!']
-        err_msg = 'Value (1, 2, 3) with type tuple is not foo!'
+        log_msg = ['ERROR:root:Value (1, 2, 3) with type tuple is not 42!']
+        err_msg = 'Value (1, 2, 3) with type tuple is not 42!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
-                _ = OneOf((1, 2, 3), items='foo')
+                _ = OneOf((1, 2, 3), items=42)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_iterable_single_item(self):
         log_msg = ['ERROR:root:Value (1, 2, 3) of '
-                   'test with type tuple is not bar!']
-        err_msg = 'Value (1, 2, 3) of test with type tuple is not bar!'
+                   'test with type tuple is not 42!']
+        err_msg = 'Value (1, 2, 3) of test with type tuple is not 42!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
-                _ = OneOf((1, 2, 3), 'test', items='bar')
+                _ = OneOf((1, 2, 3), 'test', items=42)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_membership_error_named_value_single_item(self):
+        log_msg = ['ERROR:root:Cannot determine if value'
+                   ' 42 of test with type int is in foo!']
+        err_msg = ('Cannot determine if value 42 of'
+                   ' test with type int is in foo!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(42, 'test', items='foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

@@ -38,7 +38,8 @@ class OneOf(CompositionClassMixin):
     Raises
     ------
     ItemError
-        If `value` is not among the given items.
+        If `value` is not among the given items or
+        if membership cannot be determined.
 
     Notes
     -----
@@ -56,17 +57,27 @@ class OneOf(CompositionClassMixin):
     """
 
     def __new__(cls, value, name: str = None, *, items=(), **kwargs) -> Any:
-        cls._name = str(name) if name is not None else ''
-        cls._items = cls.__formatted(items)
-        if value not in cls._items:
-            message = cls.__not_one_of_items_message_for(value)
+        cls.__name = ' of '+str(name) if name is not None else ''
+        cls.__items = cls.__valid(items)
+        try:
+            value_not_in_items = value not in cls.__items
+        except TypeError as error:
+            message = cls.__cant_determine_membership_message_for(value)
+            log.error(message)
+            raise ItemError(message) from error
+        if value_not_in_items:
+            message = cls.__not_in_items_message_for(value)
             log.error(message)
             raise ItemError(message)
         return value
 
     @staticmethod
-    def __formatted(items: Any) -> Any:
-        if type(items) in Iterables:
+    def __valid(items: Any) -> Any:
+        has_len = hasattr(items, '__len__')
+        has_in = (hasattr(items, '__contains__') or
+                  hasattr(items, '__iter__') or
+                  hasattr(items, '__getitem__'))
+        if has_len and has_in:
             if len(items) == 0:
                 return items,
             else:
@@ -74,11 +85,23 @@ class OneOf(CompositionClassMixin):
         return items,
 
     @classmethod
-    def __not_one_of_items_message_for(cls, value: Any) -> str:
-        name = ' of '+cls._name if cls._name else ''
+    def __cant_determine_membership_message_for(cls, value: Any) -> str:
+        with_type, one_of_items = cls.__strings_for(value)
+        return (f'Cannot determine if value {value}{cls.__name}'
+                f' {with_type} is {one_of_items}!')
+
+    @classmethod
+    def __not_in_items_message_for(cls, value: Any) -> str:
+        with_type, one_of_items = cls.__strings_for(value)
+        return f'Value {value}{cls.__name} {with_type} is not {one_of_items}!'
+
+    @classmethod
+    def __strings_for(cls, value: Any) -> (str, str):
         with_type = 'with type ' + type(value).__name__
-        if len(cls._items) == 1:
-            one_of_items = cls._items[0]
+        if len(cls.__items) == 1:
+            one_of_items = cls.__items[0]
+        elif isinstance(cls.__items, str):
+            one_of_items = f'in {cls.__items}'
         else:
-            one_of_items = f'one of {cls._items}'
-        return f'Value {value}{name} {with_type} is not {one_of_items}!'
+            one_of_items = f'one of {cls.__items}'
+        return with_type, one_of_items
