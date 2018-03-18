@@ -1,7 +1,9 @@
 import logging as log
-from typing import Any
+from typing import Any, Collection, Union
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
+
+Items = Union[Collection, tuple]
 
 
 class OneOf(CompositionClassMixin):
@@ -65,11 +67,9 @@ class OneOf(CompositionClassMixin):
         return value
 
     @staticmethod
-    def __valid(items: Any) -> Any:
+    def __valid(items: Collection) -> Items:
         has_len = hasattr(items, '__len__')
-        has_in = (hasattr(items, '__contains__') or
-                  hasattr(items, '__iter__') or
-                  hasattr(items, '__getitem__'))
+        has_in = hasattr(items, '__contains__') or hasattr(items, '__iter__')
         if has_len and has_in:
             if len(items) == 0:
                 return items,

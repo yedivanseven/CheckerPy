@@ -9,8 +9,8 @@ from ....functional import CompositionOf
 class TestJustLen(ut.TestCase):
 
     def test_error_on_one_length_not_convertible_to_int(self):
-        err_msg = ('Could not convert given length foo'
-                   ' of type str to required type int!')
+        err_msg = ('Could not convert given length f '
+                   'of type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustLen([1, 2], length='foo')
         self.assertEqual(str(err.exception), err_msg)

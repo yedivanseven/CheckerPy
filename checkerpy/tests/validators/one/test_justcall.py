@@ -2,6 +2,7 @@ import logging
 import unittest as ut
 from ....validators.one import JustCall
 from ....exceptions import CallableError
+from ....functional import CompositionOf
 
 
 class TestJustCall(ut.TestCase):
@@ -54,6 +55,26 @@ class TestJustCall(ut.TestCase):
                 _ = JustCall(t, 'name')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_has_attribute_o(self):
+        self.assertTrue(hasattr(JustCall, 'o'))
+
+    def test_attribute_o_is_callable(self):
+        self.assertTrue(callable(JustCall.o))
+
+    def test_o_returns_composition(self):
+        def f(x):
+            return x
+        composition = JustCall.o(f)
+        self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = JustCall.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
 
 if __name__ == '__main__':

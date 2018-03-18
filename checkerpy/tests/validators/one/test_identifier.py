@@ -26,7 +26,7 @@ class TestIdentifier(ut.TestCase):
         err_msg = 'Test of type int is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
-                _ = Identifier(1, 'Test')
+                _ = Identifier(1, 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -44,7 +44,7 @@ class TestIdentifier(ut.TestCase):
         err_msg = 'Test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
-                _ = Identifier('1', 'Test')
+                _ = Identifier('1', 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -59,7 +59,7 @@ class TestIdentifier(ut.TestCase):
         err_msg = 'Test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
-                _ = Identifier.JustStr('1', 'Test')
+                _ = Identifier.JustStr('1', 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

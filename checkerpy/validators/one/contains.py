@@ -1,16 +1,19 @@
 import logging as log
-from typing import Any, Iterable
+from typing import Any, Collection, Tuple, Union
+from collections import defaultdict, deque, OrderedDict
 from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError, IterError
 
+Items = Union[Collection, Tuple[str, ...]]
+
 dict_keys = type({}.keys())
 dict_values = type({}.values())
 dict_items = type({}.items())
-
-Iterables = (tuple, list, set, frozenset, dict,
-             dict_keys, dict_values, dict_items)
-SpecialTypes = (dict_keys, dict_values, dict_items, frozenset)
+named_types = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items)
+NamedTypes = Union[frozenset, deque, defaultdict, OrderedDict,
+                   dict_keys, dict_values, dict_items]
 
 
 class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
@@ -53,7 +56,7 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
     ------
     ItemError
         If `iterable` does not contain any or all of the given items, or if
-        the items are not specified as lists.
+        the items are not specified as iterable.
     IterError
         If `iterable` is not, in fact, an iterable.
 
@@ -64,40 +67,44 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
     """
 
     def __new__(cls, iterable, name=None, *, every=(), some=(), **kwargs):
-        cls._name = str(name) if name is not None else ''
+        cls.__name = str(name) if name is not None else ''
         cls.__string = cls.__string_for(iterable)
-        cls._every = cls.__validated(every)
-        cls._some = cls.__validated(some)
+        cls.__every = cls.__valid(every)
+        cls.__some = cls.__valid(some)
         try:
-            all_in = all(item in iterable for item in cls._every)
-            any_in = any(item in iterable for item in cls._some)
+            all_in = all(item in iterable for item in cls.__every)
+            any_in = any(item in iterable for item in cls.__some)
         except TypeError:
             message = cls.__not_an_iterable_message()
             log.error(message)
             raise IterError(message)
-        if cls._every and not all_in:
-            missing = list(filter(lambda x: x not in iterable, cls._every))
+        if cls.__every and not all_in:
+            missing = tuple(filter(lambda x: x not in iterable, cls.__every))
             message = cls.__some_missing_message_for(missing)
             log.error(message)
             raise ItemError(message)
-        if cls._some and not any_in:
+        if cls.__some and not any_in:
             message = cls.__all_missing_message()
             log.error(message)
             raise ItemError(message)
         return iterable
 
     @classmethod
-    def __validated(cls, items: Iterable) -> Iterable:
-        if type(items) not in Iterables:
-            message = cls.__wrong_specification_message_for(items)
-            raise ItemError(message)
-        return list(items)
+    def __valid(cls, items: Items) -> Items:
+        if isinstance(items, str):
+            return tuple(items)
+        has_len = hasattr(items, '__len__')
+        has_in = hasattr(items, '__contains__') or hasattr(items, '__iter__')
+        if has_len and has_in:
+            return items
+        message = cls.__wrong_specification_message_for(items)
+        raise ItemError(message)
 
     @staticmethod
     def __wrong_specification_message_for(items: Any) -> str:
-        type_of_value = type(items).__name__
-        return ('Item(s) to check must be given as a list,'
-                f' not as {type_of_value} like {items}!')
+        type_of_items = type(items).__name__
+        return ('Item(s) to check must be given as iterable,'
+                f' not as {type_of_items} like {items}!')
 
     @classmethod
     def __not_an_iterable_message(cls) -> str:
@@ -105,25 +112,26 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
                 'be an iterable whose content could be checked!')
 
     @classmethod
-    def __some_missing_message_for(cls, missing: list) -> str:
+    def __some_missing_message_for(cls, missing: tuple) -> str:
         only_one = len(missing) == 1
-        prefix = type(missing[0]).__name__.title() if only_one else 'Items'
+        type_of_first = type(missing[0]).__name__.capitalize()
+        prefix = type_of_first if only_one else 'Items'
         items = missing[0] if only_one else missing
         verb = 'is' if only_one else 'are'
         return f'{prefix} {items} {verb} not in {cls.__string}!'
 
     @classmethod
     def __all_missing_message(cls) -> str:
-        only_one = len(cls._some) == 1
-        prefix = type(cls._some[0]).__name__.title() if only_one else 'None of'
-        items = cls._some[0] if only_one else cls._some
+        only_one = len(cls.__some) == 1
+        type_of_first = type(cls.__some[0]).__name__.capitalize()
+        prefix = type_of_first if only_one else 'None of'
+        items = cls.__some[0] if only_one else cls.__some
         verb = 'is not' if only_one else 'are'
         return f'{prefix} {items} {verb} in {cls.__string}!'
 
     @classmethod
-    def __string_for(cls, iterable: Iterable) -> str:
-        type_of_iterable = type(iterable)
-        type_name = type_of_iterable.__name__
-        if type_of_iterable in SpecialTypes:
-            return type_name+' '+cls._name if cls._name else str(iterable)
-        return type_name + ' ' + (cls._name or str(iterable))
+    def __string_for(cls, iterable: NamedTypes) -> str:
+        type_name = type(iterable).__name__
+        if isinstance(iterable, named_types):
+            return type_name+' '+cls.__name if cls.__name else str(iterable)
+        return type_name + ' ' + (cls.__name or str(iterable))

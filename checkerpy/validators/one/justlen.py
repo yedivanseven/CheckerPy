@@ -1,5 +1,6 @@
-from typing import Any, Sized
 import logging as log
+from typing import Any, Sized
+from collections import deque, defaultdict, OrderedDict
 from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
@@ -7,9 +8,8 @@ from ...exceptions import LenError, IntError
 dict_keys = type({}.keys())
 dict_values = type({}.values())
 dict_items = type({}.items())
-named_types = (frozenset, dict_keys, dict_values, dict_items)
-
-Iterables = (tuple, list, set, dict) + named_types
+named_types = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items)
 
 
 class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
@@ -58,25 +58,30 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     """
 
-    def __new__(cls, iterable, name=None, *, length, **kwargs) -> Sized:
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(iterable)
-        lengths = length if type(length) in Iterables else (length,)
-        cls._lengths = tuple(map(cls.__validate, lengths))
+    def __new__(cls, iterable: Sized, name=None, *, length, **kwargs) -> Sized:
+        cls.__name = str(name) if name is not None else ''
+        cls.__string = cls.__name or str(iterable)
+        cls.__lengths = cls.__valid(length)
         try:
-            length_of_iterable = len(iterable)
+            length_of_sizable = len(iterable)
         except TypeError as error:
             message = cls.__has_no_length_message_for(iterable)
             log.error(message)
             raise LenError(message) from error
-        if length_of_iterable not in cls._lengths:
+        if length_of_sizable not in cls.__lengths:
             message = cls.__wrong_length_message_for(iterable)
             log.error(message)
             raise LenError(message)
         return iterable
 
     @classmethod
-    def __validate(cls, length: int) -> int:
+    def __valid(cls, lengths: Any) -> tuple:
+        if not hasattr(lengths, '__iter__'):
+            lengths = (lengths,)
+        return tuple(map(cls.__converted, lengths))
+
+    @classmethod
+    def __converted(cls, length: int) -> int:
         try:
             length = int(length)
         except (ValueError, TypeError) as error:
@@ -98,18 +103,17 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     @classmethod
     def __wrong_length_message_for(cls, iterable: Sized) -> str:
-        if len(cls._lengths) == 1:
-            of_length = cls._lengths[0]
+        if len(cls.__lengths) == 1:
+            of_length = cls.__lengths[0]
         else:
-            of_length = f'one of {cls._lengths}'
-        actual_len = len(iterable)
+            of_length = f'one of {cls.__lengths}'
+        actual_length = len(iterable)
         type_of = cls.__type_name_of(iterable)
         return (f'Length of {type_of}{cls.__string} must'
-                f' be {of_length}, not {actual_len}!')
+                f' be {of_length}, not {actual_length}!')
 
     @classmethod
     def __type_name_of(cls, iterable: Sized) -> str:
-        type_of_iterable = type(iterable)
-        if type_of_iterable in named_types and not cls._name:
+        if isinstance(iterable, named_types) and not cls.__name:
             return ''
-        return type_of_iterable.__name__ + ' '
+        return type(iterable).__name__ + ' '

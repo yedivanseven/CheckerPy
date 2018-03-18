@@ -29,15 +29,15 @@ class TestContainsParameterSpecification(ut.TestCase):
         self.assertEqual(out, inp)
 
     def test_error_on_some_not_an_iterable(self):
-        err_msg = ('Item(s) to check must be given as'
-                   ' a list, not as str like test!')
+        err_msg = ('Item(s) to check must be given '
+                   'as iterable, not as int like 1!')
         with self.assertRaises(ItemError) as err:
-            _ = Contains((1, 2, 3), some='test', every=(1, 2))
+            _ = Contains((1, 2, 3), some=1, every=(2, 3))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_every_not_an_iterable(self):
-        err_msg = ('Item(s) to check must be given as'
-                   ' a list, not as int like 1!')
+        err_msg = ('Item(s) to check must be given '
+                   'as iterable, not as int like 1!')
         with self.assertRaises(ItemError) as err:
             _ = Contains((1, 2, 3), some=(3, 4), every=1)
         self.assertEqual(str(err.exception), err_msg)
@@ -77,17 +77,17 @@ class TestContainsGeneral(ut.TestCase):
             self.assertIsInstance(type_checker, CompositionOf)
 
     def test_some_is_passed_through_to_contains(self):
-        err_msg = ('Item(s) to check must be given as'
-                   ' a list, not as str like test!')
+        err_msg = ('Item(s) to check must be given '
+                   'as iterable, not as int like 1!')
         with self.assertRaises(ItemError) as err:
-            _ = Contains.JustTuple((1, 2, 3), some='test', every=(1, 2))
+            _ = Contains.JustTuple((1, 2, 3), some=1, every=(2, 3))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_every_is_passed_through_to_contains(self):
-        err_msg = ('Item(s) to check must be given as'
-                   ' a list, not as int like 1!')
+        err_msg = ('Item(s) to check must be given '
+                   'as iterable, not as int like 5!')
         with self.assertRaises(ItemError) as err:
-            _ = Contains.JustTuple((1, 2, 3), some=(3, 4), every=1)
+            _ = Contains.JustTuple((1, 2, 3), some=(3, 4), every=5)
         self.assertEqual(str(err.exception), err_msg)
 
     def test_has_attribute_o(self):
@@ -123,8 +123,8 @@ class TestContainsIterables(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_multi_every_error_with_unnamed_list(self):
-        log_msg = ['ERROR:root:Items [4, 5] are not in list [1, 2, 3]!']
-        err_msg = 'Items [4, 5] are not in list [1, 2, 3]!'
+        log_msg = ['ERROR:root:Items (4, 5) are not in list [1, 2, 3]!']
+        err_msg = 'Items (4, 5) are not in list [1, 2, 3]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = Contains([1, 2, 3], every=[4, 5])

@@ -42,20 +42,20 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
     """
 
     def __new__(cls, string: str, name: str = None, **kwargs) -> str:
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(string)
+        cls.__name = str(name) if name not in [None, ''] else str(string)
         try:
             string_is_identifier = string.isidentifier()
         except AttributeError:
             string_is_identifier = False
         if not string_is_identifier:
-            message = cls.__not_idenitfier_message_for(string)
+            message = cls.__not_identifier_message_for(string)
             log.error(message)
             raise IdentifierError(message)
         return string
 
     @classmethod
-    def __not_idenitfier_message_for(cls, value: Any) -> str:
+    def __not_identifier_message_for(cls, value: Any) -> str:
         type_of_value = type(value).__name__
         of_type = '' if type_of_value == 'str' else f' of type {type_of_value}'
-        return f'{cls.__string}{of_type} is not a valid identifier!'
+        name = cls.__name.capitalize()
+        return f'{name}{of_type} is not a valid identifier!'

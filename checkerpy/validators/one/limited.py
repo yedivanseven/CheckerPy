@@ -1,5 +1,4 @@
 import logging as log
-from typing import Any
 from .nonempty import NonEmpty
 from .justlen import JustLen
 from ...functional.mixins import CompositionClassMixin
