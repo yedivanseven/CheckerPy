@@ -5,11 +5,170 @@ from ....validators.one import OneOf
 from ....exceptions import ItemError, CallableError
 
 
-class TestOneOf(ut.TestCase):
+class TestNoInMethods:
+    def __init__(self):
+        self.elements = [i for i in range(1)]
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __str__(self):
+        return self.elements.__str__()
+
+
+class TestLenContains:
+    def __init__(self):
+        self.elements = [i for i in range(3)]
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __str__(self):
+        return self.elements.__str__()
+
+
+class TestLenIter:
+    def __init__(self):
+        self.elements = [i for i in range(3)]
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __str__(self):
+        return self.elements.__str__()
+
+
+class TestIterNoLen:
+    def __init__(self):
+        self.elements = [i for i in range(3)]
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __str__(self):
+        return self.elements.__str__()
+
+
+class TestContainsNoLen:
+    def __init__(self):
+        self.elements = [i for i in range(3)]
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __str__(self):
+        return self.elements.__str__()
+
+
+class TestOneOfItems(ut.TestCase):
+
+    def test_works_with_items_len_and_contains(self):
+        test_len_contains = TestLenContains()
+        inputs = 2
+        output = OneOf(inputs, items=test_len_contains)
+        self.assertEqual(output, inputs)
+
+    def test_error_on_unnamed_value_with_items_len_and_contains(self):
+        test_len_contains = TestLenContains()
+        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, items=test_len_contains)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_value_with_items_len_and_contains(self):
+        test_len_contains = TestLenContains()
+        log_msg = ['ERROR:root:Value 3 of test with '
+                   'type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 of test with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, 'test', items=test_len_contains)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_items_len_and_iter(self):
+        test_len_iter = TestLenIter()
+        inputs = 2
+        output = OneOf(inputs, items=test_len_iter)
+        self.assertEqual(output, inputs)
+
+    def test_error_on_unnamed_value_with_items_len_and_iter(self):
+        test_len_iter = TestLenIter()
+        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, items=test_len_iter)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_value_with_items_len_and_iter(self):
+        test_len_iter = TestLenIter()
+        log_msg = ['ERROR:root:Value 3 of test with '
+                   'type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 of test with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, 'test', items=test_len_iter)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_items_iter_no_len(self):
+        test_iter_no_len = TestIterNoLen()
+        inputs = 2
+        output = OneOf(inputs, items=test_iter_no_len)
+        self.assertEqual(output, inputs)
+
+    def test_error_on_items_iter_no_len(self):
+        test_iter_no_len = TestIterNoLen()
+        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, items=test_iter_no_len)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_items_contains_no_len(self):
+        test_contains_no_len = TestContainsNoLen()
+        inputs = 2
+        output = OneOf(inputs, items=test_contains_no_len)
+        self.assertEqual(output, inputs)
+
+    def test_error_on_items_contains_no_len(self):
+        test_contains_no_len = TestContainsNoLen()
+        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
+        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(3, items=test_contains_no_len)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestOneOfValue(ut.TestCase):
+
+    def test_error_on_empty_items(self):
+        log_msg = ['ERROR:root:Value 1 with type int is not one of ()!']
+        err_msg = 'Value 1 with type int is not one of ()!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(1, items=())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
     def test_works_with_single_item(self):
         inputs = 2
-        output = OneOf(inputs, items=2)
+        output = OneOf(inputs, items=(2,))
         self.assertEqual(output, inputs)
 
     def test_error_on_unnamed_value_single_item(self):
@@ -17,7 +176,7 @@ class TestOneOf(ut.TestCase):
         err_msg = 'Value 1 with type int is not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
-                _ = OneOf(1, items=2)
+                _ = OneOf(1, items=(2,))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -26,72 +185,14 @@ class TestOneOf(ut.TestCase):
         err_msg = 'Value 1 of test with type int is not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
-                _ = OneOf(1, 'test', items=2)
+                _ = OneOf(1, 'test', items=(2,))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_multiple_items_as_tuple(self):
+    def test_works_with_multiple_items(self):
         inputs = 2
         output = OneOf(inputs, items=(2, 3))
         self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_list(self):
-        inputs = 2
-        output = OneOf(inputs, items=[2, 3])
-        self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_set(self):
-        inputs = 2
-        output = OneOf(inputs, items={2, 3})
-        self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_dict(self):
-        inputs = 2
-        items = {1: 'one', 2: 'two'}
-        output = OneOf(inputs, items=items)
-        self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_dict_keys(self):
-        inputs = 2
-        items = {1: 'one', 2: 'two'}
-        output = OneOf(inputs, items=items.keys())
-        self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_dict_values(self):
-        inputs = 'one'
-        items = {1: 'one', 2: 'two'}
-        output = OneOf(inputs, items=items.values())
-        self.assertEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_dict_items(self):
-        inputs = (2, 'two')
-        items = {1: 'one', 2: 'two'}
-        output = OneOf(inputs, items=items.items())
-        self.assertTupleEqual(output, inputs)
-
-    def test_works_with_multiple_items_as_str(self):
-        inputs = 'oo'
-        items = 'foo'
-        output = OneOf(inputs, items=items)
-        self.assertEqual(output, inputs)
-
-    def test_error_on_unnamed_value_item_string(self):
-        log_msg = ['ERROR:root:Value oo with type str is not in bar!']
-        err_msg = 'Value oo with type str is not in bar!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(ItemError) as err:
-                _ = OneOf('oo', items='bar')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_error_on_named_value_item_string(self):
-        log_msg = ['ERROR:root:Value oo of test with type str is not in bar!']
-        err_msg = 'Value oo of test with type str is not in bar!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(ItemError) as err:
-                _ = OneOf('oo', 'test', items='bar')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
 
     def test_error_on_unnamed_value_multiple_items(self):
         log_msg = ['ERROR:root:Value 1 with type int is not one of (2, 3)!']
@@ -112,25 +213,29 @@ class TestOneOf(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_empty_item_tuple(self):
-        inputs = ()
-        output = OneOf(inputs, items=())
-        self.assertTupleEqual(output, inputs)
+    def test_works_with_multiple_items_as_str(self):
+        inputs = 'oo'
+        items = 'foo'
+        output = OneOf(inputs, items=items)
+        self.assertEqual(output, inputs)
 
-    def test_works_with_empty_item_list(self):
-        inputs = []
-        output = OneOf(inputs, items=[])
-        self.assertListEqual(output, inputs)
+    def test_error_on_unnamed_value_item_as_str(self):
+        log_msg = ['ERROR:root:Value oo with type str is not in bar!']
+        err_msg = 'Value oo with type str is not in bar!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf('oo', items='bar')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
-    def test_works_with_empty_item_dict(self):
-        inputs = {}
-        output = OneOf(inputs, items={})
-        self.assertDictEqual(output, inputs)
-
-    def test_works_with_empty_item_set(self):
-        inputs = set()
-        output = OneOf(inputs, items=set())
-        self.assertSetEqual(output, inputs)
+    def test_error_on_named_value_item_as_str(self):
+        log_msg = ['ERROR:root:Value oo of test with type str is not in bar!']
+        err_msg = 'Value oo of test with type str is not in bar!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf('oo', 'test', items='bar')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
 
     def test_works_with_item_tuple_of_empty_iterables(self):
         inputs = ()
@@ -142,26 +247,7 @@ class TestOneOf(ut.TestCase):
         output = OneOf(inputs, items=[(1, 2, 3), 'foo', {'a': 4.0}])
         self.assertEqual(output, inputs)
 
-    def test_error_on_unnamed_iterable_single_item(self):
-        log_msg = ['ERROR:root:Value (1, 2, 3) with type tuple is not 42!']
-        err_msg = 'Value (1, 2, 3) with type tuple is not 42!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(ItemError) as err:
-                _ = OneOf((1, 2, 3), items=42)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_error_on_named_iterable_single_item(self):
-        log_msg = ['ERROR:root:Value (1, 2, 3) of '
-                   'test with type tuple is not 42!']
-        err_msg = 'Value (1, 2, 3) of test with type tuple is not 42!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(ItemError) as err:
-                _ = OneOf((1, 2, 3), 'test', items=42)
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_membership_error_named_value_single_item(self):
+    def test_membership_error_named_value_incomparable(self):
         log_msg = ['ERROR:root:Cannot determine if value'
                    ' 42 of test with type int is in foo!']
         err_msg = ('Cannot determine if value 42 of'
@@ -172,7 +258,7 @@ class TestOneOf(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_membership_error_unnamed_value_single_item(self):
+    def test_membership_error_unnamed_value_incomparable(self):
         log_msg = ['ERROR:root:Cannot determine if '
                    'value 42 with type int is in foo!']
         err_msg = 'Cannot determine if value 42 with type int is in foo!'
@@ -181,6 +267,30 @@ class TestOneOf(ut.TestCase):
                 _ = OneOf(42, items='foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_membership_error_named_value_item_wrong_type(self):
+        log_msg = ['ERROR:root:Cannot determine if value'
+                   ' 42 of test with type int is one of 2!']
+        err_msg = ('Cannot determine if value 42 of'
+                   ' test with type int is one of 2!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(42, 'test', items=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_membership_error_unnamed_value_item_wrong_type(self):
+        log_msg = ['ERROR:root:Cannot determine if '
+                   'value 42 with type int is one of 2!']
+        err_msg = 'Cannot determine if value 42 with type int is one of 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(42, items=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestOneOfMethods(ut.TestCase):
 
     def test_has_attribute_o(self):
         self.assertTrue(hasattr(OneOf, 'o'))

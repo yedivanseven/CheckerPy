@@ -1,9 +1,7 @@
 import logging as log
-from typing import Any, Collection, Union
+from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
-
-Items = Union[Collection, tuple]
 
 
 class OneOf(CompositionClassMixin):
@@ -53,9 +51,9 @@ class OneOf(CompositionClassMixin):
 
     def __new__(cls, value, name: str = None, *, items=(), **kwargs):
         cls.__name = ' of '+str(name) if name not in ['', None] else ''
-        cls.__items = cls.__valid(items)
+        cls.__items = items
         try:
-            value_not_in_items = value not in cls.__items
+            value_not_in_items = value not in items
         except TypeError as error:
             message = cls.__cant_determine_membership_message_for(value)
             log.error(message)
@@ -65,17 +63,6 @@ class OneOf(CompositionClassMixin):
             log.error(message)
             raise ItemError(message)
         return value
-
-    @staticmethod
-    def __valid(items: Collection) -> Items:
-        has_len = hasattr(items, '__len__')
-        has_in = hasattr(items, '__contains__') or hasattr(items, '__iter__')
-        if has_len and has_in:
-            if len(items) == 0:
-                return items,
-            else:
-                return items
-        return items,
 
     @classmethod
     def __cant_determine_membership_message_for(cls, value: Any) -> str:
@@ -90,11 +77,17 @@ class OneOf(CompositionClassMixin):
 
     @classmethod
     def __strings_for(cls, value: Any) -> (str, str):
-        with_type = 'with type ' + type(value).__name__
-        if len(cls.__items) == 1:
-            one_of_items = cls.__items[0]
+        try:
+            number_of_items = len(cls.__items)
+        except TypeError:
+            number_of_items = ...
+        if number_of_items == 1:
+            try:
+                items_string = cls.__items[0]
+            except (TypeError, IndexError):
+                items_string = f'one of {cls.__items}'
         elif isinstance(cls.__items, str):
-            one_of_items = f'in {cls.__items}'
+            items_string = f'in {cls.__items}'
         else:
-            one_of_items = f'one of {cls.__items}'
-        return with_type, one_of_items
+            items_string = f'one of {cls.__items}'
+        return 'with type '+type(value).__name__, items_string
