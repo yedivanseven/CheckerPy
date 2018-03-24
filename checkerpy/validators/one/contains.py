@@ -1,9 +1,9 @@
 import logging as log
 from typing import Any, Collection, Tuple, Union
 from collections import defaultdict, deque, OrderedDict
-from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError, IterError
+from .registrars import IterableRegistrar
 
 Items = Union[Collection, Tuple[str, ...]]
 
@@ -25,10 +25,10 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
         The iterable to check.
     name : str, optional
         The name of the variable to check. Defaults to None
-    every : list(object), optional
+    every : tuple(object), optional
         The item(s) that must (all) be contained in the `iterable`.
         Defaults to and empty tuple.
-    some : list(object), optional
+    some : tuple(object), optional
         The item(s) of which at least one must be contained in the `iterable`.
         Defaults to and empty tuple.
 

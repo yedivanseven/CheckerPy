@@ -17,7 +17,7 @@ else:
 class TestJustNdim(ut.TestCase):
 
     def test_error_on_one_ndim_not_convertible_to_int(self):
-        err_msg = ('Could not convert given ndim foo '
+        err_msg = ('Could not convert given ndim f '
                    'of type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustNdim(array([1, 2]), ndim='foo')

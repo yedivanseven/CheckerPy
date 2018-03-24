@@ -84,10 +84,10 @@ class OneOf(CompositionClassMixin):
         if number_of_items == 1:
             try:
                 items_string = cls.__items[0]
-            except (TypeError, IndexError):
+            except (TypeError, IndexError, KeyError):
                 items_string = f'one of {cls.__items}'
         elif isinstance(cls.__items, str):
-            items_string = f'in {cls.__items}'
+            items_string = f'in str {cls.__items}'
         else:
             items_string = f'one of {cls.__items}'
         return 'with type '+type(value).__name__, items_string

@@ -1,10 +1,10 @@
 import logging as log
-from .nonempty import NonEmpty
-from .justlen import JustLen
 from ...functional.mixins import CompositionClassMixin
 from ...functional import CompositionOf
 from ...types.one import _COMPARABLES
 from ...exceptions import LimitError, WrongTypeError
+from .nonempty import NonEmpty
+from .justlen import JustLen
 
 
 class ComparableRegistrar(type):

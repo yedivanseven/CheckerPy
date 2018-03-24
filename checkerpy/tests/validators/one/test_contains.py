@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import deque, defaultdict, OrderedDict
 from ....validators.one import Contains
 from ....exceptions import ItemError, IterError, CallableError
 from ....functional import CompositionOf
@@ -226,6 +227,45 @@ class TestContainsIterables(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = Contains(input.items(), 'test', some=[4, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_with_unnamed_deque(self):
+        log_msg = ['ERROR:root:Items (4, 5) are not in deque([1, 2, 3])!']
+        err_msg = 'Items (4, 5) are not in deque([1, 2, 3])!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = Contains(deque([1, 2, 3]), every=[4, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_with_named_deque(self):
+        log_msg = ['ERROR:root:Items (4, 5) are not in deque test!']
+        err_msg = 'Items (4, 5) are not in deque test!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = Contains(deque([1, 2, 3]), 'test', every=[4, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_with_unnamed_ordereddict(self):
+        log_msg = ["ERROR:root:None of [4, 5] are in "
+                   "OrderedDict([(1, 'one'), (2, 'two')])!"]
+        err_msg = ("None of [4, 5] are in Ordered"
+                   "Dict([(1, 'one'), (2, 'two')])!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = Contains(OrderedDict({1: 'one', 2: 'two'}), some=[4, 5])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_with_named_defaultdict(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        log_msg = ['ERROR:root:None of [4, 5] are in defaultdict test!']
+        err_msg = 'None of [4, 5] are in defaultdict test!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = Contains(inp, 'test', some=[4, 5])
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

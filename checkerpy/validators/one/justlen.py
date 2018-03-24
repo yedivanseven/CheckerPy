@@ -1,9 +1,9 @@
 import logging as log
 from typing import Any, Sized
 from collections import deque, defaultdict, OrderedDict
-from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
+from .registrars import IterableRegistrar
 
 dict_keys = type({}.keys())
 dict_values = type({}.values())
@@ -76,9 +76,11 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     @classmethod
     def __valid(cls, lengths: Any) -> tuple:
-        if not hasattr(lengths, '__iter__'):
-            lengths = (lengths,)
-        return tuple(map(cls.__converted, lengths))
+        try:
+            converted = tuple(map(cls.__converted, lengths))
+        except TypeError:
+            converted = tuple(map(cls.__converted, [lengths]))
+        return converted
 
     @classmethod
     def __converted(cls, length: int) -> int:

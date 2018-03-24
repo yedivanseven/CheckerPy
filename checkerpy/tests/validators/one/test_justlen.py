@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import deque, defaultdict, OrderedDict
 from ....validators.one import JustLen
 from ....exceptions import LenError, IntError, CallableError
 from ....types.one import _ITERABLES
@@ -77,8 +78,7 @@ class TestJustLen(ut.TestCase):
 
     def test_works_with_sane_tuple(self):
         out = JustLen((1, 2), length=2)
-        self.assertIsInstance(out, tuple)
-        self.assertEqual(out, (1, 2))
+        self.assertTupleEqual(out, (1, 2))
 
     def test_error_on_length_of_tuple_not_in_lengths(self):
         log_msg = ['ERROR:root:Length of tuple (1, 2, 3)'
@@ -110,7 +110,6 @@ class TestJustLen(ut.TestCase):
 
     def test_works_with_sane_list(self):
         out = JustLen([1, 2], length=2)
-        self.assertIsInstance(out, list)
         self.assertListEqual(out, [1, 2])
 
     def test_error_on_length_of_list_not_in_lengths(self):
@@ -143,7 +142,6 @@ class TestJustLen(ut.TestCase):
 
     def test_works_with_sane_set(self):
         out = JustLen({1, 2}, length=2)
-        self.assertIsInstance(out, set)
         self.assertSetEqual(out, {1, 2})
 
     def test_error_on_length_of_set_not_in_lengths(self):
@@ -211,7 +209,6 @@ class TestJustLen(ut.TestCase):
 
     def test_works_with_sane_dict(self):
         out = JustLen({1: 'one', 2: 'two'}, length=2)
-        self.assertIsInstance(out, dict)
         self.assertDictEqual(out, {1: 'one', 2: 'two'})
 
     def test_error_on_length_of_dict_not_in_lengths(self):
@@ -345,6 +342,118 @@ class TestJustLen(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 _ = JustLen({1: 'one', 2: 'two'}.items(), 'test', length=7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_deque(self):
+        inp = deque([1, 2])
+        out = JustLen(inp, length=2)
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(inp, out)
+
+    def test_error_on_length_of_deque_not_in_lengths(self):
+        log_msg = ['ERROR:root:Length of deque([1, 2])'
+                   ' must be one of (4, 5), not 2!']
+        err_msg = 'Length of deque([1, 2]) must be one of (4, 5), not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(deque([1, 2]), length=(4, 5))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_deque_wrong_length(self):
+        log_msg = ['ERROR:root:Length of deque([1, 2]) must be 6, not 2!']
+        err_msg = 'Length of deque([1, 2]) must be 6, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(deque([1, 2]), length=6)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_deque_wrong_length(self):
+        log_msg = ['ERROR:root:Length of deque test must be 7, not 2!']
+        err_msg = 'Length of deque test must be 7, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(deque([1, 2]), 'test', length=7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        out = JustLen(inp, length=2)
+        self.assertDictEqual(out, inp)
+
+    def test_error_on_length_of_defaultdict_not_in_lengths(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        log_msg = ["ERROR:root:Length of defaultdict(<class 'str'>, "
+                   "{1: 'one', 2: 'two'}) must be one of (4, 5), not 2!"]
+        err_msg = ("Length of defaultdict(<class 'str'>, {1: 'one',"
+                   " 2: 'two'}) must be one of (4, 5), not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, length=(4, 5))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_defaultdict_wrong_length(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        log_msg = ["ERROR:root:Length of defaultdict(<class 'str'>, "
+                   "{1: 'one', 2: 'two'}) must be 6, not 2!"]
+        err_msg = ("Length of defaultdict(<class 'str'>, "
+                   "{1: 'one', 2: 'two'}) must be 6, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, length=6)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_defaultdict_wrong_length(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        log_msg = ['ERROR:root:Length of defaultdict test must be 7, not 2!']
+        err_msg = 'Length of defaultdict test must be 7, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, 'test', length=7)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_ordererddict(self):
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        out = JustLen(inp, length=2)
+        self.assertDictEqual(out, inp)
+
+    def test_error_on_length_of_ordererddict_not_in_lengths(self):
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        log_msg = ["ERROR:root:Length of OrderedDict([(1, 'one'),"
+                   " (2, 'two')]) must be one of (4, 5), not 2!"]
+        err_msg = ("Length of OrderedDict([(1, 'one'), (2, "
+                   "'two')]) must be one of (4, 5), not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, length=(4, 5))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_ordererddict_wrong_length(self):
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        log_msg = ["ERROR:root:Length of OrderedDict([(1, "
+                   "'one'), (2, 'two')]) must be 6, not 2!"]
+        err_msg = ("Length of OrderedDict([(1, 'one'),"
+                   " (2, 'two')]) must be 6, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, length=6)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_ordererddict_wrong_length(self):
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        log_msg = ['ERROR:root:Length of OrderedDict test must be 7, not 2!']
+        err_msg = 'Length of OrderedDict test must be 7, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = JustLen(inp, 'test', length=7)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

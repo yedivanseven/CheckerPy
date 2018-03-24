@@ -1,11 +1,9 @@
 import logging as log
-from typing import Tuple, Union, List, Any
+from typing import Any
 from numpy import ndarray
 from .registrar import Registrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IntError, NdimError
-
-NdimType = Union[int, Tuple[int, ...], List[int]]
 
 
 class JustNdim(CompositionClassMixin, metaclass=Registrar):
@@ -55,25 +53,32 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
 
     """
 
-    def __new__(cls, array, name: str = None, *, ndim: NdimType = 1, **kwargs):
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(array)
-        ndims = ndim if type(ndim) in (tuple, list, set) else (ndim,)
-        cls._ndims = tuple(map(cls.__validate, ndims))
+    def __new__(cls, array: ndarray, name: str = None, *, ndim=1, **kwargs):
+        name = str(name) if name is not None else ''
+        cls.__string = name or str(array)
+        cls.__ndims = cls.__valid(ndim)
         try:
             array_ndim = array.ndim
         except AttributeError as error:
             message = cls.__has_no_ndim_message_for(array)
             log.error(message)
             raise NdimError(message) from error
-        if array_ndim not in cls._ndims:
+        if array_ndim not in cls.__ndims:
             message = cls.__error_message_for(array)
             log.error(message)
             raise NdimError(message)
         return array
 
     @classmethod
-    def __validate(cls, ndim: int) -> int:
+    def __valid(cls, ndims: Any) -> tuple:
+        try:
+            converted = tuple(map(cls.__converted, ndims))
+        except TypeError:
+            converted = tuple(map(cls.__converted, [ndims]))
+        return converted
+
+    @classmethod
+    def __converted(cls, ndim: int) -> int:
         try:
             ndim = int(ndim)
         except (ValueError, TypeError) as error:
@@ -96,9 +101,9 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
 
     @classmethod
     def __error_message_for(cls, array: ndarray) -> str:
-        if len(cls._ndims) == 1:
-            of_ndims = cls._ndims[0]
+        if len(cls.__ndims) == 1:
+            of_ndims = cls.__ndims[0]
         else:
-            of_ndims = f'one of {cls._ndims}'
+            of_ndims = f'one of {cls.__ndims}'
         return (f'The number of dimensions of array {cls.__string}'
                 f' must be {of_ndims}, not {array.ndim}!')

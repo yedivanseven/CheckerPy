@@ -43,6 +43,24 @@ class TestLimited(ut.TestCase):
         self.assertIsInstance(out, set)
         self.assertSetEqual(out, {2, 3})
 
+    def test_works_with_sane_frozenset(self):
+        inp = frozenset({2, 3})
+        out = Limited(inp, lo=frozenset({1}), hi=frozenset({4, 5, 6}))
+        self.assertIsInstance(out, type(inp))
+        self.assertSetEqual(out, inp)
+
+    def test_works_with_sane_dict_keys(self):
+        inp = {2: 'two'}.keys()
+        out = Limited(inp, lo={1: 'one'}.keys(), hi={3: 'three'}.keys())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+    def test_works_with_sane_dict_items(self):
+        inp = {2: 'bbb'}.items()
+        out = Limited(inp, lo={1: 'aaa'}.items(), hi={3: 'ccc'}.items())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
     def test_error_on_unnamed_value_uncomparable_to_lower_limit(self):
         log_msg = ['ERROR:root:Cannot compare type str of '
                    'foo with limits of types int and ellipsis!']
@@ -205,6 +223,14 @@ class TestLimited(ut.TestCase):
             return x
         composition = Limited.o(f)
         self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = Limited.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
 
 if __name__ == '__main__':

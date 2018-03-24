@@ -1,9 +1,4 @@
 # To Do
-- Test OneOf items
-  - with and without len
-  - with and without getitem (put a contains if without)
-  - for len = 1 and len > 1
-- Continue with reviewing tests of validators.one!
 - Continue with reviewing validators.numpy!
 
 

@@ -1,8 +1,8 @@
 import logging as log
 from typing import Any
-from .registrars import StrRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IdentifierError
+from .registrars import StrRegistrar
 
 
 class Identifier(CompositionClassMixin, metaclass=StrRegistrar):

@@ -1,8 +1,8 @@
 import logging as log
 from typing import Sized
-from .registrars import IterableRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import EmptyError
+from .registrars import IterableRegistrar
 
 
 class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):

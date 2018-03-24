@@ -65,11 +65,11 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
 
     """
 
-    def __new__(cls, array, name=None, *, shape: Shape = (...,), **kwargs):
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(array)
-        cls._shapes = cls.__validated(shape)
-        ndims = [len(shape) for shape in cls._shapes]
+    def __new__(cls, array: ndarray, name=None, *, shape=(...,), **kwargs):
+        name = str(name) if name is not None else ''
+        cls.__string = name or str(array)
+        cls.__shapes = cls.__validated(shape)
+        ndims = [len(shape) for shape in cls.__shapes]
         try:
             array_shape = array.shape
         except AttributeError as error:
@@ -78,7 +78,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
             raise ShapeError(message) from error
         array_ndim = len(array_shape)
         ok_indices = [i for i, ndim in enumerate(ndims) if ndim == array_ndim]
-        possible_shapes = [cls._shapes[index] for index in ok_indices]
+        possible_shapes = [cls.__shapes[index] for index in ok_indices]
         has_permitted_shape = cls.__compare(array_shape, possible_shapes)
         if not has_permitted_shape:
             message = cls.__wrong_shape_message_for(array_shape)
@@ -95,9 +95,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
         if any(type(shape) not in (tuple, list) for shape in shapes):
             shapes = cls.__type_converted(shapes),
         else:
-            shapes = list(shapes)
-            for i_shape, shape in enumerate(shapes):
-                shapes[i_shape] = cls.__type_converted(shape)
+            shapes = map(cls.__type_converted, shapes)
         return tuple(shapes)
 
     @classmethod
@@ -142,9 +140,9 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
 
     @classmethod
     def __wrong_shape_message_for(cls, array_shape: tuple) -> str:
-        if len(cls._shapes) == 1:
-            of_shape = cls._shapes[0]
+        if len(cls.__shapes) == 1:
+            of_shape = cls.__shapes[0]
         else:
-            of_shape = f'one of {cls._shapes}'
+            of_shape = f'one of {cls.__shapes}'
         return (f'Shape of array {cls.__string} must'
                 f' be {of_shape}, not {array_shape}!')
