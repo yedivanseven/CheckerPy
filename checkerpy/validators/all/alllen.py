@@ -1,9 +1,11 @@
 import logging as log
-from typing import Any
+from typing import Any, Tuple
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IterError
 from ..one import JustLen
 from .registrars import AllIterableRegistrar
+
+Enumerated = Tuple[tuple, ...]
 
 
 class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
@@ -56,30 +58,53 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     """
 
     def __new__(cls, iterable, name: str = None, *, alen: int, **kwargs):
-        cls._name = str(name) if name is not None else ''
-        cls._string = cls._name or str(iterable)
-        cls._iter_type = type(iterable).__name__
-        if not hasattr(iterable, '__iter__'):
-            message = cls._not_an_iterable_message_for()
-            log.error(message)
-            raise IterError(message)
-        for index, value in enumerate(iterable):
+        cls.__name = str(name) if name is not None else ''
+        cls._string = cls.__name or str(iterable)
+        cls._itertype = type(iterable).__name__
+        enumerated_iterable = cls.__enumerate(iterable)
+        for index, value in enumerated_iterable:
             value_name = cls.__name_from(index, value)
             _ = JustLen(value, name=value_name, length=alen)
         return iterable
 
     @classmethod
+    def __enumerate(cls, iterable) -> Enumerated:
+        try:
+            if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
+                enumerated = tuple(enumerate(iterable))
+            else:
+                indices = (-1 for _ in range(len(iterable)))
+                enumerated = tuple(zip(indices, iterable))
+        except TypeError:
+            cls.__raise_itererror()
+        return enumerated
+
+    @classmethod
+    def __raise_itererror(cls) -> None:
+        message = cls._not_an_iterable_message_for()
+        log.error(message)
+        raise IterError(message)
+
+    @classmethod
     def __name_from(cls, index: int, value: Any) -> str:
-        dict_types_string = f'dict {cls._string}' if cls._name else cls._string
-        if cls._iter_type == 'dict':
+        dicts = f'dict {cls._string}' if cls.__name else cls._string
+        named = f'{cls._itertype} {cls.__name}' if cls.__name else cls._string
+        if cls._itertype == 'dict':
             return f'key {value} in dict {cls._string}'
-        elif cls._iter_type == 'dict_keys':
-            return f'key {value} in ' + dict_types_string
-        elif cls._iter_type == 'dict_values':
-            return f'value {value} in ' + dict_types_string
-        elif cls._iter_type == 'dict_items':
-            return f'item {value} in ' + dict_types_string
-        elif cls._iter_type in ('set', 'frozenset'):
-            return f'{value} in {cls._iter_type} {cls._string}'
-        return (f'{value} with index {index} in '
-                f'{cls._iter_type} {cls._string}')
+        elif cls._itertype in ('dict_keys', 'odict_keys'):
+            return f'key {value} in {dicts}'
+        elif cls._itertype in ('dict_values', 'odict_values'):
+            return f'value {value} in {dicts}'
+        elif cls._itertype in ('dict_items', 'odict_items'):
+            return f'item {value} in {dicts}'
+        elif cls._itertype == 'frozenset':
+            value = set(value) if type(value) is frozenset else value
+            return f'{value} in {named}'
+        elif cls._itertype in ('OrderedDict', 'defaultdict'):
+            return f'key {value} in {named}'
+        return (f'{value}{cls.__string_for(index)} in '
+                f'{cls._itertype} {cls._string}')
+
+    @staticmethod
+    def __string_for(index: int) -> str:
+        return f' with index {index}' if index >= 0 else ''

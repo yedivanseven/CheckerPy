@@ -1,5 +1,6 @@
 # To Do
-- Continue with reviewing validators.numpy!
+- Continue with reviewing tests of AllLen!
+- Continue with reviewing validators.all!
 
 
 - Add numpy JustSize validator?

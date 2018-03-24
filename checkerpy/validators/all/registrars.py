@@ -17,7 +17,7 @@ class IterableRegistrar(type):
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
 
     def _not_an_iterable_message_for(cls) -> str:
-        return (f'Variable {cls._string} with type {cls._iter_type} does'
+        return (f'Variable {cls._string} with type {cls._itertype} does'
                 ' not seem to be an iterable with elements to inspect!')
 
 

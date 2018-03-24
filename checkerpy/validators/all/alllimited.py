@@ -58,7 +58,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
     def __new__(cls, iterable, name=None, *, alo=..., ahi=..., **kwargs):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
-        cls._iter_type = type(iterable).__name__
+        cls._itertype = type(iterable).__name__
         if not hasattr(iterable, '__iter__'):
             message = cls._not_an_iterable_message_for()
             log.error(message)
@@ -70,15 +70,15 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     @classmethod
     def __name_from(cls, index: int) -> str:
-        if cls._iter_type == 'dict':
+        if cls._itertype == 'dict':
             return f'dict key in {cls._string}'
-        elif cls._iter_type == 'dict_keys':
+        elif cls._itertype == 'dict_keys':
             return f'key in dict {cls._string}' if cls._name else cls._string
-        elif cls._iter_type == 'dict_values':
+        elif cls._itertype == 'dict_values':
             s = f'dict value in {cls._string}' if cls._name else cls._string
             return s
-        elif cls._iter_type == 'dict_items':
+        elif cls._itertype == 'dict_items':
             return f'item in dict {cls._string}' if cls._name else cls._string
-        elif cls._iter_type in ('set', 'frozenset'):
-            return f'element in {cls._iter_type} {cls._string}'
-        return f'{cls._iter_type} {cls._string} at index {index}'
+        elif cls._itertype in ('set', 'frozenset'):
+            return f'element in {cls._itertype} {cls._string}'
+        return f'{cls._itertype} {cls._string} at index {index}'
