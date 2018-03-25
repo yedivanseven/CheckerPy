@@ -48,7 +48,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         If an element of `value` lies on the wrong side or outside its
         respective limit(s).
     LenError
-        If `value` is not of the same lenth as `limits`.
+        If `value` is not of the same length as `limits`.
     TypeError
         If `limits` is not a tuple or any of its elements are not tuples.
     ValueError

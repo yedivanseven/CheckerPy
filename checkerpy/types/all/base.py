@@ -1,4 +1,4 @@
-from types import FunctionType, MethodType
+from types import FunctionType, MethodType, GeneratorType
 from .all import All
 
 AllType = All(type, identifier='AllType')
@@ -10,6 +10,11 @@ AllStr = All(str, identifier='AllStr')
 AllTuple = All(tuple, identifier='AllTuple')
 AllList = All(list, identifier='AllList')
 AllSet = All(set, identifier='AllSet')
+AllFrozen = All(frozenset, identifier='AllFrozen')
 AllDict = All(dict, identifier='AllDict')
+AllKeys = All(type({}.keys()), identifier='AllKeys')
+AllValues = All(type({}.values()), identifier='AllValues')
+AllItems = All(type({}.items()), identifier='AllItems')
 AllFunc = All(FunctionType, identifier='AllFunc')
 AllMeth = All(MethodType, identifier='AllMeth')
+AllGen = All(GeneratorType, identifier='AllGen')

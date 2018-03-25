@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import deque, defaultdict, OrderedDict
 from ....validators.all import AllLen
 from ....exceptions import LenError, IterError, CallableError
 from ....types.one import _ITERABLES
@@ -82,6 +83,34 @@ class TestAllLen(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(LenError) as err:
                 _ = AllLen(['foo', 'ba', 'baz'], 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_deque(self):
+        inputs = deque(['foo', 'bar', 'baz'])
+        output = AllLen(inputs, alen=3)
+        self.assertIsInstance(output, type(inputs))
+        self.assertEqual(output, inputs)
+
+    def test_error_on_wrong_alen_element_in_unnamed_deque(self):
+        log_msg = ["ERROR:root:Length of str ba with index 1 in "
+                   "deque(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str ba with index 1 in deque"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(deque(['foo', 'ba', 'baz']), alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_deque(self):
+        log_msg = ['ERROR:root:Length of str ba with index'
+                   ' 1 in deque test must be 3, not 2!']
+        err_msg = ('Length of str ba with index 1 '
+                   'in deque test must be 3, not 2!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(deque(['foo', 'ba', 'baz']), 'test', alen=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -234,6 +263,205 @@ class TestAllLen(ut.TestCase):
                 _ = AllLen(inputs.items(), 'test', alen=3)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_ordered_dict(self):
+        inputs = OrderedDict({'foo': 1, 'bar': 2, 'baz': 3})
+        output = AllLen(inputs, alen=3)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_wrong_alen_element_in_unnamed_ordered_dict(self):
+        inputs = OrderedDict({'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ["ERROR:root:Length of str key ba in OrderedDict([('foo',"
+                   " 1), ('ba', 2), ('baz', 3)]) must be 3, not 2!"]
+        err_msg = ("Length of str key ba in OrderedDict([('foo', 1),"
+                   " ('ba', 2), ('baz', 3)]) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_ordered_dict_keys(self):
+        inputs = OrderedDict({'foo': 1, 'ba': 2, 'baz': 3}).keys()
+        log_msg = ["ERROR:root:Length of str key ba in odict_keys"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str key ba in odict_keys"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_ordered_dict_values(self):
+        inputs = OrderedDict({1: 'foo', 2: 'ba', 3: 'baz'}).values()
+        log_msg = ["ERROR:root:Length of str value ba in odict_values"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str value ba in odict_values(['foo',"
+                   " 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_ordered_dict_items(self):
+        inputs = OrderedDict({1: 'foo', 2: 'ba', 3: 'baz'}).items()
+        log_msg = ["ERROR:root:Length of tuple item (1, 'foo') in odict_items"
+                   "([(1, 'foo'), (2, 'ba'), (3, 'baz')]) must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo') in odict_items([(1,"
+                   " 'foo'), (2, 'ba'), (3, 'baz')]) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_ordered_dict(self):
+        inputs = OrderedDict({'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ['ERROR:root:Length of str key ba in '
+                   'OrderedDict test must be 3, not 2!']
+        err_msg = 'Length of str key ba in OrderedDict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_ordered_dict_keys(self):
+        inputs = OrderedDict({'foo': 1, 'ba': 2, 'baz': 3}).keys()
+        log_msg = ["ERROR:root:Length of str key ba "
+                   "in dict test must be 3, not 2!"]
+        err_msg = "Length of str key ba in dict test must be 3, not 2!"
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_ordered_dict_values(self):
+        inputs = OrderedDict({1: 'foo', 2: 'ba', 3: 'baz'}).values()
+        log_msg = ["ERROR:root:Length of str value ba"
+                   " in dict test must be 3, not 2!"]
+        err_msg = "Length of str value ba in dict test must be 3, not 2!"
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_ordered_dict_items(self):
+        inputs = OrderedDict({1: 'foo', 2: 'ba', 3: 'baz'}).items()
+        log_msg = ["ERROR:root:Length of tuple item (1, "
+                   "'foo') in dict test must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo')"
+                   " in dict test must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict(self):
+        inputs = defaultdict(int, {'foo': 1, 'bar': 2, 'baz': 3})
+        output = AllLen(inputs, alen=3)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_wrong_alen_element_in_unnamed_defaultdict(self):
+        inputs = defaultdict(int, {'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ["ERROR:root:Length of str key ba in defaultdict(<class "
+                   "'int'>, {'foo': 1, 'ba': 2, 'baz': 3}) must be 3, not 2!"]
+        err_msg = ("Length of str key ba in defaultdict(<class 'int'>, "
+                   "{'foo': 1, 'ba': 2, 'baz': 3}) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_defaultdict_keys(self):
+        inputs = defaultdict(int, {'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ["ERROR:root:Length of str key ba in dict_keys"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str key ba in dict_keys(['foo',"
+                   " 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.keys(), alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_defaultdict_values(self):
+        inputs = defaultdict(str, {1: 'foo', 2: 'ba', 3: 'baz'})
+        log_msg = ["ERROR:root:Length of str value ba in dict_values"
+                   "(['foo', 'ba', 'baz']) must be 3, not 2!"]
+        err_msg = ("Length of str value ba in dict_values(['foo',"
+                   " 'ba', 'baz']) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.values(), alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_unnamed_defaultdict_items(self):
+        inputs = defaultdict(str, {1: 'foo', 2: 'ba', 3: 'baz'})
+        log_msg = ["ERROR:root:Length of tuple item (1, 'foo') in dict_items"
+                   "([(1, 'foo'), (2, 'ba'), (3, 'baz')]) must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo') in dict_items([(1, 'foo'),"
+                   " (2, 'ba'), (3, 'baz')]) must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.items(), alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_defaultdict(self):
+        inputs = defaultdict(int, {'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ['ERROR:root:Length of str key ba in '
+                   'defaultdict test must be 3, not 2!']
+        err_msg = 'Length of str key ba in defaultdict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs, 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_defaultdict_keys(self):
+        inputs = defaultdict(str, {'foo': 1, 'ba': 2, 'baz': 3})
+        log_msg = ['ERROR:root:Length of str key ba '
+                   'in dict test must be 3, not 2!']
+        err_msg = 'Length of str key ba in dict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.keys(), 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_defaultdict_values(self):
+        inputs = defaultdict(str, {1: 'foo', 2: 'ba', 3: 'baz'})
+        log_msg = ['ERROR:root:Length of str value ba'
+                   ' in dict test must be 3, not 2!']
+        err_msg = 'Length of str value ba in dict test must be 3, not 2!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.values(), 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_alen_element_in_named_defaultdict_items(self):
+        inputs = defaultdict(str, {1: 'foo', 2: 'ba', 3: 'baz'})
+        log_msg = ["ERROR:root:Length of tuple item (1, 'foo')"
+                   " in dict test must be 3, not 2!"]
+        err_msg = ("Length of tuple item (1, 'foo') "
+                   "in dict test must be 3, not 2!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(LenError) as err:
+                _ = AllLen(inputs.items(), 'test', alen=3)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestAllLenMethods(ut.TestCase):
 
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:

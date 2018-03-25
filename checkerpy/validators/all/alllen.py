@@ -97,11 +97,13 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
             return f'value {value} in {dicts}'
         elif cls._itertype in ('dict_items', 'odict_items'):
             return f'item {value} in {dicts}'
+        elif cls._itertype in ('OrderedDict', 'defaultdict'):
+            return f'key {value} in {named}'
         elif cls._itertype == 'frozenset':
             value = set(value) if type(value) is frozenset else value
             return f'{value} in {named}'
-        elif cls._itertype in ('OrderedDict', 'defaultdict'):
-            return f'key {value} in {named}'
+        elif cls._itertype == 'deque':
+            return f'{value}{cls.__string_for(index)} in {named}'
         return (f'{value}{cls.__string_for(index)} in '
                 f'{cls._itertype} {cls._string}')
 
