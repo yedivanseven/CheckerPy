@@ -75,15 +75,11 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
             else:
                 indices = (-1 for _ in range(len(iterable)))
                 enumerated = tuple(zip(indices, iterable))
-        except TypeError:
-            cls.__raise_itererror()
+        except TypeError as error:
+            message = cls._not_an_iterable_message_for()
+            log.error(message)
+            raise IterError(message) from error
         return enumerated
-
-    @classmethod
-    def __raise_itererror(cls) -> None:
-        message = cls._not_an_iterable_message_for()
-        log.error(message)
-        raise IterError(message)
 
     @classmethod
     def __name_from(cls, index: int, value: Any) -> str:
