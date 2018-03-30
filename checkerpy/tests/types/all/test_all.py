@@ -1,9 +1,10 @@
 import logging
 import unittest as ut
+from collections import defaultdict, deque, OrderedDict
 from ....functional import CompositionOf
 from ....types.all import All
 from ....types.one import _ITERABLES
-from ....exceptions import WrongTypeError, IterError
+from ....exceptions import WrongTypeError, IterError, CallableError
 
 
 class TestAllInstatiation(ut.TestCase):
@@ -47,47 +48,95 @@ class TestAllInstatiation(ut.TestCase):
         self.assertTupleEqual(AllNum.types, (int, float))
 
 
-class TestAll(ut.TestCase):
+class TestAllWorks(ut.TestCase):
 
-    def test_returns_correct_value_with_str(self):
+    def test_works_with_str(self):
         AllStr = All(str)
         s = AllStr('foo')
+        self.assertIsInstance(s, str)
         self.assertEqual(s, 'foo')
 
-    def test_returns_correct_value_with_tuple(self):
+    def test_works_with_tuple(self):
         AllStr = All(str)
         t = AllStr(('f', 'o', 'o'))
         self.assertTupleEqual(t, ('f', 'o', 'o'))
 
-    def test_returns_correct_value_with_list(self):
+    def test_works_with_list(self):
         AllStr =All(str)
         l = AllStr(['f', 'o', 'o'])
         self.assertListEqual(l, ['f', 'o', 'o'])
 
-    def test_returns_correct_value_with_set(self):
+    def test_works_with_deque(self):
+        AllStr =All(str)
+        dq = AllStr(deque(['f', 'o', 'o']))
+        self.assertIsInstance(dq, deque)
+        self.assertEqual(dq, deque(['f', 'o', 'o']))
+
+    def test_works_with_set(self):
         AllStr = All(str)
         s = AllStr({'f', 'o', 'o'})
         self.assertSetEqual(s, {'f', 'o'})
 
-    def test_returns_correct_value_with_frozenset(self):
+    def test_works_with_frozenset(self):
         AllStr = All(str)
         s = AllStr(frozenset({'f', 'o', 'o'}))
         self.assertSetEqual(s, {'f', 'o'})
 
-    def test_returns_correct_value_with_dict(self):
+    def test_works_with_dict(self):
         AllStr = All(str)
         d = AllStr({'f': 1, 'o': 2})
         self.assertDictEqual(d, {'f': 1, 'o': 2})
 
-    def test_returns_correct_value_with_dict_keys(self):
+    def test_works_ordered_dict(self):
+        AllStr = All(str)
+        od = AllStr(OrderedDict({'f': 1, 'o': 2}))
+        self.assertIsInstance(od, OrderedDict)
+        self.assertDictEqual(od, {'f': 1, 'o': 2})
+
+    def test_works_with_defaultdict(self):
+        AllStr = All(str)
+        dd = AllStr(defaultdict(int, {'f': 1, 'o': 2}))
+        self.assertDictEqual(dd, {'f': 1, 'o': 2})
+
+    def test_works_with_dict_keys(self):
         AllStr = All(str)
         d = AllStr({'f': 1, 'o': 2}.keys())
+        self.assertIsInstance(d, type({}.keys()))
         self.assertSetEqual(set(d), set({'f': 1, 'o': 2}.keys()))
 
-    def test_returns_correct_value_with_dict_values(self):
+    def test_works_with_ordered_dict_keys(self):
+        AllStr = All(str)
+        od = OrderedDict({'f': 1, 'o': 2})
+        output = AllStr(od.keys())
+        self.assertIsInstance(output, type(od.keys()))
+        self.assertSetEqual(set(od.keys()), set(output))
+
+    def test_works_with_defaultdict_keys(self):
+        AllStr = All(str)
+        dd = defaultdict(int, {'f': 1, 'o': 2})
+        output = AllStr(dd.keys())
+        self.assertIsInstance(output, type(dd.keys()))
+        self.assertSetEqual(set(dd.keys()), set(output))
+
+    def test_works_with_dict_values(self):
         AllInt = All(int)
         d = AllInt({'f': 1, 'o': 2}.values())
+        self.assertIsInstance(d, type({}.values()))
         self.assertSetEqual(set(d), set({'f': 1, 'o': 2}.values()))
+
+    def test_works_with_ordered_dict_values(self):
+        AllInt = All(int)
+        od = OrderedDict({'f': 1, 'o': 2})
+        output = AllInt(od.values())
+        self.assertIsInstance(output, type(od.values()))
+        self.assertSetEqual(set(od.values()), set(output))
+
+    def test_works_with_defaultdict_values(self):
+        AllInt = All(int)
+        dd = defaultdict(int, {'f': 1, 'o': 2})
+        output = AllInt(dd.values())
+        self.assertIsInstance(output, type(dd.values()))
+        self.assertSetEqual(set(dd.values()), set(output))
 
     def test_returns_correct_type_with_two_types(self):
         AllNum = All(int, float)
@@ -100,6 +149,9 @@ class TestAll(ut.TestCase):
         AllNum = All(int, float)
         self.assertTupleEqual(AllNum((2, )), (2, ))
         self.assertListEqual(AllNum([2.0]), [2.0])
+
+
+class TestAllErrorUnnamedOneType(ut.TestCase):
 
     def test_error_on_unnamed_variable_not_iterable(self):
         AllInt = All(int)
@@ -125,7 +177,7 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_unnamed_variable_with_one_type(self):
+    def test_error_on_wrong_unnamed_tuple_with_one_type(self):
         AllInt = All(int)
         log_msg = ['ERROR:root:Type of element 1 in tuple (4,'
                    ' 5.0) must be int, not float like 5.0!']
@@ -137,15 +189,66 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_unnamed_list_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of element 1 in list [4,'
+                   ' 5.0] must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in list [4, 5.0]'
+                   ' must be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt([4, 5.0])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_deque_with_one_type(self):
+        AllInt = All(int)
+        log_msg = ['ERROR:root:Type of element 1 in deque([4,'
+                   ' 5.0]) must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in deque([4, 5.0])'
+                   ' must be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(deque([4, 5.0]))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_error_on_wrong_unnamed_dict_with_one_type(self):
         AllInt = All(int)
+        inputs = {4: 'four', 5.0: 'five'}
         log_msg = ["ERROR:root:Type of key in dict {4: 'four', "
                    "5.0: 'five'} must be int, not float like 5.0!"]
         err_msg = ("Type of key in dict {4: 'four', 5.0: "
                    "'five'} must be int, not float like 5.0!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = AllInt({4: 'four', 5.0: 'five'})
+                _ = AllInt(inputs)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_ordered_dict_with_one_type(self):
+        AllInt = All(int)
+        inputs = OrderedDict({4: 'four', 5.0: 'five'})
+        log_msg = ["ERROR:root:Type of key in OrderedDict([(4, 'four'),"
+                   " (5.0, 'five')]) must be int, not float like 5.0!"]
+        err_msg = ("Type of key in OrderedDict([(4, 'four'), (5.0,"
+                   " 'five')]) must be int, not float like 5.0!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_defaultdict_with_one_type(self):
+        AllInt = All(int)
+        inputs = defaultdict(str, {4: 'four', 5.0: 'five'})
+        log_msg = ["ERROR:root:Type of key in defaultdict(<class 'str'>, {4:"
+                   " 'four', 5.0: 'five'}) must be int, not float like 5.0!"]
+        err_msg = ("Type of key in defaultdict(<class 'str'>, {4: 'four',"
+                   " 5.0: 'five'}) must be int, not float like 5.0!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -161,6 +264,32 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_wrong_unnamed_ordered_dict_key_with_one_type(self):
+        AllInt = All(int)
+        inputs = OrderedDict({4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in odict_keys([4,'
+                   ' 5.0]) must be int, not float like 5.0!']
+        err_msg = ('Type of key in odict_keys([4, 5.0])'
+                   ' must be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs.keys())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_defaultdict_key_with_one_type(self):
+        AllInt = All(int)
+        inputs = defaultdict(str, {4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in dict_keys([4,'
+                   ' 5.0]) must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict_keys([4, 5.0])'
+                   ' must be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs.keys())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_error_on_wrong_unnamed_dict_values_with_one_type(self):
         AllStr = All(str)
         log_msg = ["ERROR:root:Type of value in dict_values(['four', 5])"
@@ -170,6 +299,32 @@ class TestAll(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = AllStr({4: 'four', 5.0: 5}.values())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_ordered_dict_values_with_one_type(self):
+        AllStr = All(str)
+        inputs = OrderedDict({4: 'four', 5.0: 5})
+        log_msg = ["ERROR:root:Type of value in odict_values(['four', 5])"
+                   " must be str, not int like 5!"]
+        err_msg = ("Type of value in odict_values(['four', 5])"
+                   " must be str, not int like 5!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllStr(inputs.values())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_unnamed_defaultdict_values_with_one_type(self):
+        AllStr = All(str)
+        inputs = defaultdict(str, {4: 'four', 5.0: 5})
+        log_msg = ["ERROR:root:Type of value in dict_values(['four', 5])"
+                   " must be str, not int like 5!"]
+        err_msg = ("Type of value in dict_values(['four', 5])"
+                   " must be str, not int like 5!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllStr(inputs.values())
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -197,7 +352,10 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_named_variable_with_one_type(self):
+
+class TestAllErrorNamedOneType(ut.TestCase):
+
+    def test_error_on_wrong_named_tuple_with_one_type(self):
         AllInt = All(int)
         log_msg = ['ERROR:root:Type of element 1 in tuple '
                    'test must be int, not float like 5.0!']
@@ -209,39 +367,144 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_named_dict_with_one_type(self):
+    def test_error_on_wrong_named_list_with_one_type(self):
         AllInt = All(int)
-        log_msg = ['ERROR:root:Type of key in dict test'
-                   ' must be int, not float like 5.0!']
-        err_msg = ('Type of key in dict test must'
-                   ' be int, not float like 5.0!')
+        log_msg = ['ERROR:root:Type of element 1 in list '
+                   'test must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in list test '
+                   'must be int, not float like 5.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = AllInt({4: 'four', 5.0: 'five'}, 'test')
+                _ = AllInt([4, 5.0], 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_wrong_named_dict_key_with_one_type(self):
+    def test_error_on_wrong_named_deque_with_one_type(self):
         AllInt = All(int)
+        log_msg = ['ERROR:root:Type of element 1 in deque '
+                   'test must be int, not float like 5.0!']
+        err_msg = ('Type of element 1 in deque test '
+                   'must be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(deque([4, 5.0]), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_dict_with_one_type(self):
+        AllInt = All(int)
+        inputs = {4: 'four', 5.0: 'five'}
         log_msg = ['ERROR:root:Type of key in dict test'
                    ' must be int, not float like 5.0!']
         err_msg = ('Type of key in dict test must'
                    ' be int, not float like 5.0!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = AllInt({4: 'four', 5.0: 'five'}.keys(), 'test')
+                _ = AllInt(inputs, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_ordered_dict_with_one_type(self):
+        AllInt = All(int)
+        inputs = OrderedDict({4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in OrderedDict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in OrderedDict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_defaultdict_with_one_type(self):
+        AllInt = All(int)
+        inputs = defaultdict(str, {4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in defaultdict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in defaultdict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_dict_keys_with_one_type(self):
+        AllInt = All(int)
+        inputs = {4: 'four', 5.0: 'five'}
+        log_msg = ['ERROR:root:Type of key in dict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs.keys(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_ordered_dict_keys_with_one_type(self):
+        AllInt = All(int)
+        inputs = OrderedDict({4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in dict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs.keys(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_defaultdict_keys_with_one_type(self):
+        AllInt = All(int)
+        inputs = defaultdict(str, {4: 'four', 5.0: 'five'})
+        log_msg = ['ERROR:root:Type of key in dict test'
+                   ' must be int, not float like 5.0!']
+        err_msg = ('Type of key in dict test must'
+                   ' be int, not float like 5.0!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllInt(inputs.keys(), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_wrong_named_dict_values_with_one_type(self):
         AllStr = All(str)
+        inputs = {4: 'four', 5.0: 5}
         log_msg = ['ERROR:root:Type of value in dict '
                    'test must be str, not int like 5!']
         err_msg = ('Type of value in dict test '
                    'must be str, not int like 5!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
-                _ = AllStr({4: 'four', 5.0: 5}.values(), 'test')
+                _ = AllStr(inputs.values(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_ordered_dict_values_with_one_type(self):
+        AllStr = All(str)
+        inputs = OrderedDict({4: 'four', 5.0: 5})
+        log_msg = ['ERROR:root:Type of value in dict '
+                   'test must be str, not int like 5!']
+        err_msg = ('Type of value in dict test '
+                   'must be str, not int like 5!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllStr(inputs.values(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_defaultdict_values_with_one_type(self):
+        AllStr = All(str)
+        inputs = defaultdict(str, {4: 'four', 5.0: 5})
+        log_msg = ['ERROR:root:Type of value in dict '
+                   'test must be str, not int like 5!']
+        err_msg = ('Type of value in dict test '
+                   'must be str, not int like 5!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = AllStr(inputs.values(), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -268,6 +531,9 @@ class TestAll(ut.TestCase):
                 _ = AllInt(frozenset({4, 5.0}), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+
+class TestAllErrorTowTypes(ut.TestCase):
 
     def test_error_on_wrong_unnamed_variable_with_two_types(self):
         AllNum = All(int, float)
@@ -401,6 +667,9 @@ class TestAll(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+
+class TestAllMethods(ut.TestCase):
+
     def test_has_iterable_type_checker_attributes(self):
         AllNum = All(int, float)
         for iterable in _ITERABLES:
@@ -422,7 +691,7 @@ class TestAll(ut.TestCase):
         AllInt = All(int)
         self.assertIsInstance(AllInt.NonEmpty, CompositionOf)
 
-    def test_has_attribute_JustLent(self):
+    def test_has_attribute_JustLen(self):
         AllInt = All(int)
         self.assertTrue(hasattr(AllInt, 'JustLen'))
 
@@ -468,6 +737,15 @@ class TestAll(ut.TestCase):
         AllNum = All(int, float)
         composition = AllInt.o(AllNum)
         self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        AllInt = All(int)
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = AllInt.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
 
 if __name__ == '__main__':

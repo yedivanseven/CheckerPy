@@ -19,11 +19,11 @@ class IterableRegistrar(type):
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
 
-    def _not_an_iterable_message_for(cls) -> str:
+    def _not_an_iterable_message(cls) -> str:
         return (f'Variable {cls._string} with type {cls._itertype} does'
                 ' not seem to be an iterable with elements to inspect!')
 
-    def _enumerate(cls, iterable) -> Enumerated:
+    def _enumerate(cls, iterable: Any) -> Enumerated:
         try:
             if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
                 enumerated = tuple(enumerate(iterable))
@@ -31,7 +31,7 @@ class IterableRegistrar(type):
                 indices = (-1 for _ in range(len(iterable)))
                 enumerated = tuple(zip(indices, iterable))
         except TypeError as error:
-            message = cls._not_an_iterable_message_for()
+            message = cls._not_an_iterable_message()
             log.error(message)
             raise IterError(message) from error
         return enumerated

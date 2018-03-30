@@ -57,8 +57,7 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._itertype = type(iterable).__name__
-        enumerated_iterable = cls._enumerate(iterable)
-        for index, value in enumerated_iterable:
+        for index, value in cls._enumerate(iterable):
             value_name = cls.__name_from(index)
             _ = Limited(value, name=value_name, lo=alo, hi=ahi)
         return iterable

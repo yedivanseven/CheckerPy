@@ -239,6 +239,10 @@ class TestJustDtype(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+
+@ut.skipIf(no_numpy, 'Could not import numpy!')
+class TestJustDtypeMethods(ut.TestCase):
+
     def test_has_attribute_JustNdarray(self):
         JustInt16 = JustDtype(int16)
         self.assertTrue(hasattr(JustInt16, 'JustNdarray'))

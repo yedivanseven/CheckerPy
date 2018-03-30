@@ -57,8 +57,7 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         cls.__name = str(name) if name is not None else ''
         cls._string = cls.__name or str(iterable)
         cls._itertype = type(iterable).__name__
-        enumerated_iterable = cls._enumerate(iterable)
-        for index, value in enumerated_iterable:
+        for index, value in cls._enumerate(iterable):
             value_name = cls.__name_from(index, value)
             _ = JustLen(value, name=value_name, length=alen)
         return iterable
@@ -82,8 +81,8 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
             return f'{value} in {named}'
         elif cls._itertype == 'deque':
             return f'{value}{cls.__string_for(index)} in {named}'
-        return (f'{value}{cls.__string_for(index)} in '
-                f'{cls._itertype} {cls._string}')
+        return (f'{value}{cls.__string_for(index)} '
+                f'in {cls._itertype} {cls._string}')
 
     @staticmethod
     def __string_for(index: int) -> str:
