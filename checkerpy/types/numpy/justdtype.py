@@ -1,11 +1,11 @@
 import logging as log
 from typing import Tuple, Union, Iterable, Any
 from numpy import dtype
-from .docstring import DOC_HEADER, DOC_BODY
-from .justndarray import JustNdarray
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError, DtypeError
+from .docstring import DOC_HEADER, DOC_BODY
+from .justndarray import JustNdarray
 
 Types = Union[type, Iterable[type]]
 

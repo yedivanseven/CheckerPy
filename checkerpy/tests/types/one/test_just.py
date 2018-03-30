@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import defaultdict, deque, OrderedDict
 from ....functional import CompositionOf
 from ....types.one import Just
 from ....exceptions import WrongTypeError, CallableError
@@ -63,17 +64,62 @@ class TestJustInstantiation(ut.TestCase):
         JustNum = Just(int, float)
         self.assertTupleEqual(JustNum.types, (int, float))
 
-    def test_works_with_types_given_as_set(self):
-        JustIntFloat = Just({int, float})
-        self.assertSetEqual(set(JustIntFloat.types), {int, float})
+    def test_works_with_types_given_as_tuple(self):
+        JustListDict = Just((list, dict))
+        self.assertTupleEqual(JustListDict.types, (list, dict))
 
     def test_works_with_types_given_as_list(self):
         JustBoolStr = Just([bool, str])
         self.assertTupleEqual(JustBoolStr.types, (bool, str))
 
-    def test_works_with_types_given_as_tuple(self):
-        JustListDict = Just((list, dict))
-        self.assertTupleEqual(JustListDict.types, (list, dict))
+    def test_works_with_types_given_as_deque(self):
+        JustFloatSet = Just(deque([float, set]))
+        self.assertTupleEqual(JustFloatSet.types, (float, set))
+
+    def test_works_with_types_given_as_set(self):
+        JustIntFloat = Just({int, float})
+        self.assertSetEqual(set(JustIntFloat.types), {int, float})
+
+    def test_works_with_types_given_as_frozenset(self):
+        JustSliceTuple = Just(frozenset({slice, tuple}))
+        self.assertSetEqual(set(JustSliceTuple.types), {slice, tuple})
+
+    def test_works_with_types_given_as_dict(self):
+        JustDictInt = Just({dict: 'dict', int: 'int'})
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_ordered_dict(self):
+        JustDictInt = Just(OrderedDict({dict: 'dict', int: 'int'}))
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_defaultdict(self):
+        JustDictInt = Just(defaultdict(str, {dict: 'dict', int: 'int'}))
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_dict_keys(self):
+        JustDictInt = Just({dict: 'dict', int: 'int'}.keys())
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_ordered_dict_keys(self):
+        JustDictInt = Just(OrderedDict({dict: 'dict', int: 'int'}).keys())
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_defaultdict_keys(self):
+        JustDictInt = Just(defaultdict(str, {dict: 'dict', int: 'int'}).keys())
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_dict_values(self):
+        JustDictInt = Just({'dict': dict, 'int': int}.values())
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_ordered_dict_values(self):
+        JustDictInt = Just(OrderedDict({'dict': dict, 'int': int}).values())
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
+
+    def test_works_with_types_given_as_defaultdict_values(self):
+        types = defaultdict(type, {'dict': dict, 'int': int}).values()
+        JustDictInt = Just(types)
+        self.assertSetEqual(set(JustDictInt.types), {dict, int})
 
 
 class TestJust(ut.TestCase):

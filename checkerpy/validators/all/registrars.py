@@ -1,10 +1,13 @@
-from typing import Tuple
+import logging as log
+from typing import Tuple, Any
 from ...types.one import _ITERABLES
 from ...types.all import _ALL_ITERABLES, _ALL_COMPARABLES
-from ..one import NonEmpty, JustLen
 from ...functional import CompositionOf
+from ...exceptions import IterError
+from ..one import NonEmpty, JustLen
 
 Types = Tuple[type, ...]
+Enumerated = Tuple[Tuple[int, Any], ...]
 
 
 class IterableRegistrar(type):
@@ -19,6 +22,19 @@ class IterableRegistrar(type):
     def _not_an_iterable_message_for(cls) -> str:
         return (f'Variable {cls._string} with type {cls._itertype} does'
                 ' not seem to be an iterable with elements to inspect!')
+
+    def _enumerate(cls, iterable) -> Enumerated:
+        try:
+            if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
+                enumerated = tuple(enumerate(iterable))
+            else:
+                indices = (-1 for _ in range(len(iterable)))
+                enumerated = tuple(zip(indices, iterable))
+        except TypeError as error:
+            message = cls._not_an_iterable_message_for()
+            log.error(message)
+            raise IterError(message) from error
+        return enumerated
 
 
 class AllIterableRegistrar(IterableRegistrar):

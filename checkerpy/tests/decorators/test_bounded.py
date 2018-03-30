@@ -1162,10 +1162,10 @@ class TestBoundedFunctionDict(ut.TestCase):
         @Bounded({(1, 3): ('a', 'c')})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Value 5 of dict key in argument x to function '
+        log_msg = ['ERROR:root:Value 5 of key in dict argument x to function '
                    f'f defined in module {__name__} lies outside the allowed'
                    ' interval [1, 3]!']
-        err_msg = ('Value 5 of dict key in argument x to function'
+        err_msg = ('Value 5 of key in dict argument x to function'
                    f' f defined in module {__name__} lies outside'
                    ' the allowed interval [1, 3]!')
         with self.assertLogs(level=logging.ERROR) as log:
@@ -1178,10 +1178,10 @@ class TestBoundedFunctionDict(ut.TestCase):
         @Bounded({(1, 3): ('a', 'c')})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Cannot compare type str of dict key in argument'
+        log_msg = ['ERROR:root:Cannot compare type str of key in dict argument'
                    f' x to function f defined in module {__name__} with limits'
                    ' of types int and int!']
-        err_msg = ('Cannot compare type str of dict key in argument x'
+        err_msg = ('Cannot compare type str of key in dict argument x'
                    f' to function f defined in module {__name__} with'
                    ' limits of types int and int!')
         with self.assertLogs(level=logging.ERROR) as log:

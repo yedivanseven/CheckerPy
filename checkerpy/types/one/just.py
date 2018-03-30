@@ -1,8 +1,8 @@
 import logging as log
-from typing import Tuple, Union, Iterable, Any
-from .docstring import DOC_HEADER, DOC_BODY
+from typing import Tuple, Union, Sequence, Iterable, Any
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError
+from .docstring import DOC_HEADER, DOC_BODY
 
 Types = Union[type, Iterable[type]]
 
@@ -33,10 +33,10 @@ class Just(CompositionMixin):
     """
 
     def __init__(self, *types: Types, identifier: str = 'Just') -> None:
-        self._name = None
+        self.__name = None
         self.__types = self.__registered(types)
-        self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
+        self.__doc__ = self.__doc_string()
 
     @property
     def types(self) -> Tuple[type, ...]:
@@ -44,7 +44,7 @@ class Just(CompositionMixin):
 
     def __call__(self, value: Any, name: str = None, **kwargs):
         value_type = type(value)
-        self._name = str(name) if name is not None else ''
+        self.__name = str(name) if name is not None else ''
         if value_type not in self.__types:
             message = self.__error_message_for(value, value_type.__name__)
             log.error(message)
@@ -52,7 +52,7 @@ class Just(CompositionMixin):
         return value
 
     def __error_message_for(self, value: Any, value_type: str) -> str:
-        name = ' of '+self._name if self._name else ''
+        name = ' of '+self.__name if self.__name else ''
         types = tuple(type_.__name__ for type_ in self.__types)
         of_type = types[0] if len(types) == 1 else f'one of {types}'
         return f'Type{name} must be {of_type}, not {value_type} like {value}!'
@@ -65,12 +65,14 @@ class Just(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __registered(self, types: Tuple[type, ...]) -> Tuple[type, ...]:
+    def __registered(self, types: Sequence[Types]) -> Tuple[type, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
-        type_is_iter = len(types) == 1 and type(types[0]) in (tuple, list, set)
-        types = types[0] if type_is_iter else types
-        return tuple(map(self.__validate, types))
+        try:
+            types = tuple(map(self.__validate, types[0]))
+        except TypeError:
+            types = tuple(map(self.__validate, types))
+        return types
 
     def __validate(self, type_: type) -> type:
         if not type(type_) is type:

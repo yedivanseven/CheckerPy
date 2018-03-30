@@ -1,8 +1,6 @@
-import logging as log
-from .registrars import AllComparableRegistrar
-from ..one import Limited
 from ...functional.mixins import CompositionClassMixin
-from ...exceptions import IterError
+from ..one import Limited
+from .registrars import AllComparableRegistrar
 
 
 class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
@@ -59,26 +57,34 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
         cls._name = str(name) if name is not None else ''
         cls._string = cls._name or str(iterable)
         cls._itertype = type(iterable).__name__
-        if not hasattr(iterable, '__iter__'):
-            message = cls._not_an_iterable_message_for()
-            log.error(message)
-            raise IterError(message)
-        for index, value in enumerate(iterable):
+        enumerated_iterable = cls._enumerate(iterable)
+        for index, value in enumerated_iterable:
             value_name = cls.__name_from(index)
             _ = Limited(value, name=value_name, lo=alo, hi=ahi)
         return iterable
 
     @classmethod
     def __name_from(cls, index: int) -> str:
+        named = f'{cls._itertype} {cls._name}' if cls._name else cls._string
         if cls._itertype == 'dict':
-            return f'dict key in {cls._string}'
-        elif cls._itertype == 'dict_keys':
+            return f'key in dict {cls._string}'
+        elif cls._itertype in ('dict_keys', 'odict_keys'):
             return f'key in dict {cls._string}' if cls._name else cls._string
-        elif cls._itertype == 'dict_values':
-            s = f'dict value in {cls._string}' if cls._name else cls._string
-            return s
-        elif cls._itertype == 'dict_items':
+        elif cls._itertype in ('dict_values', 'odict_values'):
+            return f'dict value in {cls._string}' if cls._name else cls._string
+        elif cls._itertype in ('dict_items', 'odict_items'):
             return f'item in dict {cls._string}' if cls._name else cls._string
-        elif cls._itertype in ('set', 'frozenset'):
-            return f'element in {cls._itertype} {cls._string}'
-        return f'{cls._itertype} {cls._string} at index {index}'
+        elif cls._itertype in ('OrderedDict', 'defaultdict'):
+            return f'key in {named}'
+        elif cls._itertype == 'frozenset':
+            return f'element in {named}'
+        elif cls._itertype == 'deque':
+            return f'{named} at index {index}'
+        prefix, postfix = cls.__fixes_for(index)
+        return f'{prefix}{cls._itertype} {cls._string}{postfix}'
+
+    @staticmethod
+    def __fixes_for(index: int) -> (str, str):
+        prefix = '' if index >= 0 else 'element in '
+        postfix = f' at index {index}' if index >= 0 else ''
+        return prefix, postfix

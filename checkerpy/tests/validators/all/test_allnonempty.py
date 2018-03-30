@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import deque, defaultdict, OrderedDict
 from ....validators.all import AllNonEmpty
 from ....exceptions import IterError, EmptyError, CallableError
 from ....types.one import _ITERABLES
@@ -81,6 +82,33 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_deque(self):
+        inputs = deque(['f', 'o', 'o'])
+        output = AllNonEmpty(inputs)
+        self.assertIsInstance(output, type(inputs))
+        self.assertEqual(output, inputs)
+
+    def test_error_on_empty_element_in_unnamed_deque(self):
+        log_msg = ["ERROR:root:Str with index 2 in deque"
+                   "(['f', 'o', '']) must not be empty!"]
+        err_msg = ("Str with index 2 in deque"
+                   "(['f', 'o', '']) must not be empty!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(deque(['f', 'o', '']))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_deque(self):
+        log_msg = ['ERROR:root:Str with index 2 in'
+                   ' deque test must not be empty!']
+        err_msg = 'Str with index 2 in deque test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(deque(['f', 'o', '']), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_works_with_sane_set(self):
         inputs = {'f', 'o', 'o'}
         output = AllNonEmpty(inputs)
@@ -143,9 +171,64 @@ class TestAllNonEmpty(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_ordered_dict(self):
+        inputs = OrderedDict({'f': 1, 'o': 2})
+        output = AllNonEmpty(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_empty_element_in_unnamed_ordered_dict(self):
+        inputs = OrderedDict({'f': 1, 'o': 2, '': 3})
+        log_msg = ["ERROR:root:Str key in OrderedDict([('f', 1),"
+                   " ('o', 2), ('', 3)]) must not be empty!"]
+        err_msg = ("Str key in OrderedDict([('f', 1), ('o',"
+                   " 2), ('', 3)]) must not be empty!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_ordered_dict(self):
+        inputs = OrderedDict({'f': 1, 'o': 2, '': 3})
+        log_msg = ['ERROR:root:Str key in OrderedDict test must not be empty!']
+        err_msg = 'Str key in OrderedDict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2})
+        output = AllNonEmpty(inputs)
+        self.assertDictEqual(output, inputs)
+
+    def test_error_on_empty_element_in_unnamed_defaultdict(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2, '': 3})
+        log_msg = ["ERROR:root:Str key in defaultdict(<class 'int'>,"
+                   " {'f': 1, 'o': 2, '': 3}) must not be empty!"]
+        err_msg = ("Str key in defaultdict(<class 'int'>,"
+                   " {'f': 1, 'o': 2, '': 3}) must not be empty!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_defaultdict(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2, '': 3})
+        log_msg = ['ERROR:root:Str key in defaultdict test must not be empty!']
+        err_msg = 'Str key in defaultdict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_works_with_sane_dict_keys(self):
         inputs = {'f': 1, 'o': 2}
         output = AllNonEmpty(inputs.keys())
+        self.assertIsInstance(output, type(inputs.keys()))
         self.assertSetEqual(set(output), set(inputs.keys()))
 
     def test_error_on_empty_element_in_unnamed_dict_keys(self):
@@ -161,6 +244,60 @@ class TestAllNonEmpty(ut.TestCase):
 
     def test_error_on_empty_element_in_named_dict_keys(self):
         inputs = {'f': 1, 'o': 2, '': 3}
+        log_msg = ['ERROR:root:Str key in dict test must not be empty!']
+        err_msg = 'Str key in dict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.keys(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_ordered_dict_keys(self):
+        inputs = OrderedDict({'f': 1, 'o': 2})
+        output = AllNonEmpty(inputs.keys())
+        self.assertIsInstance(output, type(inputs.keys()))
+        self.assertSetEqual(set(output), set(inputs.keys()))
+
+    def test_error_on_empty_element_in_unnamed_ordered_dict_keys(self):
+        inputs = OrderedDict({'f': 1, 'o': 2, '': 3})
+        log_msg = ["ERROR:root:Str key in odict_keys"
+                   "(['f', 'o', '']) must not be empty!"]
+        err_msg = "Str key in odict_keys(['f', 'o', '']) must not be empty!"
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.keys())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_ordered_dict_keys(self):
+        inputs = OrderedDict({'f': 1, 'o': 2, '': 3})
+        log_msg = ['ERROR:root:Str key in dict test must not be empty!']
+        err_msg = 'Str key in dict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.keys(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict_keys(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2})
+        output = AllNonEmpty(inputs.keys())
+        self.assertIsInstance(output, type(inputs.keys()))
+        self.assertSetEqual(set(output), set(inputs.keys()))
+
+    def test_error_on_empty_element_in_unnamed_defaultdict_keys(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2, '': 3})
+        log_msg = ["ERROR:root:Str key in dict_keys"
+                   "(['f', 'o', '']) must not be empty!"]
+        err_msg = "Str key in dict_keys(['f', 'o', '']) must not be empty!"
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.keys())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_defaultdict_keys(self):
+        inputs = defaultdict(int, {'f': 1, 'o': 2, '': 3})
         log_msg = ['ERROR:root:Str key in dict test must not be empty!']
         err_msg = 'Str key in dict test must not be empty!'
         with self.assertLogs(level=logging.ERROR) as log:
@@ -194,6 +331,65 @@ class TestAllNonEmpty(ut.TestCase):
                 _ = AllNonEmpty(inputs.values(), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_ordered_dict_values(self):
+        inputs = OrderedDict({1: 'f', 2: 'o'})
+        output = AllNonEmpty(inputs.values())
+        self.assertIsInstance(output, type(inputs.values()))
+        self.assertSetEqual(set(output), set(inputs.values()))
+
+    def test_error_on_empty_element_in_unnamed_ordered_dict_values(self):
+        inputs = OrderedDict({1: 'f', 2: 'o', 3: ''})
+        log_msg = ["ERROR:root:Str value in odict_values"
+                   "(['f', 'o', '']) must not be empty!"]
+        err_msg = ("Str value in odict_values"
+                   "(['f', 'o', '']) must not be empty!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.values())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_ordered_dict_values(self):
+        inputs = OrderedDict({1: 'f', 2: 'o', 3: ''})
+        log_msg = ['ERROR:root:Str value in dict test must not be empty!']
+        err_msg = 'Str value in dict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.values(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict_values(self):
+        inputs = defaultdict(str, {1: 'f', 2: 'o'})
+        output = AllNonEmpty(inputs.values())
+        self.assertIsInstance(output, type(inputs.values()))
+        self.assertSetEqual(set(output), set(inputs.values()))
+
+    def test_error_on_empty_element_in_unnamed_defaultdict_values(self):
+        inputs = defaultdict(str, {1: 'f', 2: 'o', 3: ''})
+        log_msg = ["ERROR:root:Str value in dict_values"
+                   "(['f', 'o', '']) must not be empty!"]
+        err_msg = ("Str value in dict_values"
+                   "(['f', 'o', '']) must not be empty!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.values())
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_element_in_named_defaultdict_values(self):
+        inputs = defaultdict(str, {1: 'f', 2: 'o', 3: ''})
+        log_msg = ['ERROR:root:Str value in dict test must not be empty!']
+        err_msg = 'Str value in dict test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = AllNonEmpty(inputs.values(), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestAllNonEmptyMethods(ut.TestCase):
 
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:

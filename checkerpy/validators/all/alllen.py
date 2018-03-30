@@ -1,11 +1,7 @@
-import logging as log
-from typing import Any, Tuple
+from typing import Any
 from ...functional.mixins import CompositionClassMixin
-from ...exceptions import IterError
 from ..one import JustLen
 from .registrars import AllIterableRegistrar
-
-Enumerated = Tuple[tuple, ...]
 
 
 class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
@@ -61,25 +57,11 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
         cls.__name = str(name) if name is not None else ''
         cls._string = cls.__name or str(iterable)
         cls._itertype = type(iterable).__name__
-        enumerated_iterable = cls.__enumerate(iterable)
+        enumerated_iterable = cls._enumerate(iterable)
         for index, value in enumerated_iterable:
             value_name = cls.__name_from(index, value)
             _ = JustLen(value, name=value_name, length=alen)
         return iterable
-
-    @classmethod
-    def __enumerate(cls, iterable) -> Enumerated:
-        try:
-            if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
-                enumerated = tuple(enumerate(iterable))
-            else:
-                indices = (-1 for _ in range(len(iterable)))
-                enumerated = tuple(zip(indices, iterable))
-        except TypeError as error:
-            message = cls._not_an_iterable_message_for()
-            log.error(message)
-            raise IterError(message) from error
-        return enumerated
 
     @classmethod
     def __name_from(cls, index: int, value: Any) -> str:

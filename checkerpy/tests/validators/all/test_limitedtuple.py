@@ -2,15 +2,11 @@ import logging
 import unittest as ut
 from ....functional import CompositionOf
 from ....validators.all import LimitedTuple
-from ....exceptions import LenError, WrongTypeError, LimitError
+from ....exceptions import LenError, WrongTypeError, LimitError, CallableError
 from ....types.all import _ALL_COMPARABLES, TypedDict
 
 
-class TestLimitedTuple(ut.TestCase):
-
-    def test_works_with_empty_tuple(self):
-        out = LimitedTuple(())
-        self.assertTupleEqual(out, ())
+class TestLimitedTupleLimits(ut.TestCase):
 
     def test_error_on_limits_no_length(self):
         err_msg = 'Type of limits argument must be tuple, not int like 1!'
@@ -35,6 +31,28 @@ class TestLimitedTuple(ut.TestCase):
         inp = (1, 2)
         out = LimitedTuple(inp, limits=((0, 2), (1, 3)))
         self.assertTupleEqual(out, inp)
+
+    def test_works_with_one_ellipsis_in_limit(self):
+        inp = (1, 2)
+        out = LimitedTuple(inp, limits=((0, 2), (..., 3)))
+        self.assertTupleEqual(out, inp)
+
+    def test_works_with_two_ellipsis_in_limit(self):
+        inp = (1, 2)
+        out = LimitedTuple(inp, limits=((0, 2), (..., ...)))
+        self.assertTupleEqual(out, inp)
+
+    def test_works_with_ellipsis_instead_of_limit(self):
+        inp = (1, 2, 3)
+        out = LimitedTuple(inp, limits=((0, 2), ..., (2, 4)))
+        self.assertTupleEqual(out, inp)
+
+
+class TestLimitedTupleValue(ut.TestCase):
+
+    def test_works_with_empty_tuple(self):
+        out = LimitedTuple(())
+        self.assertTupleEqual(out, ())
 
     def test_error_on_unnamed_tuple_wrong_length(self):
         inp = (1, 'foo', True)
@@ -104,11 +122,6 @@ class TestLimitedTuple(ut.TestCase):
                 _ = LimitedTuple(inp, 'test', limits=((0, 2), ('a', 'b')))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
-
-    def test_works_with_one_ellipsis_in_limit(self):
-        inp = (1, 2)
-        out = LimitedTuple(inp, limits=((0, 2), (..., 3)))
-        self.assertTupleEqual(out, inp)
 
     def test_out_of_bounds_error_on_element_of_unnamed_tuple_lower_bound(self):
         inp = (1, 2)
@@ -206,15 +219,8 @@ class TestLimitedTuple(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_two_ellipsis_in_limit(self):
-        inp = (1, 2)
-        out = LimitedTuple(inp, limits=((0, 2), (..., ...)))
-        self.assertTupleEqual(out, inp)
 
-    def test_works_with_ellipsis_instead_of_limit(self):
-        inp = (1, 2, 3)
-        out = LimitedTuple(inp, limits=((0, 2), ..., (2, 4)))
-        self.assertTupleEqual(out, inp)
+class TestLimitedTupleMethods(ut.TestCase):
 
     def test_has_attribute_o(self):
         self.assertTrue(hasattr(LimitedTuple, 'o'))
@@ -227,6 +233,14 @@ class TestLimitedTuple(ut.TestCase):
             return x
         composition = LimitedTuple.o(f)
         self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = LimitedTuple.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
     def test_has_all_comparable_type_checker_attributes(self):
         all_comparables = (c for c in _ALL_COMPARABLES if c is not TypedDict)

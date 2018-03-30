@@ -182,6 +182,7 @@ class TestAllLen(ut.TestCase):
     def test_works_with_sane_dict_keys(self):
         inputs = {'foo': 1, 'bar': 2, 'baz': 3}
         output = AllLen(inputs.keys(), alen=3)
+        self.assertIsInstance(output, type(inputs.keys()))
         self.assertSetEqual(set(output), set(inputs.keys()))
 
     def test_error_on_wrong_alen_element_in_unnamed_dict_keys(self):
@@ -210,6 +211,7 @@ class TestAllLen(ut.TestCase):
     def test_works_with_sane_dict_values(self):
         inputs = {1: 'foo', 2: 'bar', 3: 'baz'}
         output = AllLen(inputs.values(), alen=3)
+        self.assertIsInstance(output, type(inputs.values()))
         self.assertSetEqual(set(output), set(inputs.values()))
 
     def test_error_on_wrong_alen_element_in_unnamed_dict_values(self):
@@ -238,6 +240,7 @@ class TestAllLen(ut.TestCase):
     def test_works_with_sane_dict_items(self):
         inputs = {1: 'foo', 2: 'bar', 3: 'baz'}
         output = AllLen(inputs.items(), alen=2)
+        self.assertIsInstance(output, type(inputs.items()))
         self.assertSetEqual(set(output), set(inputs.items()))
 
     def test_error_on_wrong_alen_element_in_unnamed_dict_items(self):

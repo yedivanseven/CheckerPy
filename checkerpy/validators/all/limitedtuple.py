@@ -29,7 +29,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     Methods
     -------
     o(callable) : CompositionOf
-        Daisy-chains the tuple length and value to another `callable`,
+        Daisy-chains the tuple length and value checker to another `callable`,
         returning the functional composition of both. The argument `limits` is
         passed through to `LimitedTuple` when when calling the composition.
 
@@ -61,8 +61,8 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     """
 
     def __new__(cls, value: tuple, name: str = None, *, limits=()) -> tuple:
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(value)
+        cls.__name = str(name) if name is not None else ''
+        cls.__string = cls.__name or str(value)
         limits, length = cls.__length_of(limits)
         value = JustLen.JustTuple(value, name=name, length=length)
         for index, element in enumerate(value):
