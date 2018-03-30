@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import defaultdict, deque, OrderedDict
 from ....functional import CompositionOf
 from ....exceptions import WrongTypeError, DtypeError, CallableError
 try:
@@ -21,13 +22,13 @@ class TestJustDtypeInstatiation(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_type_to_check_wrong_type_as_attribute(self):
-        err_msg = 'Type of foo must be type, not str!'
+        err_msg = 'Type of type specifier foo must be type, not str!'
         with self.assertRaises(TypeError) as err:
             _ = JustDtype('foo')
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_two_types_to_check_wrong_type(self):
-        err_msg = 'Type of bar must be type, not str!'
+        err_msg = 'Type of type specifier bar must be type, not str!'
         with self.assertRaises(TypeError) as err:
             _ = JustDtype(int16, 'bar')
         self.assertEqual(str(err.exception), err_msg)
@@ -70,18 +71,81 @@ class TestJustDtypeInstatiation(ut.TestCase):
         JustNpNum = JustDtype(int16, float32)
         self.assertTupleEqual(JustNpNum.dtypes, (int16, float32))
 
-    def test_works_with_types_given_as_set(self):
-        JustInt16Float32 = JustDtype({int16, float32})
-        self.assertSetEqual(set(JustInt16Float32.dtypes),
-                            {dtype('int16'), dtype('float32')})
+    def test_works_with_types_given_as_tuple(self):
+        JustInt16Float32 = JustDtype((int16, float32))
+        self.assertTupleEqual(JustInt16Float32.dtypes, (int16, float32))
 
     def test_works_with_types_given_as_list(self):
         JustInt16Float32 = JustDtype([int16, float32])
         self.assertTupleEqual(JustInt16Float32.dtypes, (int16, float32))
 
-    def test_works_with_types_given_as_tuple(self):
-        JustInt16Float32 = JustDtype((int16, float32))
+    def test_works_with_types_given_as_deque(self):
+        JustInt16Float32 = JustDtype(deque([int16, float32]))
         self.assertTupleEqual(JustInt16Float32.dtypes, (int16, float32))
+
+    def test_works_with_types_given_as_set(self):
+        JustInt16Float32 = JustDtype({int16, float32})
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_frozenset(self):
+        JustInt16Float32 = JustDtype(frozenset({int16, float32}))
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_dict(self):
+        types = {int16: 'int16', float32: 'float32'}
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_ordered_dict(self):
+        types = OrderedDict({int16: 'int16', float32: 'float32'})
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_defaultdict(self):
+        types = defaultdict(str, {int16: 'int16', float32: 'float32'})
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_dict_keys(self):
+        types = {int16: 'int16', float32: 'float32'}.keys()
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_ordered_dict_keys(self):
+        types = OrderedDict({int16: 'int16', float32: 'float32'}).keys()
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_defaultdict_keys(self):
+        types = defaultdict(str, {int16: 'int16', float32: 'float32'}).keys()
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_dict_values(self):
+        types = {'int16': int16, 'float32': float32}.values()
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_ordered_dict_values(self):
+        types = OrderedDict({'int16': int16, 'float32': float32}).values()
+        JustInt16Float32 = JustDtype(types)
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
+
+    def test_works_with_types_given_as_defaultdict_values(self):
+        types = defaultdict(type, {'int16': int16, 'float32': float32})
+        JustInt16Float32 = JustDtype(types.values())
+        self.assertSetEqual(set(JustInt16Float32.dtypes),
+                            {dtype('int16'), dtype('float32')})
 
 
 @ut.skipIf(no_numpy, 'Could not import numpy!')

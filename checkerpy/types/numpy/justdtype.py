@@ -1,5 +1,5 @@
 import logging as log
-from typing import Tuple, Union, Iterable, Any
+from typing import Tuple, Union, Iterable, Sequence, Any
 from numpy import dtype
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
@@ -40,10 +40,10 @@ class JustDtype(CompositionMixin):
     """
 
     def __init__(self, *types: Types, identifier: str = 'JustD') -> None:
-        self._name = None
+        self.__name = None
         self.__dtypes = self.__registered(types)
-        self.__doc__ = self.__doc_string()
         self.__name__ = self.__identified(identifier)
+        self.__doc__ = self.__doc_string()
         setattr(self, 'JustNdarray', CompositionOf(self, JustNdarray))
 
     @property
@@ -51,7 +51,7 @@ class JustDtype(CompositionMixin):
         return self.__dtypes
 
     def __call__(self, value: Any, name: str = None, **kwargs):
-        self._name = str(name) if name is not None else ''
+        self.__name = str(name) if name is not None else ''
         try:
             value_dtype = value.dtype
         except AttributeError as error:
@@ -59,20 +59,19 @@ class JustDtype(CompositionMixin):
             log.error(message)
             raise DtypeError(message) from error
         if value_dtype not in self.__dtypes:
-            message = self.__error_message_for(value)
+            message = self.__error_message_for(value, value_dtype.name)
             log.error(message)
             raise WrongTypeError(message)
         return value
 
     def __has_no_dtype_message_for(self, value: Any) -> str:
-        value_name = self._name or str(value)
+        value_name = self.__name or str(value)
         value_type = type(value).__name__
         return (f'Variable {value_name} of type '
                 f'{value_type} has no attribute dtype!')
 
-    def __error_message_for(self, value: Any) -> str:
-        name = ' of '+self._name if self._name else ''
-        value_type = value.dtype.name
+    def __error_message_for(self, value: Any, value_type: str) -> str:
+        name = ' of '+self.__name if self.__name else ''
         dtypes = tuple(dtype_.name for dtype_ in self.__dtypes)
         of_type = dtypes[0] if len(dtypes) == 1 else f'one of {dtypes}'
         return f'Dtype{name} must be {of_type}, not {value_type} like {value}!'
@@ -85,12 +84,14 @@ class JustDtype(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __registered(self, types: Tuple[type, ...]) -> Tuple[dtype, ...]:
+    def __registered(self, types: Sequence[Types]) -> Tuple[dtype, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
-        type_is_iter = len(types) == 1 and type(types[0]) in (tuple, list, set)
-        types = types[0] if type_is_iter else types
-        return tuple(map(self.__dtype_from, types))
+        try:
+            dtypes = tuple(map(self.__dtype_from, types[0]))
+        except TypeError:
+            dtypes = tuple(map(self.__dtype_from, types))
+        return dtypes
 
     def __dtype_from(self, type_: type) -> dtype:
         try:
@@ -104,7 +105,7 @@ class JustDtype(CompositionMixin):
     def __invalid_type_message_for(type_: Any) -> str:
         name = type_.__name__ if hasattr(type_, '__name__') else type_
         type_name = type(type_).__name__
-        return f'Type of {name} must be type, not {type_name}!'
+        return f'Type of type specifier {name} must be type, not {type_name}!'
 
     def __doc_string(self) -> str:
         dtypes = tuple(dtype_.name for dtype_ in self.__dtypes)

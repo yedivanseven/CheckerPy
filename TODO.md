@@ -1,5 +1,5 @@
 # To Do
-- Continue with reviewing numpy types
+- Continue with reviewing all types
 
 
 - Add numpy JustSize validator?
