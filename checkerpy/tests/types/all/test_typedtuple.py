@@ -2,7 +2,7 @@ import logging
 import unittest as ut
 from ....functional import CompositionOf
 from ....types.all import TypedTuple
-from ....exceptions import LenError, WrongTypeError
+from ....exceptions import LenError, WrongTypeError, CallableError
 
 
 class TestTypedTuple(ut.TestCase):
@@ -11,10 +11,9 @@ class TestTypedTuple(ut.TestCase):
         out = TypedTuple(())
         self.assertTupleEqual(out, ())
 
-    def test_error_on_type_spec_no_length(self):
-        err_msg = ("Length of types argument 2 with"
-                   " type int cannot be determined!")
-        with self.assertRaises(LenError) as err:
+    def test_error_on_wrong_type_spec_no_length(self):
+        err_msg = "Type of types argument must be tuple, not int like 2!"
+        with self.assertRaises(TypeError) as err:
             _ = TypedTuple((1,), types=2)
         self.assertEqual(str(err.exception), err_msg)
 
@@ -151,6 +150,14 @@ class TestTypedTuple(ut.TestCase):
             return x
         composition = TypedTuple.o(f)
         self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = TypedTuple.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
 
 if __name__ == '__main__':

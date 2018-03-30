@@ -1,5 +1,7 @@
 # To Do
-- Continue with reviewing all types
+- Check for type query on list or tuple and augment by deque!
+- Check for **kwargs __call__ and __new__ and delete!
+- Continue with reviewing typeddict
 
 
 - Add numpy JustSize validator?

@@ -1,9 +1,10 @@
-from typing import Tuple, Any
+from typing import Tuple, Any, Sequence
+from collections import deque
 from .registrars import CustomRegistrar
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, Limited
 
-Limits = Tuple[Tuple[Any, Any], ...]
+Limits = Sequence[Tuple[Any, Any]]
 
 
 class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
@@ -63,7 +64,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     def __new__(cls, value: tuple, name: str = None, *, limits=()) -> tuple:
         cls.__name = str(name) if name is not None else ''
         cls.__string = cls.__name or str(value)
-        limits, length = cls.__length_of(limits)
+        limits, length = cls.__valid(limits)
         value = JustLen.JustTuple(value, name=name, length=length)
         for index, element in enumerate(value):
             element_name = f'element {index} in tuple {cls.__string}'
@@ -72,9 +73,9 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         return value
 
     @classmethod
-    def __length_of(cls, limits: Limits) -> Tuple[Limits, int]:
-        if type(limits) not in (tuple, list):
-            message = cls.__has_no_length_message_for(limits)
+    def __valid(cls, limits: Limits) -> Tuple[Limits, int]:
+        if type(limits) not in (tuple, list, deque):
+            message = cls.__wrong_type_message_for(limits)
             raise TypeError(message)
         limits = [(..., ...) if limit is ... else limit for limit in limits]
         for index, limit in enumerate(limits):
@@ -91,7 +92,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         return tuple(limits), len(limits)
 
     @staticmethod
-    def __has_no_length_message_for(limits: Limits) -> str:
+    def __wrong_type_message_for(limits: Limits) -> str:
         type_name = type(limits).__name__
         return ('Type of limits argument must be tuple,'
                 f' not {type_name} like {limits}!')
