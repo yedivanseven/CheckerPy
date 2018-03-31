@@ -1,8 +1,9 @@
 import logging
 import unittest as ut
+from collections import defaultdict, OrderedDict
 from ....functional import CompositionOf
 from ....types.all import TypedDict
-from ....exceptions import WrongTypeError
+from ....exceptions import WrongTypeError, CallableError
 
 
 class TestTypedDict(ut.TestCase):
@@ -65,8 +66,10 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_unnamed_argument_not_dict(self):
         inp = {1, 2, 3}
-        log_msg = ['ERROR:root:Type must be dict, not set like {1, 2, 3}!']
-        err_msg = 'Type must be dict, not set like {1, 2, 3}!'
+        log_msg = ["ERROR:root:Type must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not set like {1, 2, 3}!"]
+        err_msg = ("Type must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not set like {1, 2, 3}!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = TypedDict(inp, keys=int, values=float)
@@ -75,14 +78,25 @@ class TestTypedDict(ut.TestCase):
 
     def test_error_on_named_argument_not_dict(self):
         inp = {1, 2, 3}
-        log_msg = ['ERROR:root:Type of test must be'
-                   ' dict, not set like {1, 2, 3}!']
-        err_msg = 'Type of test must be dict, not set like {1, 2, 3}!'
+        log_msg = ["ERROR:root:Type of test must be one of ('dict', "
+                   "'defaultdict', 'OrderedDict'), not set like {1, 2, 3}!"]
+        err_msg = ("Type of test must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not set like {1, 2, 3}!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = TypedDict(inp, 'test', keys=int, values=float)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+    def test_works_with_sane_defaultdict(self):
+        inp = defaultdict(str, {1: 'one', 2: 'two', 3: 'three'})
+        out = TypedDict(inp, keys=int, values=str)
+        self.assertDictEqual(out, inp)
+
+    def test_works_with_sane_ordered_dict(self):
+        inp = OrderedDict({1: 'one', 2: 'two', 3: 'three'})
+        out = TypedDict(inp, keys=int, values=str)
+        self.assertDictEqual(out, inp)
 
     def test_works_with_single_type_for_keys(self):
         inp = {1: 'one', 2: 'two', 3: 'three'}
@@ -211,6 +225,9 @@ class TestTypedDict(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+
+class TestTypedDictMethods(ut.TestCase):
+
     def test_has_attribute_o(self):
         self.assertTrue(hasattr(TypedDict, 'o'))
 
@@ -222,6 +239,14 @@ class TestTypedDict(ut.TestCase):
             return x
         composition = TypedDict.o(f)
         self.assertIsInstance(composition, CompositionOf)
+
+    def test_o_raises_error_on_argument_not_callable(self):
+        err_msg = ('foo must be a callable that accepts (i) a value,'
+                   ' (ii) an optional name for that value, and (iii)'
+                   ' any number of keyword arguments!')
+        with self.assertRaises(CallableError) as err:
+            _ = TypedDict.o('foo')
+        self.assertEqual(str(err.exception), err_msg)
 
     def test_has_attribute_JustLen(self):
         self.assertTrue(hasattr(TypedDict, 'JustLen'))

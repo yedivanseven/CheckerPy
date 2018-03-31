@@ -974,10 +974,12 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed({(int, float): ...})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   f'in module {__name__} must be dict, not str like foo!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be dict, not str like foo!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not str like foo!"]
+        err_msg = ("Type of argument x to function f defined in module "
+                   f"{__name__} must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -1035,10 +1037,12 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed({...: (str, int)})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   f'in module {__name__} must be dict, not str like foo!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be dict, not str like foo!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('dict', 'defaultdict',"
+                   " 'OrderedDict'), not str like foo!"]
+        err_msg = ("Type of argument x to function f defined in module "
+                   f"{__name__} must be one of ('dict', 'defaultdict', "
+                   "'OrderedDict'), not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')

@@ -1,11 +1,12 @@
 import logging as log
 from typing import Union, Any
+from collections import deque
 from numpy import ndarray
 from .registrar import Registrar
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ShapeError, IntError
 
-Shape = Union[tuple, list]
+Shape = Union[tuple, list, deque]
 
 
 class JustShape(CompositionClassMixin, metaclass=Registrar):
@@ -89,10 +90,10 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
     @classmethod
     def __validated(cls, shapes: Shape) -> Shape:
         type_of_shape = type(shapes)
-        if type_of_shape not in (tuple, list):
+        if type_of_shape not in (tuple, list, deque):
             message = cls.__wrong_shape_spec_message_for(shapes)
             raise ShapeError(message)
-        if any(type(shape) not in (tuple, list) for shape in shapes):
+        if any(type(shape) not in (tuple, list, deque) for shape in shapes):
             shapes = cls.__type_converted(shapes),
         else:
             shapes = map(cls.__type_converted, shapes)

@@ -14,6 +14,7 @@ AllIter = All(str, tuple, list, set, dict, frozenset,
               OrderedDictKey, OrderedDictItem, OrderedDictValue,
               identifier='AllIter')
 AllFuncMeth = All(FunctionType, MethodType, identifier='AllFuncMeth')
+AllLists = All(list, deque, identifier='AllLists')
 AllDicts = All(dict, defaultdict, OrderedDict, identifier='AllDicts')
 AllKeys = All(type({}.keys()), OrderedDictKey, identifier='AllKeys')
 AllValues = All(type({}.values()), OrderedDictValue, identifier='AllValues')

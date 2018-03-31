@@ -1,8 +1,8 @@
-from ..one import JustDict, Just
-from ..all import All
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, NonEmpty
+from ..one import JustDicts, Just
+from ..all import All
 
 
 class Registrar(type):
@@ -62,12 +62,12 @@ class TypedDict(CompositionClassMixin, metaclass=Registrar):
     """
 
     def __new__(cls, mapping, name=None, *, keys=(), values=(), **kwargs):
-        cls._name = str(name) if name is not None else ''
-        cls.__string = cls._name or str(mapping)
-        mapping = JustDict(mapping, name=name)
+        cls.__name = str(name) if name is not None else ''
+        cls.__string = cls.__name or str(mapping)
+        mapping = JustDicts(mapping, name=name)
         if keys and keys is not ...:
             AllKeys = All(keys, identifier='AllKeys')
-            _ = AllKeys(mapping, name=cls.__string)
+            _ = AllKeys(mapping, name=name)
         if values and values is not ...:
             JustValues = Just(values, identifier='JustValues')
             for key, value in mapping.items():

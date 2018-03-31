@@ -61,7 +61,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
 
     """
 
-    def __new__(cls, value: tuple, name: str = None, *, limits=()) -> tuple:
+    def __new__(cls, value: tuple, name=None, *, limits=(), **kwargs) -> tuple:
         cls.__name = str(name) if name is not None else ''
         cls.__string = cls.__name or str(value)
         limits, length = cls.__valid(limits)
