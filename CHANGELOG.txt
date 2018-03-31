@@ -1,3 +1,6 @@
+v0.9.8, 04/01/2018 -- Minor Revision
+* ...
+
 v0.9.7, 03/31/2018 -- Minor Revision
 * Removed np.int16 and np.float16 from JustNpNum
 * Added JustGen to check for GenratorType
