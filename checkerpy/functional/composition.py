@@ -45,30 +45,20 @@ class CompositionOf:
     def __init__(self, first: Callable, second: Callable) -> None:
         self.__first = self.__callable(first)
         self.__second = self.__callable(second)
-        self.__copy_attributes('__doc__', '__annotations__', '__module__')
-        if hasattr(self.__second, '__name__'):
-            self.__name__ = self.__second.__name__
-        else:
-            self.__name__ = 'Composition'
-        if hasattr(self.__second, '__dict__'):
-            for attr_name, attr in self.__second.__dict__.items():
-                if attr_name[0].isupper() and callable(attr):
-                    setattr(self, attr_name, CompositionOf(self, attr))
-                if attr_name[0].islower():
-                    setattr(self, attr_name, attr)
+        self.__copy_attributes_from_second_to_self()
 
     def __call__(self, value, name=None, **kwargs):
         try:
-            value = self.__second(value, name, **kwargs)
+            intermediate = self.__second(value, name, **kwargs)
         except TypeError as error:
             message = self.__not_callable_message_for(self.__second)
             raise CallableError(message) from error
         try:
-            value = self.__first(value, name, **kwargs)
+            final = self.__first(intermediate, name, **kwargs)
         except TypeError as error:
             message = self.__not_callable_message_for(self.__first)
             raise CallableError(message) from error
-        return value
+        return final
 
     def o(self, other: Callable):
         """Daisy-chain self and other callable into new functional composition.
@@ -106,7 +96,17 @@ class CompositionOf:
                 'a value, (ii) an optional name for that value,'
                 ' and (iii) any number of keyword arguments!')
 
-    def __copy_attributes(self, *attributes: str) -> None:
-        for attribute in attributes:
-            if hasattr(self, attribute):
-                setattr(self, attribute, getattr(self.__second, attribute))
+    def __copy_attributes_from_second_to_self(self) -> None:
+        for attr_name in ('__doc__', '__annotations__', '__module__'):
+            try:
+                setattr(self, attr_name, getattr(self.__second, attr_name))
+            except AttributeError:
+                pass
+        has_name = hasattr(self.__second, '__name__')
+        self.__name__ = self.__second.__name__ if has_name else 'Composition'
+        if hasattr(self.__second, '__dict__'):
+            for attr_name, attr in self.__second.__dict__.items():
+                if attr_name[0].isupper() and callable(attr):
+                    setattr(self, attr_name, CompositionOf(self, attr))
+                if attr_name[0].islower():
+                    setattr(self, attr_name, attr)

@@ -6,7 +6,7 @@ from ...exceptions import CallableError
 class TestCompositionOfInstantiation(ut.TestCase):
 
     def setUp(self):
-        self.f = lambda x, name=None: x^2
+        self.f = lambda x, name=None: x**2
         self.g = lambda y, name=None: y - 3
 
     def test_works_with_sane_callables(self):
@@ -79,8 +79,10 @@ class TestCompositionOf(ut.TestCase):
 
     def test_o_raises_error_on_argument_not_callable(self):
         comp = self.comp.o(self.h)
+
         class WrongCallable:
             __name__ = 'Named object'
+
         wrong_callable = WrongCallable()
         err_msg = ('Named object must be a callable that accepts (i)'
                    ' a value, (ii) an optional name for that value,'

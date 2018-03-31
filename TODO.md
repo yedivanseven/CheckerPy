@@ -1,6 +1,5 @@
 # To Do
-- Continue with reviewing functional!
-
+- Continue with reviewing Decorators!
 
 - Add numpy JustSize validator?
 - Add validator for checking if object has attributes?
