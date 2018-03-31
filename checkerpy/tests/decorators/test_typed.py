@@ -647,14 +647,14 @@ class TestTypedFunctionsEllipsis(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_works_with_kwarg_types_and_ellipsis(self):
+    def test_works_with_arg_and_kwarg_types_and_ellipsis(self):
         @Typed(..., bool, z=(float, tuple))
         def f(x, y, z):
             return x + y + z
         output = f(1, True, 2.0)
         self.assertEqual(output, 4.0)
 
-    def test_error_with_kwarg_types_and_ellipsis(self):
+    def test_error_with_arg_and_kwarg_types_and_ellipsis(self):
         @Typed(int, ..., z=(float, tuple))
         def f(x, y, z):
             return x + y + z
@@ -720,7 +720,7 @@ class TestTypedFunctionsDefaults(ut.TestCase):
         self.assertEqual(output, 6)
 
 
-class TestTypedFunctionIterables(ut.TestCase):
+class TestTypedFunctionsIterables(ut.TestCase):
 
     def test_works_with_tuple_one_type(self):
         @Typed((int, ...))
@@ -834,10 +834,12 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed([int, float])
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   f'in module {__name__} must be list, not str like foo!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be list, not str like foo!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in"
+                   f" module {__name__} must be one of ('list', 'deque'), "
+                   "not str like foo!"]
+        err_msg = ("Type of argument x to function f defined in"
+                   f" module {__name__} must be one of ('list', 'deque'),"
+                   " not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -887,10 +889,12 @@ class TestTypedFunctionIterables(ut.TestCase):
         @Typed({int, float})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined '
-                   f'in module {__name__} must be set, not str like foo!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be set, not str like foo!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('set', 'frozenset'),"
+                   " not str like foo!"]
+        err_msg = ("Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('set', 'frozenset'),"
+                   " not str like foo!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f('foo')
@@ -1058,7 +1062,7 @@ class TestTypedFunctionIterables(ut.TestCase):
         self.assertDictEqual(out, inp)
 
 
-class TestTypedFunctionTypedTuple(ut.TestCase):
+class TestTypedFunctionsTypedTuple(ut.TestCase):
 
     def test_works_with_typed_tuple_one_type(self):
         @Typed(((int,), (str,)))
@@ -1161,7 +1165,7 @@ class TestTypedFunctionTypedTuple(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
 
-class TestTypedMethod(ut.TestCase):
+class TestTypedMethods(ut.TestCase):
 
     def test_works_with_methods(self):
         class Test:

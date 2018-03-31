@@ -1,9 +1,9 @@
-v0.9.7, 03/24/2018 -- Minor Revision
-* Fixed docstring in Contains
+v0.9.7, 03/31/2018 -- Minor Revision
 * Removed np.int16 and np.float16 from JustNpNum
 * Added JustGen to check for GenratorType
-* Added JustKeys, JustValues, and JustItems to check dictionary views
-* Many smalls tweaks under the hood ...
+* Added JustKey, JustValue, and JustItem to check dictionary views
+* Added support fo deque, defaultdict, and OrderedDict
+* Many mores smalls tweaks under the hood ...
 
 v0.9.6, 02/7/2018 -- Minor Revision
 * Added Contains validator

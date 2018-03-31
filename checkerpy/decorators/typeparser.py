@@ -14,12 +14,12 @@ class TypeParser(ParserMixin):
     @staticmethod
     def tuple_checker(types, _) -> Callable:
         if ... in types:
-            types = tuple(type_ for type_ in types if type_ is not ...)
+            types = filter(lambda type_: type_ is not ..., types)
             return All(*types).JustTuple
-        elif all(type(type_) in (tuple, list, set) for type_ in types):
+        elif all(hasattr(type_, '__iter__') for type_ in types):
 
-            def typed_tuple(value, name: str = None, **kwargs):
-                return TypedTuple(value, name=name, types=types, **kwargs)
+            def typed_tuple(value, name: str = None):
+                return TypedTuple(value, name=name, types=types)
 
             return typed_tuple
         else:
@@ -27,11 +27,11 @@ class TypeParser(ParserMixin):
 
     @staticmethod
     def list_checker(types: List[type], _) -> Callable:
-        return All(*types).JustList
+        return All(*types).JustLists
 
     @staticmethod
     def set_checker(types: Set[type], _) -> Callable:
-        return All(*types).JustSet
+        return All(*types).JustSets
 
     def dict_checker(self, types: dict, type_id: SpecID) -> Callable:
         types_name = self.__types_string_from(type_id)

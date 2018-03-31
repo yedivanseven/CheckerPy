@@ -678,7 +678,7 @@ class TestBoundedFunctionsDefaults(ut.TestCase):
 class TestBoundedFunctionTuple(ut.TestCase):
 
     def test_works_with_tuple(self):
-        @Bounded((..., (4, 6)))
+        @Bounded(((4, 6), ...))
         def f(x):
             return x
         inputs = (4, 5)
@@ -692,19 +692,6 @@ class TestBoundedFunctionTuple(ut.TestCase):
         inputs = ()
         output = f(inputs)
         self.assertTupleEqual(output, inputs)
-
-    def test_error_on_limit_specs_too_many_tuples(self):
-        log_msg = ['ERROR:root:Length of tuple for limits specification'
-                   ' of tuple argument at position 0 must be 2, not 3!']
-        err_msg = ('Length of tuple for limits specification of'
-                   ' tuple argument at position 0 must be 2, not 3!')
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(LenError) as err:
-                @Bounded(((1, 2), ..., (3, 4)))
-                def f(x):
-                    return x
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
 
     def test_error_on_limit_specs_wrong_length(self):
         log_msg = ['ERROR:root:Length of tuple for limits specification'
@@ -734,7 +721,7 @@ class TestBoundedFunctionTuple(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_limit_error_on_tuple_element(self):
-        @Bounded(((4, 6), ...))
+        @Bounded((..., (4, 6)))
         def f(x):
             return x
         log_msg = ['ERROR:root:Value 2 of tuple argument x to function f '
@@ -898,10 +885,12 @@ class TestBoundedFunctionList(ut.TestCase):
         @Bounded([(1, 3)])
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined in '
-                   f'module {__name__} must be list, not tuple like (1, 5)!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be list, not tuple like (1, 5)!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in"
+                   f" module {__name__} must be one of ('list', 'deque'), "
+                   "not tuple like (1, 5)!"]
+        err_msg = ("Type of argument x to function f defined in"
+                   f" module {__name__} must be one of ('list', 'deque'), "
+                   "not tuple like (1, 5)!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f((1, 5))
@@ -1002,10 +991,12 @@ class TestBoundedFunctionSet(ut.TestCase):
         @Bounded({(1, 3)})
         def f(x):
             return x
-        log_msg = ['ERROR:root:Type of argument x to function f defined in '
-                   f'module {__name__} must be set, not list like [1, 5]!']
-        err_msg = ('Type of argument x to function f defined in '
-                   f'module {__name__} must be set, not list like [1, 5]!')
+        log_msg = ["ERROR:root:Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('set', 'frozenset'),"
+                   " not list like [1, 5]!"]
+        err_msg = ("Type of argument x to function f defined in "
+                   f"module {__name__} must be one of ('set', 'frozenset'),"
+                   " not list like [1, 5]!")
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = f([1, 5])

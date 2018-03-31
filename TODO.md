@@ -1,6 +1,4 @@
 # To Do
-- Continue with reviewing Decorators!
-
 - Add numpy JustSize validator?
 - Add validator for checking if object has attributes?
   - Add validators for all attributes of the Collections abstract base classes?

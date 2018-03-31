@@ -14,6 +14,7 @@ JustIter = Just(str, tuple, list, set, dict, frozenset,
                 OrderedDictKey, OrderedDictItem, OrderedDictValue,
                 identifier='JustIter')
 JustFuncMeth = Just(FunctionType, MethodType, identifier='JustFuncMeth')
+JustSets = Just(set, frozenset, identifier='JustSets')
 JustLists = Just(list, deque, identifier='JustLists')
 JustDicts = Just(dict, defaultdict, OrderedDict, identifier='JustDicts')
 JustKeys = Just(type({}.keys()), OrderedDictKey, identifier='JustKeys')

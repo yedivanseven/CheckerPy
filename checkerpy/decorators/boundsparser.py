@@ -13,31 +13,31 @@ class BoundsParser(ParserMixin):
     def list_checker(self, limits: List[Limit], limits_id: SpecID) -> Callable:
         limits_name = 'for ' + self.__limits_string_from(limits_id).format('')
         list_limits_name = self.__limits_string_from(limits_id).format('list ')
-        limits = JustLen(limits, name=limits_name, length=1)
+        limits: list = JustLen(limits, name=limits_name, length=1)
         limits = JustTuple(limits[0], name=list_limits_name)
         lo, hi = JustLen(limits, name='for '+list_limits_name, length=2)
 
         def limited_list(value, name: str = None):
-            return AllLimited.JustList(value, name=name, alo=lo, ahi=hi)
+            return AllLimited.JustLists(value, name=name, alo=lo, ahi=hi)
 
         return limited_list
 
     def set_checker(self, limits: Set[Limit], limits_id: SpecID) -> Callable:
         limits_name = 'for ' + self.__limits_string_from(limits_id).format('')
         set_limits_name = self.__limits_string_from(limits_id).format('set ')
-        limits = JustLen(limits, name=limits_name, length=1)
+        limits: set = JustLen(limits, name=limits_name, length=1)
         limits = JustTuple(limits.pop(), name=set_limits_name)
         lo, hi = JustLen(limits, name='for '+set_limits_name, length=2)
 
         def limited_set(value, name: str = None):
-            return AllLimited.JustSet(value, name=name, alo=lo, ahi=hi)
+            return AllLimited.JustSets(value, name=name, alo=lo, ahi=hi)
 
         return limited_set
 
     def dict_checker(self, limits: dict, limits_id: SpecID) -> Callable:
         limits_name = 'for ' + self.__limits_string_from(limits_id).format('')
         dict_limits_name = self.__limits_string_from(limits_id).format('dict ')
-        limits = JustLen(limits, name=limits_name, length=1)
+        limits: dict = JustLen(limits, name=limits_name, length=1)
         keys = tuple(limits.keys())[0]
         keys = (..., ...) if keys is ... else keys
         keys = JustTuple(keys, name=dict_limits_name)
@@ -49,7 +49,7 @@ class BoundsParser(ParserMixin):
 
         def limited_dict(mapping, name: str = None):
             mapping = JustDict(mapping, name=name)
-            _ = AllLimited(mapping, name=name, alo=lo_key, ahi=hi_key)
+            _ = AllLimited(mapping.keys(), name=name, alo=lo_key, ahi=hi_key)
             _ = AllLimited(mapping.values(), name=name, alo=lo, ahi=hi)
             return mapping
 
@@ -61,8 +61,8 @@ class BoundsParser(ParserMixin):
         contains_ellipsis = ... in limits
         contains_tuples = any(type(limit) is tuple for limit in limits)
         if contains_ellipsis and contains_tuples:
-            limits = JustLen(limits, name='for '+tup_limits_name, length=2)
-            limits = tuple(limit for limit in limits if limit is not ...)
+            limits = filter(lambda limit: limit is not ..., limits)
+            limits = tuple(filter(lambda limit: type(limit) is tuple, limits))
             lo, hi = JustLen(limits[0], name='for '+tup_limits_name, length=2)
 
             def limited_tuple(value, name: str = None):
