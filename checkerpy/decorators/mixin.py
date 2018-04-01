@@ -12,7 +12,7 @@ def identity(value: Any, name: str = None, **kwargs) -> Any:
 
 
 class ParserMixin:
-    """Provides basic functionality for *args and **kwargs parsers"""
+    """Basic functionality for argument and keyword-argument parsers"""
     def __init__(self):
         self._checker_for: CheckerDict = {type(...): self.ellipsis_checker,
                                           list: self.list_checker,
