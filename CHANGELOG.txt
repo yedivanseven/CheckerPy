@@ -1,4 +1,5 @@
 v0.9.8, 04/01/2018 -- Minor Revision
+* Added numpy validator JustSize
 * ...
 
 v0.9.7, 03/31/2018 -- Minor Revision

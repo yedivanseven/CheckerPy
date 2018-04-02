@@ -12,7 +12,7 @@ To make the error messages more expressive, an optional variable name can be
 passed to all checkers.
 
 Some of these type and value checkers are bundled in _decorators_ to
-conveniently check the arguments of functions or methods. 
+conveniently check the arguments of functions or methods.
 
 #### Installation
 This package is available on the
@@ -36,13 +36,13 @@ python -m unittest discover -v -s checkerpy.tests
 
 #### Related work
 You might want to consider also
-[pycheck](https://pypi.python.org/pypi/pycheck/0.1), 
-[pychecked](https://github.com/a-tal/pychecked), 
-[typechecker](https://pypi.python.org/pypi/typechecker/0.1.1), 
-[typecheck3](https://pypi.python.org/pypi/typecheck3/0.1.0), 
-[enforce](https://github.com/RussBaz/enforce), 
-[pysignature](https://github.com/intelimetrica/pysignature), 
-[pytypes](https://pypi.python.org/pypi/pytypes/1.0b3), 
+[pycheck](https://pypi.python.org/pypi/pycheck/0.1),
+[pychecked](https://github.com/a-tal/pychecked),
+[typechecker](https://pypi.python.org/pypi/typechecker/0.1.1),
+[typecheck3](https://pypi.python.org/pypi/typecheck3/0.1.0),
+[enforce](https://github.com/RussBaz/enforce),
+[pysignature](https://github.com/intelimetrica/pysignature),
+[pytypes](https://pypi.python.org/pypi/pytypes/1.0b3),
 [typecheck-decorator](https://github.com/prechelt/typecheck-decorator),
 [typeguard](https://github.com/agronholm/typeguard), or
 [mypy](http://mypy-lang.org/). I apologize if I have
@@ -85,12 +85,12 @@ out = JustInt(inp)
 As a matter of fact, `CheckerPy` already comes with type checkers for all
 built-in types predefined. So you could just do
 ```python
-from checkerpy.types.one import * 
+from checkerpy.types.one import *
 
 i = JustInt(1)
 s = JustStr('foo')
 l = JustList(['foo', 'bar', 'egg'])
-... 
+...
 ```
 You can also be less restrictive and, for example, allow a variable to be
 either a `list` or a `tuple`. In this case, you would instantiate and use the
@@ -99,7 +99,7 @@ type checker like so:
 JustListTuple = Just(list, tuple)
 out = JustListTuple(['foo', 'bar', 'egg'])
 ```
-Some of these combined types are already predefined in `CheckerPy`. To check 
+Some of these combined types are already predefined in `CheckerPy`. To check
 for `int` _or_ `float`, for example, you could do:
 ```python
 n = JustNum(2.0)
@@ -114,7 +114,7 @@ class MyFirst:
 class MySecond:
     def bar(self, y):
         print(y)
-        
+
 JustMyTypes = Just(MyFirst, MySecond, identifier='JustMyTypes')
 
 inp = MySecond()
@@ -122,7 +122,7 @@ out = JustMyTypes(inp, 'the ultimate object')
 ```
 
 #### 1.2 Value checking <a name=section1_2></a>
-Other than checking for type, `CheckerPy` also comes with validators for 
+Other than checking for type, `CheckerPy` also comes with validators for
 bounds, set membership,  string and function properties, as well as emptiness
 and length of iterables.
 ```python
@@ -159,7 +159,7 @@ or:
 ```python
 out = JustLen(('Stilton', 'Camembert'), name='cheeses', length=(2, 3))
 ```
-An error is not only logged and raised if the length of the iterable is not 
+An error is not only logged and raised if the length of the iterable is not
 among the specified lengths, but also if the value passed in is not, in fact,
 an iterable.
 
@@ -202,7 +202,7 @@ can write:
 ```python
 def cheese_shop(x):
     return f'No, sorry, we are out of {x} ...'
-    
+
 out = JustCall(cheese_shop, name='silly function')
 ```
 
@@ -272,7 +272,7 @@ t = TypedTuple((1.0, 2.0, True), types=((int, float), ..., bool))
 Some of the value checkers introduced in subsection [(1.2)](#section1_2)
 are also available for the elements of an iterable.
 ```python
-from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen 
+from checkerpy.validators.all import AllLimited, AllNonEmpty, AllLen
 ```
 If, for example, you want to check a list of 2-tuples, use:
 ```python
@@ -318,7 +318,7 @@ from checkerpy.types.numpy import JustNdarray
 #### 3.2 Dtype checking
 Both numpy scalars and arrays have a `dtype` that you can check for. In full
 analogy to the `Just` class introduced in subsection [(1.1)](#chapter1),
-`CheckerPy` provides a `JustDtype` class that you can use to create 
+`CheckerPy` provides a `JustDtype` class that you can use to create
 dtype checkers for numpy arrays.
 ```python
 from checkerpy.types.numpy import JustDtype
@@ -345,7 +345,7 @@ The respective dtypes they check for are stored in their `dtypes` property.
 (dtype('uint8'),)
 ```
 
-An error is raised and (and logged) not only if the numpy array or scalar to 
+An error is raised and (and logged) not only if the numpy array or scalar to
 be checked does not have (one of) the required dtypes, but also if you pass
 something that doesn't have a `dtype` attribute.
 
@@ -388,6 +388,23 @@ checks that array _a_ either has 3 columns and an arbitrary number of rows, or
 2 rows and an arbitrary number of columns. If it does not or if the value
 passed to the validator does not have a `shape` attribute, and error is raised
 and logged.
+
+#### 3.5 Checking the number of elements
+The total number of elements of numpy arrays is stored in their `size`
+attribute. If you want to make sure that a numpy array has a certain size or
+one of a number of sizes, you do
+```python
+from checkerpy.validators.numpy import JustSize
+
+a = np.array([[1, 2, 3], [4, 5, 6]])
+out = JustSize(a, size=(3, 6))
+```
+or just:
+```python
+out = JustSize(a, name='numbers', size=6)
+```
+An error is raised and logged if the value to be checked is not a numpy
+array or if the size of the array are not among those permitted.
 
 ### 4. Combining Validators <a name=chapter4></a>
 [Single Values](#chapter1) | [Iterables](#chapter2) | [Numpy Support](#chapter3) | [Decorators](#chapter5)
@@ -470,7 +487,7 @@ provides two dedicated decorators.
 from checkerpy.decorators import Typed, Bounded
 ```
 
-#### 5.1 Typed 
+#### 5.1 Typed
 ##### 5.1.1 Arguments
 There are two ways in which you can specify one or more types that each
 argument of a function should have. The first is:
@@ -522,10 +539,10 @@ a `set` _and_ specify one or more types that their elements can have, you do:
 @Typed([int, float], currencies={str})
 def list_coins(denom, currencies):
     print(f'There are coins of {denom} for the currencies {currencies}.')
-``` 
+```
 ###### Tuples
 For a `tuple`, you have two options. If the length of the tuple does not
-matter and you simply want to be sure that all its elements have one 
+matter and you simply want to be sure that all its elements have one
 (of several) type(s), use:
 ```python
 @Typed((int, float, ...), (str, ...))
@@ -591,7 +608,7 @@ same limits:
 @Bounded([(1, ...)], currencies={('aaa', 'zzz')})
 def list_coins(denom, currencies):
     print(f'There are coins of {denom} for the currencies {currencies}.')
-``` 
+```
 ###### Tuples
 To check for an argument being a tuple of _arbitrary_ length with all its
 elements bounded by the same limits, specify:
@@ -621,7 +638,7 @@ def show_age(persons):
     for name, age in persons.items():
         print(f'{name} is {age} years old.')
 ```
- 
+
 #### 5.3 Methods vs. functions
 Methods can be decorated just like functions provided, however, that their
 first argument is called _self_, _cls_ , _mcs_, or _mcls_ (static methods are

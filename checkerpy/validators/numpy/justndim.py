@@ -64,7 +64,7 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
             log.error(message)
             raise NdimError(message) from error
         if array_ndim not in cls.__ndims:
-            message = cls.__error_message_for(array)
+            message = cls.__error_message_for(array_ndim)
             log.error(message)
             raise NdimError(message)
         return array
@@ -100,10 +100,10 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
                 ' has no attribute ndim!')
 
     @classmethod
-    def __error_message_for(cls, array: ndarray) -> str:
+    def __error_message_for(cls, ndim: int) -> str:
         if len(cls.__ndims) == 1:
             of_ndims = cls.__ndims[0]
         else:
             of_ndims = f'one of {cls.__ndims}'
         return (f'The number of dimensions of array {cls.__string}'
-                f' must be {of_ndims}, not {array.ndim}!')
+                f' must be {of_ndims}, not {ndim}!')
