@@ -3,7 +3,7 @@ from typing import Any, Collection, Tuple, Union
 from collections import defaultdict, deque, OrderedDict
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError, IterError
-from .registrars import IterableRegistrar
+from .registrars import ContainerRegistrar
 
 Items = Union[Collection, Tuple[str, ...]]
 
@@ -16,7 +16,7 @@ NamedTypes = Union[frozenset, deque, defaultdict, OrderedDict,
                    dict_keys, dict_values, dict_items]
 
 
-class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
+class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
     """Class for checking if an iterable contains any or all of some items.
 
     Parameters
@@ -47,10 +47,10 @@ class Contains(CompositionClassMixin, metaclass=IterableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in iterables (str, tuple, list,
-    set, and dict) are attached as methods as well. If any of the optional
-    arguments `every` and `some` are specified in calls to these methods, it
-    (or they) are passed through to 'Contains'.
+    For convenience, type checkers for built-in containers are attached as
+    methods as well. If any of the optional arguments `every` and `some` are
+    specified in calls to these methods, it (or they) are passed through to
+    `Contains`.
 
     Raises
     ------

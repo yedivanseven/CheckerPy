@@ -2,6 +2,7 @@ import logging as log
 from ...functional.mixins import CompositionClassMixin
 from ...functional import CompositionOf
 from ...types.one import _COMPARABLES
+from ...types.weak import _LIKE_COMPARABLES
 from ...exceptions import LimitError, WrongTypeError
 from .nonempty import NonEmpty
 from .justlen import JustLen
@@ -12,6 +13,8 @@ class ComparableRegistrar(type):
     def __init__(cls, class_name: str, bases, attributes: dict) -> None:
         super().__init__(class_name, (), attributes)
         for comparable in _COMPARABLES:
+            setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
+        for comparable in _LIKE_COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
@@ -46,10 +49,9 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in comparables (i.e., everything
-    but dict) are attached as methods as well. If `lo` and/or `hi` is specified
-    in calls to these methods, it (or they) are passed through to the limits
-    checker.
+    For convenience, type checkers for built-in comparables are attached as
+    methods as well. If `lo` and/or `hi` is specified in calls to these
+    methods, it (or they) are passed through to the limits checker.
 
     Raises
     ------

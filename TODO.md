@@ -1,10 +1,9 @@
 # To Do
+- Make AllLike weak type checkers and append to validators!
+- Write README for JustSize, Has, AllHave, Like, ...
 
-- Add numpy JustSize validator?
-- Add validator for checking if object has attributes?
-  - Add validators for all attributes of the Collections abstract base classes?
-  - Add validators for types in the typing package?
-  - Redo JustSequence and JustIter?
+
+- Add decorator for weak types?
 - Add AllTypedDict and AllTypedTuple?
 - Add type and bounds inspection for general iterator in decorators with iter()?
 - Write tests for parsers?

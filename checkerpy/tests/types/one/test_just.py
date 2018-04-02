@@ -14,6 +14,9 @@ class TestJustInstantiation(ut.TestCase):
             _ = Just()
         self.assertEqual(str(err.exception), err_msg)
 
+    def test_works_with_one_valid_type(self):
+        _ = Just(int)
+
     def test_error_on_one_type_to_check_wrong_type(self):
         err_msg = 'Type of type specifier foo must be type, not str!'
         with self.assertRaises(TypeError) as err:

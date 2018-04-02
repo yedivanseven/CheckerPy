@@ -3,6 +3,7 @@ import unittest as ut
 from ....validators.one import NonEmpty
 from ....exceptions import EmptyError, CallableError
 from ....types.one import _ITERABLES
+from ....types.weak import _LIKE_ITERABLES
 from ....functional import CompositionOf
 
 
@@ -197,11 +198,19 @@ class TestOneOfMethods(ut.TestCase):
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(NonEmpty, iterable.__name__))
+        for iterable in _LIKE_ITERABLES:
+            self.assertTrue(hasattr(NonEmpty, iterable.__name__))
+        self.assertTrue(hasattr(NonEmpty, 'LikeSized'))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
         for iterable in _ITERABLES:
             type_checker = getattr(NonEmpty, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
+        for iterable in _LIKE_ITERABLES:
+            type_checker = getattr(NonEmpty, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        sized_checker = getattr(NonEmpty, 'LikeSized')
+        self.assertIsInstance(sized_checker, CompositionOf)
 
     def test_works_through_type_checker(self):
         log_msg = ['ERROR:root:Tuple test must not be empty!']

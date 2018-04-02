@@ -3,7 +3,7 @@ from typing import Any, Sized
 from collections import deque, defaultdict, OrderedDict
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
-from .registrars import IterableRegistrar
+from .registrars import SizedRegistrar
 
 dict_keys = type({}.keys())
 dict_values = type({}.values())
@@ -12,7 +12,7 @@ named_types = (frozenset, deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items)
 
 
-class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
+class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
     """Checks if the length of an iterable is one of the specified lengths.
 
     Parameters
@@ -39,10 +39,9 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in iterables (str, tuple, list,
-    set, and dict) are attached as methods as well. If the optional argument
-    `length` is specified in calls to these methods, it is passed through to
-    the length checker.
+    For convenience, type checkers for built-in iterables are attached as
+    methods as well. If the optional argument `length` is specified in calls
+    to these methods, it is passed through to the length checker.
 
     Raises
     ------
@@ -63,12 +62,12 @@ class JustLen(CompositionClassMixin, metaclass=IterableRegistrar):
         cls.__string = cls.__name or str(iterable)
         cls.__lengths = cls.__valid(length)
         try:
-            length_of_sizable = len(iterable)
+            length_of_iterable = len(iterable)
         except TypeError as error:
             message = cls.__has_no_length_message_for(iterable)
             log.error(message)
             raise LenError(message) from error
-        if length_of_sizable not in cls.__lengths:
+        if length_of_iterable not in cls.__lengths:
             message = cls.__wrong_length_message_for(iterable)
             log.error(message)
             raise LenError(message)

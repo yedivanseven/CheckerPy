@@ -3,6 +3,7 @@ import unittest as ut
 from ....validators.one import Limited
 from ....exceptions import WrongTypeError, LimitError, CallableError
 from ....types.one import _COMPARABLES
+from ....types.weak import _LIKE_COMPARABLES
 from ....functional import CompositionOf
 
 
@@ -190,9 +191,14 @@ class TestLimited(ut.TestCase):
     def test_has_comparable_type_checker_attributes(self):
         for comparable in _COMPARABLES:
             self.assertTrue(hasattr(Limited, comparable.__name__))
+        for comparable in _LIKE_COMPARABLES:
+            self.assertTrue(hasattr(Limited, comparable.__name__))
 
     def test_comparable_type_checkers_are_type_CompositionOf(self):
         for comparable in _COMPARABLES:
+            type_checker = getattr(Limited, comparable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        for comparable in _LIKE_COMPARABLES:
             type_checker = getattr(Limited, comparable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
 
@@ -201,6 +207,12 @@ class TestLimited(ut.TestCase):
 
     def test_attribute_NonEmpty_is_type_CompositionOf(self):
         self.assertIsInstance(Limited.NonEmpty, CompositionOf)
+
+    def test_has_attribute_JustLen(self):
+        self.assertTrue(hasattr(Limited, 'JustLen'))
+
+    def test_attribute_JustLen_is_type_CompositionOf(self):
+        self.assertIsInstance(Limited.JustLen, CompositionOf)
 
     def test_hi_and_lo_are_passed_through_type_checker(self):
         log_msg = ['ERROR:root:Value 0 lies outside '

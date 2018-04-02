@@ -10,7 +10,7 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
 
     Parameters
     ----------
-    string
+    string : str
         The string to check for being an identifier.
     name : str, optional
         The name of the variable to check for being an identifier.

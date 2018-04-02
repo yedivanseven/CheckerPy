@@ -26,9 +26,8 @@ class AllNonEmpty(CompositionClassMixin, metaclass=AllIterableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in iterables (str, tuple, list,
-    set, and dict) and an emptiness checker for `iterable` are attached as
-    methods as well.
+    For convenience, type checkers for built-in iterables and an emptiness
+    checker for `iterable` are attached as methods as well.
 
 
     Raises

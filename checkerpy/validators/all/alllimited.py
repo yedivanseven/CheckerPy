@@ -32,10 +32,10 @@ class AllLimited(CompositionClassMixin, metaclass=AllComparableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in comparables (i.e., everything
-    but dict) and iterables as well as an emptiness checker for `iterable`
-    are attached as methods. If `alo` and/or `ahi` is specified in calls
-    to these methods, it (or they) are passed through to the limits checker.
+    For convenience, type checkers for built-in comparables and iterables as
+    well as an emptiness checker for `iterable` are attached as methods. If
+    `alo` and/or `ahi` is specified in calls to these methods, it (or they)
+    are passed through to the limits checker.
 
     Raises
     ------

@@ -1,5 +1,7 @@
-v0.9.8, 04/01/2018 -- Minor Revision
+v0.9.8, 04/02/2018 -- Minor Revision
 * Added numpy validator JustSize
+* Added validators Has and AllHave to check for attributes
+* Added weak type checkers Like...
 * ...
 
 v0.9.7, 03/31/2018 -- Minor Revision

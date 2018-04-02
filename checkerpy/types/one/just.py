@@ -15,7 +15,7 @@ class Just(CompositionMixin):
     types : *type
         One or more type(s) to check for.
     identifier : str, optional
-        A valid python identifier as name of the type checker object.
+        A valid python identifier as name of the type-checker object.
         Defaults to 'Just'.
 
     Raises

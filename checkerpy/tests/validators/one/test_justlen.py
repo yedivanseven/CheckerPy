@@ -4,6 +4,7 @@ from collections import deque, defaultdict, OrderedDict
 from ....validators.one import JustLen
 from ....exceptions import LenError, IntError, CallableError
 from ....types.one import _ITERABLES
+from ....types.weak import _LIKE_ITERABLES
 from ....functional import CompositionOf
 
 
@@ -460,11 +461,19 @@ class TestJustLen(ut.TestCase):
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(JustLen, iterable.__name__))
+        for iterable in _LIKE_ITERABLES:
+            self.assertTrue(hasattr(JustLen, iterable.__name__))
+        self.assertTrue(hasattr(JustLen, 'LikeSized'))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
         for iterable in _ITERABLES:
             type_checker = getattr(JustLen, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
+        for iterable in _LIKE_ITERABLES:
+            type_checker = getattr(JustLen, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        sized_checker = getattr(JustLen, 'LikeSized')
+        self.assertIsInstance(sized_checker, CompositionOf)
 
     def test_length_is_passed_through_type_checker(self):
         log_msg = ['ERROR:root:Length of str bar must be 6, not 3!']

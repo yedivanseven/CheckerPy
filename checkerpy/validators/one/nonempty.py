@@ -2,10 +2,10 @@ import logging as log
 from typing import Sized
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import EmptyError
-from .registrars import IterableRegistrar
+from .registrars import SizedRegistrar
 
 
-class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
+class NonEmpty(CompositionClassMixin, metaclass=SizedRegistrar):
     """Checks if an iterable is empty that should not be empty.
 
     Parameters
@@ -28,8 +28,8 @@ class NonEmpty(CompositionClassMixin, metaclass=IterableRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in iterables (str, tuple, list,
-    set, and dict) are attached as methods as well.
+    For convenience, type checkers for built-in iterables are attached as
+    methods as well.
 
     Raises
     ------

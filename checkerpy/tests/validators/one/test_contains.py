@@ -5,6 +5,7 @@ from ....validators.one import Contains
 from ....exceptions import ItemError, IterError, CallableError
 from ....functional import CompositionOf
 from ....types.one import _ITERABLES
+from ....types.weak import _LIKE_ITERABLES, _LIKE_CONTAINERS
 
 
 class TestContainsParameterSpecification(ut.TestCase):
@@ -71,10 +72,20 @@ class TestContainsGeneral(ut.TestCase):
     def test_has_iterable_type_checker_attributes(self):
         for iterable in _ITERABLES:
             self.assertTrue(hasattr(Contains, iterable.__name__))
+        for iterable in _LIKE_ITERABLES:
+            self.assertTrue(hasattr(Contains, iterable.__name__))
+        for container in _LIKE_CONTAINERS:
+            self.assertTrue(hasattr(Contains, container.__name__))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
         for iterable in _ITERABLES:
             type_checker = getattr(Contains, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        for iterable in _LIKE_ITERABLES:
+            type_checker = getattr(Contains, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        for container in _LIKE_CONTAINERS:
+            type_checker = getattr(Contains, container.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
 
     def test_some_is_passed_through_to_contains(self):

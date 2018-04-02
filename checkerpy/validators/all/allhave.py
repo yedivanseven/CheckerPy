@@ -1,21 +1,22 @@
 from typing import Any
 from ...functional.mixins import CompositionClassMixin
-from ..one import JustLen
-from .registrars import AllIterableRegistrar
+from ..one import Has
+from .registrars import IterableRegistrar
 
 
-class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
-    """Checks if all elements of an iterable have one of the specified lengths.
+class AllHave(CompositionClassMixin, metaclass=IterableRegistrar):
+    """Checks if all elements of an iterable have the given attribute(s).
 
     Parameters
     ----------
     iterable
-        The iterable for which to check the length of its elements.
+        The iterable for which to check the attributes of its elements.
     name : str, optional
-        The name of the variable to check the length of the elements of.
+        The name of the variable to check the attributes of its elements for.
         Defaults to None.
-    alen : int, tuple(int)
-        One or more lengths that all elements of `iterable` should have.
+    attrs : str, tuple(str), optional
+        String or tuple of strings with the name(s) of the
+        attributes to check for. Defaults to '__new__'.
 
     Returns
     -------
@@ -25,57 +26,55 @@ class AllLen(CompositionClassMixin, metaclass=AllIterableRegistrar):
     Methods
     -------
     o(callable) : CompositionOf
-        Daisy-chains the length checker to another `callable`, returning the
-        functional composition of both. If the optional argument `alen` is
+        Daisy-chains the attribute checker to another `callable`, returning the
+        functional composition of both. If the optional argument `attrs` is
         specified when calling the composition, it is passed through to the
-        length checker.
+        attribute checker.
 
     Notes
     -----
     For convenience, type checkers for built-in iterables and an emptiness
     checker for `iterable` are attached as methods as well. If the optional
-    argument `alen` is specified in calls to these methods, it is passed
-    through to the length checker.
+    argument `attrs` is specified in calls to these methods, it is passed
+    through to the attribute checker.
 
     Raises
     ------
-    IntError
-        If the specified length(s) cannot be converted to required type int.
-    IterError
-        If the variable passed to the length checker is not an iterable.
-    LenError
-        If the length of any element of `iterable` can either not be determined
-        or is not among the allowed lengths.
+    IdentifierError
+        If (one of) the attribute name(s) to check for is not a valid python
+        identifier.
+    MissingAttrError
+        If one of the elements in the iterable does not have (all of)
+        the specified attribute(s).
 
     See Also
     --------
-    JustLen, CompositionOf
+    Has, CompositionOf
 
     """
 
-    def __new__(cls, iterable, name: str = None, *, alen: int, **kwargs):
+    def __new__(cls, iterable, name: str = None, *, attrs='__new__', **kwargs):
         cls.__name = str(name) if name is not None else ''
         cls._string = cls.__name or str(iterable)
         cls._itertype = type(iterable).__name__
         for index, value in cls._enumerate(iterable):
             value_name = cls.__name_from(index, value)
-            _ = JustLen(value, name=value_name, length=alen)
+            _ = Has(value, name=value_name, attr=attrs)
         return iterable
 
     @classmethod
     def __name_from(cls, index: int, value: Any) -> str:
-        dicts = f'dict {cls._string}' if cls.__name else cls._string
         named = f'{cls._itertype} {cls.__name}' if cls.__name else cls._string
         if cls._itertype == 'dict':
-            return f'key {value} in dict {cls._string}'
+            return f'{value} in keys to dict {cls._string}'
         elif cls._itertype in ('dict_keys', 'odict_keys'):
-            return f'key {value} in {dicts}'
+            return f'{value} in {named}'
         elif cls._itertype in ('dict_values', 'odict_values'):
-            return f'value {value} in {dicts}'
+            return f'{value} in {named}'
         elif cls._itertype in ('dict_items', 'odict_items'):
-            return f'item {value} in {dicts}'
+            return f'{value} in {named}'
         elif cls._itertype in ('OrderedDict', 'defaultdict'):
-            return f'key {value} in {named}'
+            return f'{value} in keys to {named}'
         elif cls._itertype == 'frozenset':
             value = set(value) if type(value) is frozenset else value
             return f'{value} in {named}'

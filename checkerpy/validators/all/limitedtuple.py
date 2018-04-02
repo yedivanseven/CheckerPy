@@ -36,9 +36,9 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
 
     Notes
     -----
-    For convenience, type checkers for built-in comparables (i.e., everything
-    but dict) are also attached as methods. If `limits` are specified in calls
-    to these methods, they are passed through to `LimitedTuple`.
+    For convenience, type checkers for built-in comparables are also attached
+    as methods. If `limits` are specified in calls to these methods, they are
+    passed through to `LimitedTuple`.
 
     Raises
     ------
