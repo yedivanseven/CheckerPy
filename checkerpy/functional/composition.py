@@ -104,9 +104,11 @@ class CompositionOf:
                 pass
         has_name = hasattr(self.__second, '__name__')
         self.__name__ = self.__second.__name__ if has_name else 'Composition'
-        if hasattr(self.__second, '__dict__'):
-            for attr_name, attr in self.__second.__dict__.items():
-                if attr_name[0].isupper() and callable(attr):
-                    setattr(self, attr_name, CompositionOf(self, attr))
-                if attr_name[0].islower():
-                    setattr(self, attr_name, attr)
+        public_attrs = [(attr_name, getattr(self.__second, attr_name))
+                        for attr_name in dir(self.__second)
+                        if not attr_name.startswith('_')]
+        for attr_name, attr in public_attrs:
+            if attr_name[0].isupper() and callable(attr):
+                setattr(self, attr_name, CompositionOf(self, attr))
+            if attr_name[0].islower() and not callable(attr):
+                setattr(self, attr_name, attr)

@@ -119,6 +119,24 @@ class TestCompositionOf(ut.TestCase):
         copied = self.comp.o(self.h)
         self.assertTrue(all(direct(x) == copied.U(x) for x in range(-99, 100)))
 
+    def test_copies_properties(self):
+
+        class Test:
+            def __init__(self):
+                self.__x = 1
+
+            @property
+            def x(self):
+                return self.__x
+
+            def __call__(self, y):
+                return y + self.__x
+
+        test = Test()
+        comp = CompositionOf(self.f, test)
+        self.assertTrue(hasattr(comp, 'x'))
+        self.assertEqual(comp.x, 1)
+
     def test_has_attribute_name(self):
         comp = CompositionOf(self.f, self.g)
         self.assertTrue(hasattr(comp, '__name__'))
