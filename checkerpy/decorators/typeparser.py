@@ -16,7 +16,7 @@ class TypeParser(ParserMixin):
         if ... in types:
             types = filter(lambda type_: type_ is not ..., types)
             return All(*types).JustTuple
-        elif all(hasattr(type_, '__iter__') for type_ in types):
+        elif all(type(type_) in (tuple, list, set) for type_ in types):
 
             def typed_tuple(value, name: str = None):
                 return TypedTuple(value, name=name, types=types)
