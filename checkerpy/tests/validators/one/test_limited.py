@@ -1,5 +1,6 @@
 import logging
 import unittest as ut
+from collections import defaultdict, deque, OrderedDict
 from ....validators.one import Limited
 from ....exceptions import WrongTypeError, LimitError, CallableError
 from ....types.one import _COMPARABLES
@@ -7,7 +8,7 @@ from ....types.weak import _LIKE_COMPARABLES
 from ....functional import CompositionOf
 
 
-class TestLimited(ut.TestCase):
+class TestLimitedWorks(ut.TestCase):
 
     def test_works_with_sane_bool(self):
         out = Limited(False, lo=False, hi=True)
@@ -39,6 +40,11 @@ class TestLimited(ut.TestCase):
         self.assertIsInstance(out, list)
         self.assertListEqual(out, [2, 3])
 
+    def test_works_with_sane_deque(self):
+        out = Limited(deque([2, 3]), lo=deque([1, 2]), hi=deque([3, 4]))
+        self.assertIsInstance(out, deque)
+        self.assertEqual(out, deque([2, 3]))
+
     def test_works_with_sane_set(self):
         out = Limited({2, 3}, lo={1, 2}, hi={3, 4})
         self.assertIsInstance(out, set)
@@ -61,6 +67,41 @@ class TestLimited(ut.TestCase):
         out = Limited(inp, lo={1: 'aaa'}.items(), hi={3: 'ccc'}.items())
         self.assertIsInstance(out, type(inp))
         self.assertEqual(out, inp)
+
+    def test_works_with_sane_ordered_dict_keys(self):
+        inp = OrderedDict({2: 'two'}).keys()
+        lo = OrderedDict({2: 'two'})
+        hi = OrderedDict({2: 'two'})
+        out = Limited(inp, lo=lo.keys(), hi=hi.keys())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+    def test_works_with_sane_ordered_dict_items(self):
+        inp = OrderedDict({2: 'bbb'}).items()
+        lo = OrderedDict({1: 'aaa'})
+        hi = OrderedDict({3: 'ccc'})
+        out = Limited(inp, lo=lo.items(), hi=hi.items())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+    def test_works_with_sane_defaultdict_keys(self):
+        inp = defaultdict(str, {2: 'two'}).keys()
+        lo = defaultdict(str, {2: 'two'})
+        hi = defaultdict(str, {2: 'two'})
+        out = Limited(inp, lo=lo.keys(), hi=hi.keys())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+    def test_works_with_sane_defaultdict_items(self):
+        inp = defaultdict(str, {2: 'bbb'}).items()
+        lo = defaultdict(str, {1: 'aaa'})
+        hi = defaultdict(str, {3: 'ccc'})
+        out = Limited(inp, lo=lo.items(), hi=hi.items())
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+
+class TestLimitedUncomparable(ut.TestCase):
 
     def test_error_on_unnamed_value_uncomparable_to_lower_limit(self):
         log_msg = ['ERROR:root:Cannot compare type str of '
@@ -128,6 +169,249 @@ class TestLimited(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_error_on_unnamed_deque_uncomparable(self):
+        inp = deque([1])
+        log_msg = ['ERROR:root:Cannot compare deque([1])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare deque([1])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_deque_uncomparable(self):
+        inp = deque([1])
+        log_msg = ['ERROR:root:Cannot compare type deque'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type deque'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_frozenset_uncomparable(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:Cannot compare frozenset({1})'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare frozenset({1})'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_frozenset_uncomparable(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:Cannot compare type frozenset'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type frozenset'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_ordered_dict_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare OrderedDict([(1, 1)])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare OrderedDict([(1, 1)])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_ordered_dict_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare type OrderedDict'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type OrderedDict'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_defaultdict_uncomparable(self):
+        inp = defaultdict(int, {1: 1})
+        log_msg = ["ERROR:root:Cannot compare defaultdict(<class 'int'>,"
+                   " {1: 1}) with limits of types float and int!"]
+        err_msg = ("Cannot compare defaultdict(<class 'int'>, {1: 1})"
+                   " with limits of types float and int!")
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_defaultdict_uncomparable(self):
+        inp = defaultdict(int, {1: 1})
+        log_msg = ['ERROR:root:Cannot compare type defaultdict'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type defaultdict'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp, 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_dict_keys_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare dict_keys([1])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare dict_keys([1])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.keys(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_dict_keys_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare type dict_keys'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type dict_keys'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.keys(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_ordered_dict_keys_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare odict_keys([1])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare odict_keys([1])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.keys(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_ordered_dict_keys_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare type odict_keys'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type odict_keys'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.keys(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_dict_values_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare dict_values([1])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare dict_values([1])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.values(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_dict_values_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare type dict_values'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type dict_values'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.values(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_ordered_dict_values_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare odict_values([1])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare odict_values([1])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.values(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_ordered_dict_values_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare type odict_values'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type odict_values'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.values(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_dict_items_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare dict_items([(1, 1)])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare dict_items([(1, 1)])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.items(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_dict_items_uncomparable(self):
+        inp = {1: 1}
+        log_msg = ['ERROR:root:Cannot compare type dict_items'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type dict_items'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.items(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_ordered_dict_items_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare odict_items([(1, 1)])'
+                   ' with limits of types float and int!']
+        err_msg = ('Cannot compare odict_items([(1, 1)])'
+                   ' with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.items(), lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_ordered_dict_items_uncomparable(self):
+        inp = OrderedDict({1: 1})
+        log_msg = ['ERROR:root:Cannot compare type odict_items'
+                   ' of test with limits of types float and int!']
+        err_msg = ('Cannot compare type odict_items'
+                   ' of test with limits of types float and int!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = Limited(inp.items(), 'test', lo=1.0, hi=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestLimitedOutOfBounds(ut.TestCase):
+
     def test_error_on_unnamed_variable_out_bounds(self):
         log_msg = ['ERROR:root:Value 0 lies outside '
                    'the allowed interval [1.0, 2]!']
@@ -187,6 +471,9 @@ class TestLimited(ut.TestCase):
                 _ = Limited(0, lo=1.0, hi=float('inf'))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+
+class TestLimitedMethods(ut.TestCase):
 
     def test_has_comparable_type_checker_attributes(self):
         for comparable in _COMPARABLES:

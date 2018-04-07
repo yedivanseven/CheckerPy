@@ -1,19 +1,10 @@
 import logging as log
-from typing import Any, Collection, Tuple, Union
-from collections import defaultdict, deque, OrderedDict
+from typing import Collection, Tuple, Union
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError, IterError
-from .registrars import ContainerRegistrar
+from .registrars import ContainerRegistrar, named_types
 
-Items = Union[Collection, Tuple[str, ...]]
-
-dict_keys = type({}.keys())
-dict_values = type({}.values())
-dict_items = type({}.items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
-               dict_keys, dict_values, dict_items)
-NamedTypes = Union[frozenset, deque, defaultdict, OrderedDict,
-                   dict_keys, dict_values, dict_items]
+ItemsT = Union[Collection, Tuple[str, ...]]
 
 
 class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
@@ -55,8 +46,7 @@ class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
     Raises
     ------
     ItemError
-        If `iterable` does not contain any or all of the given items, or if
-        the items are not specified as iterable.
+        If `iterable` does not contain any or all of the given items.
     IterError
         If `iterable` is not, in fact, an iterable.
 
@@ -90,21 +80,14 @@ class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
         return iterable
 
     @classmethod
-    def __valid(cls, items: Items) -> Items:
+    def __valid(cls, items: ItemsT) -> ItemsT:
         if isinstance(items, str):
             return tuple(items)
         has_len = hasattr(items, '__len__')
         has_in = hasattr(items, '__contains__') or hasattr(items, '__iter__')
         if has_len and has_in:
             return items
-        message = cls.__wrong_specification_message_for(items)
-        raise ItemError(message)
-
-    @staticmethod
-    def __wrong_specification_message_for(items: Any) -> str:
-        type_of_items = type(items).__name__
-        return ('Item(s) to check must be given as iterable,'
-                f' not as {type_of_items} like {items}!')
+        return items,
 
     @classmethod
     def __not_an_iterable_message(cls) -> str:
@@ -130,7 +113,7 @@ class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
         return f'{prefix} {items} {verb} in {cls.__string}!'
 
     @classmethod
-    def __string_for(cls, iterable: NamedTypes) -> str:
+    def __string_for(cls, iterable) -> str:
         type_name = type(iterable).__name__
         if isinstance(iterable, named_types):
             return type_name+' '+cls.__name if cls.__name else str(iterable)

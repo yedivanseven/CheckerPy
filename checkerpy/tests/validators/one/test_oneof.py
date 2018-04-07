@@ -337,6 +337,9 @@ class TestOneOfValue(ut.TestCase):
         self.assertIsInstance(output, type(inputs))
         self.assertEqual(output, inputs)
 
+
+class TestOneOfMethodsIncomparable(ut.TestCase):
+
     def test_membership_error_named_value_incomparable(self):
         log_msg = ['ERROR:root:Cannot determine if value 42'
                    ' of test with type int is in str foo!']

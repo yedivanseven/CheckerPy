@@ -1,8 +1,7 @@
 import logging as log
-from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IdentifierError
-from .registrars import StrRegistrar
+from .registrars import StrRegistrar, named_types
 
 
 class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
@@ -42,20 +41,24 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
     """
 
     def __new__(cls, string: str, name: str = None, **kwargs) -> str:
-        cls.__name = str(name) if name not in [None, ''] else str(string)
+        cls.__name = str(name) if name is not None else ''
+        cls.__string = cls.__string_for(string)
         try:
             string_is_identifier = string.isidentifier()
         except AttributeError:
             string_is_identifier = False
         if not string_is_identifier:
-            message = cls.__not_identifier_message_for(string)
+            message = f'{cls.__string} is not a valid identifier!'
             log.error(message)
             raise IdentifierError(message)
         return string
 
     @classmethod
-    def __not_identifier_message_for(cls, value: Any) -> str:
-        type_of_value = type(value).__name__
-        of_type = '' if type_of_value == 'str' else f' of type {type_of_value}'
-        name = cls.__name.capitalize()
-        return f'{name}{of_type} is not a valid identifier!'
+    def __string_for(cls, string: str) -> str:
+        if isinstance(string, str):
+            return cls.__name or string
+        if isinstance(string, named_types):
+            of_type = f' of type {type(string).__name__}' if cls.__name else ''
+        else:
+            of_type = f' of type {type(string).__name__}'
+        return (cls.__name or str(string)) + of_type

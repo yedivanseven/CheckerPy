@@ -1,6 +1,7 @@
 from .like import Like
 
 __all__ = [
+    'Like',
     'LikeContainer',
     'LikeHashable',
     'LikeIterable',

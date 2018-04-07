@@ -2,6 +2,7 @@ import logging as log
 from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
+from .registrars import named_types
 
 
 class OneOf(CompositionClassMixin):
@@ -68,12 +69,12 @@ class OneOf(CompositionClassMixin):
     def __cant_determine_membership_message_for(cls, value: Any) -> str:
         with_type, one_of_items = cls.__strings_for(value)
         return (f'Cannot determine if value {value}{cls.__name}'
-                f' {with_type} is {one_of_items}!')
+                f'{with_type} is {one_of_items}!')
 
     @classmethod
     def __not_in_items_message_for(cls, value: Any) -> str:
         with_type, one_of_items = cls.__strings_for(value)
-        return f'Value {value}{cls.__name} {with_type} is not {one_of_items}!'
+        return f'Value {value}{cls.__name}{with_type} is not {one_of_items}!'
 
     @classmethod
     def __strings_for(cls, value: Any) -> (str, str):
@@ -90,4 +91,8 @@ class OneOf(CompositionClassMixin):
             items_string = f'in str {cls.__items}'
         else:
             items_string = f'one of {cls.__items}'
-        return 'with type '+type(value).__name__, items_string
+        if isinstance(value, named_types):
+            type_string = ''
+        else:
+            type_string = ' with type '+type(value).__name__
+        return type_string, items_string

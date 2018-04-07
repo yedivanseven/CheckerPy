@@ -2,6 +2,7 @@ import logging as log
 from typing import Callable
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import CallableError
+from .registrars import named_types
 
 
 class JustCall(CompositionClassMixin):
@@ -43,6 +44,7 @@ class JustCall(CompositionClassMixin):
             cls.__name = callbl.__name__
         else:
             cls.__name = ''
+        cls.__string = cls.__name or str(callbl)
         if not callable(callbl):
             message = cls.__not_callable_message_for(callbl)
             log.error(message)
@@ -50,7 +52,9 @@ class JustCall(CompositionClassMixin):
         return callbl
 
     @classmethod
-    def __not_callable_message_for(cls, callable: Callable) -> str:
-        name = cls.__name or callable
-        type_name = type(callable).__name__
-        return f'Object {name} of type {type_name} is not callable!'
+    def __not_callable_message_for(cls, callbl: Callable) -> str:
+        if isinstance(callbl, named_types):
+            of_type = f' of type {type(callbl).__name__}' if cls.__name else ''
+        else:
+            of_type = f' of type {type(callbl).__name__}'
+        return f'Object {cls.__string}{of_type} is not callable!'

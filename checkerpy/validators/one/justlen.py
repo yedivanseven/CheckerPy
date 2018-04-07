@@ -1,15 +1,8 @@
 import logging as log
 from typing import Any, Sized
-from collections import deque, defaultdict, OrderedDict
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
-from .registrars import SizedRegistrar
-
-dict_keys = type({}.keys())
-dict_values = type({}.values())
-dict_items = type({}.items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
-               dict_keys, dict_values, dict_items)
+from .registrars import SizedRegistrar, named_types
 
 
 class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
@@ -86,21 +79,19 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
         try:
             length = int(length)
         except (ValueError, TypeError) as error:
-            message = cls.__invalid_type_message_for(length)
+            message = cls.__invalid_length_message_for(length)
             raise IntError(message) from error
         return length
 
-    @staticmethod
-    def __invalid_type_message_for(value: Any) -> str:
-        type_name = type(value).__name__
-        return (f'Could not convert given length {value} of'
-                f' type {type_name} to required type int!')
+    @classmethod
+    def __invalid_length_message_for(cls, length: Any) -> str:
+        return (f'Could not convert given length {length}'
+                f'{cls.__with_type_of(length)} to required type int!')
 
     @classmethod
-    def __has_no_length_message_for(cls, variable: Any) -> str:
-        var_name = cls.__string + ' with'
-        type_name = type(variable).__name__
-        return f'Length of {var_name} type {type_name} cannot be determined!'
+    def __has_no_length_message_for(cls, value: Any) -> str:
+        type_name = cls.__type_name_of(value)
+        return f'Length of {type_name}{cls.__string} cannot be determined!'
 
     @classmethod
     def __wrong_length_message_for(cls, iterable: Sized) -> str:
@@ -109,8 +100,8 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
         else:
             of_length = f'one of {cls.__lengths}'
         actual_length = len(iterable)
-        type_of = cls.__type_name_of(iterable)
-        return (f'Length of {type_of}{cls.__string} must'
+        type_name = cls.__type_name_of(iterable)
+        return (f'Length of {type_name}{cls.__string} must'
                 f' be {of_length}, not {actual_length}!')
 
     @classmethod
@@ -118,3 +109,9 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
         if isinstance(iterable, named_types) and not cls.__name:
             return ''
         return type(iterable).__name__ + ' '
+
+    @staticmethod
+    def __with_type_of(value: Any):
+        if isinstance(value, named_types):
+            return ''
+        return f' with type {type(value).__name__}'

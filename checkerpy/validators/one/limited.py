@@ -6,12 +6,13 @@ from ...types.weak import _LIKE_COMPARABLES
 from ...exceptions import LimitError, WrongTypeError
 from .nonempty import NonEmpty
 from .justlen import JustLen
+from .registrars import named_types
 
 
 class ComparableRegistrar(type):
     """Sets compositions of class and type/non-empty checkers as attributes."""
     def __init__(cls, class_name: str, bases, attributes: dict) -> None:
-        super().__init__(class_name, (), attributes)
+        super().__init__(class_name, bases, attributes)
         for comparable in _COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
         for comparable in _LIKE_COMPARABLES:
@@ -85,9 +86,12 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
     def __uncomparable_type_message_for(cls, value, lo, hi) -> str:
         lo_type = type(lo).__name__
         hi_type = type(hi).__name__
-        value_type = type(value).__name__
         value_name = cls.__name or str(value)
-        return (f'Cannot compare type {value_type} of {value_name}'
+        if isinstance(value, named_types) and not cls.__name:
+            type_of = ''
+        else:
+            type_of = f'type {type(value).__name__} of '
+        return (f'Cannot compare {type_of}{value_name}'
                 f' with limits of types {lo_type} and {hi_type}!')
 
     @classmethod

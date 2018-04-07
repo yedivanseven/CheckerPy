@@ -2,7 +2,7 @@ import logging
 import unittest as ut
 from collections import defaultdict, deque, OrderedDict
 from ....functional import CompositionOf
-from ....validators.one import Like
+from ....types.weak import Like
 from ....exceptions import MissingAttrError, CallableError
 
 

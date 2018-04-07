@@ -121,6 +121,30 @@ class TestNonEmpty(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
+    def test_works_with_sane_frozenset(self):
+        inp = frozenset([1, 2])
+        out = NonEmpty(inp)
+        self.assertIsInstance(out, type(inp))
+        self.assertEqual(out, inp)
+
+    def test_error_on_empty_unnamed_frozenset(self):
+        log_msg = ['ERROR:root:Frozenset must not be empty!']
+        err_msg = 'Frozenset must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = NonEmpty(frozenset([]))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_empty_named_frozenset(self):
+        log_msg = ['ERROR:root:Frozenset test must not be empty!']
+        err_msg = 'Frozenset test must not be empty!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(EmptyError) as err:
+                _ = NonEmpty(frozenset([]), 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
     def test_works_with_sane_dict(self):
         out = NonEmpty({4: 'four'})
         self.assertIsInstance(out, dict)
@@ -165,30 +189,6 @@ class TestNonEmpty(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(EmptyError) as err:
                 _ = NonEmpty({}.keys(), 'test')
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_works_with_sane_frozenset(self):
-        inp = frozenset([1, 2])
-        out = NonEmpty(inp)
-        self.assertIsInstance(out, type(inp))
-        self.assertEqual(out, inp)
-
-    def test_error_on_empty_unnamed_frozenset(self):
-        log_msg = ['ERROR:root:Frozenset must not be empty!']
-        err_msg = 'Frozenset must not be empty!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(EmptyError) as err:
-                _ = NonEmpty(frozenset([]))
-        self.assertEqual(str(err.exception), err_msg)
-        self.assertEqual(log.output, log_msg)
-
-    def test_error_on_empty_named_frozenset(self):
-        log_msg = ['ERROR:root:Frozenset test must not be empty!']
-        err_msg = 'Frozenset test must not be empty!'
-        with self.assertLogs(level=logging.ERROR) as log:
-            with self.assertRaises(EmptyError) as err:
-                _ = NonEmpty(frozenset([]), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

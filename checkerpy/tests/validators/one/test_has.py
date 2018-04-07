@@ -51,7 +51,7 @@ class TestHasAttributeSpecification(ut.TestCase):
         out = Has(inp, attr={'__init__', '__len__'})
         self.assertEqual(out, inp)
 
-    def test_works_with_attrs_as_forzenset(self):
+    def test_works_with_attrs_as_frozenset(self):
         inp = 'test'
         out = Has(inp, attr=frozenset({'__init__', '__len__'}))
         self.assertEqual(out, inp)
@@ -148,6 +148,246 @@ class TestHas(ut.TestCase):
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
                 _ = Has([1, 2, 3], 'foo', attr=('test', 'bar'))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_deque_one_attr(self):
+        log_msg = ['ERROR:root:Object deque([1, 2, 3])'
+                   ' does not have required attribute test!']
+        err_msg = ('Object deque([1, 2, 3]) does'
+                   ' not have required attribute test!')
+        inp = deque([1, 2, 3])
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_deque_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type deque'
+                   ' does not have required attribute test!']
+        err_msg = ('Object foo of type deque does'
+                   ' not have required attribute test!')
+        inp = deque([1, 2, 3])
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_frozenset_one_attr(self):
+        log_msg = ['ERROR:root:Object frozenset({1, 2, 3})'
+                   ' does not have required attribute test!']
+        err_msg = ('Object frozenset({1, 2, 3}) does'
+                   ' not have required attribute test!')
+        inp = frozenset({1, 2, 3})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_frozenset_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type frozenset'
+                   ' does not have required attribute test!']
+        err_msg = ('Object foo of type frozenset does'
+                   ' not have required attribute test!')
+        inp = frozenset({1, 2, 3})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_ordereddict_one_attr(self):
+        log_msg = ["ERROR:root:Object OrderedDict([(1, 'one'), (2, 'two')])"
+                   " does not have required attribute test!"]
+        err_msg = ("Object OrderedDict([(1, 'one'), (2, 'two')])"
+                   " does not have required attribute test!")
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_ordereddict_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type OrderedDict'
+                   ' does not have required attribute test!']
+        err_msg = ('Object foo of type OrderedDict does'
+                   ' not have required attribute test!')
+        inp = OrderedDict({1: 'one', 2: 'two'})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_defaultdict_one_attr(self):
+        log_msg = ["ERROR:root:Object defaultdict(<class 'str'>, {1: 'one',"
+                   " 2: 'two'}) does not have required attribute test!"]
+        err_msg = ("Object defaultdict(<class 'str'>, {1: 'one',"
+                   " 2: 'two'}) does not have required attribute test!")
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_defaultdict_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type defaultdict'
+                   ' does not have required attribute test!']
+        err_msg = ('Object foo of type defaultdict does'
+                   ' not have required attribute test!')
+        inp = defaultdict(str, {1: 'one', 2: 'two'})
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_dict_keys_one_attr(self):
+        log_msg = ['ERROR:root:Object dict_keys([1, 2]) '
+                   'does not have required attribute test!']
+        err_msg = ('Object dict_keys([1, 2]) does not'
+                   ' have required attribute test!')
+        inp = {1: 'one', 2: 'two'}.keys()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_dict_keys_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type dict_keys '
+                   'does not have required attribute test!']
+        err_msg = ('Object foo of type dict_keys does not'
+                   ' have required attribute test!')
+        inp = {1: 'one', 2: 'two'}.keys()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_ordereddict_keys_one_attr(self):
+        log_msg = ['ERROR:root:Object odict_keys([1, 2]) '
+                   'does not have required attribute test!']
+        err_msg = ('Object odict_keys([1, 2]) does not'
+                   ' have required attribute test!')
+        inp = OrderedDict({1: 'one', 2: 'two'}).keys()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_ordereddict_keys_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type odict_keys '
+                   'does not have required attribute test!']
+        err_msg = ('Object foo of type odict_keys does not'
+                   ' have required attribute test!')
+        inp = OrderedDict({1: 'one', 2: 'two'}).keys()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_dict_values_one_attr(self):
+        log_msg = ['ERROR:root:Object dict_values([1, 2]) '
+                   'does not have required attribute test!']
+        err_msg = ('Object dict_values([1, 2]) does not'
+                   ' have required attribute test!')
+        inp = {'one': 1, 'two': 2}.values()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_dict_values_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type dict_values '
+                   'does not have required attribute test!']
+        err_msg = ('Object foo of type dict_values does not'
+                   ' have required attribute test!')
+        inp = {'one': 1, 'two': 2}.values()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_ordereddict_values_one_attr(self):
+        log_msg = ['ERROR:root:Object odict_values([1, 2]) '
+                   'does not have required attribute test!']
+        err_msg = ('Object odict_values([1, 2]) does not'
+                   ' have required attribute test!')
+        inp = OrderedDict({'one': 1, 'two': 2}).values()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_ordereddict_values_one_attr(self):
+        log_msg = ['ERROR:root:Object foo of type odict_values '
+                   'does not have required attribute test!']
+        err_msg = ('Object foo of type odict_values does not'
+                   ' have required attribute test!')
+        inp = OrderedDict({'one': 1, 'two': 2}).values()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_dict_items_one_attr(self):
+        log_msg = ["ERROR:root:Object dict_items([('one', 1), ('two', 2)])"
+                   " does not have required attribute test!"]
+        err_msg = ("Object dict_items([('one', 1), ('two', 2)])"
+                   " does not have required attribute test!")
+        inp = {'one': 1, 'two': 2}.items()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_dict_items_one_attr(self):
+        log_msg = ["ERROR:root:Object foo of type dict_items"
+                   " does not have required attribute test!"]
+        err_msg = ("Object foo of type dict_items"
+                   " does not have required attribute test!")
+        inp = {'one': 1, 'two': 2}.items()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_unnamed_ordereddict_items_one_attr(self):
+        log_msg = ["ERROR:root:Object odict_items([('one', 1), ('two', 2)])"
+                   " does not have required attribute test!"]
+        err_msg = ("Object odict_items([('one', 1), ('two', 2)])"
+                   " does not have required attribute test!")
+        inp = OrderedDict({'one': 1, 'two': 2}).items()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, attr='test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_named_ordereddict_items_one_attr(self):
+        log_msg = ["ERROR:root:Object foo of type odict_items"
+                   " does not have required attribute test!"]
+        err_msg = ("Object foo of type odict_items"
+                   " does not have required attribute test!")
+        inp = OrderedDict({'one': 1, 'two': 2}).items()
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(MissingAttrError) as err:
+                _ = Has(inp, 'foo', attr='test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
