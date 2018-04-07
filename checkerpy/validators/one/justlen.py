@@ -85,8 +85,12 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
 
     @classmethod
     def __invalid_length_message_for(cls, length: Any) -> str:
+        if isinstance(length, named_types):
+            with_type = ''
+        else:
+            with_type = f' with type {type(length).__name__}'
         return (f'Could not convert given length {length}'
-                f'{cls.__with_type_of(length)} to required type int!')
+                f'{with_type} to required type int!')
 
     @classmethod
     def __has_no_length_message_for(cls, value: Any) -> str:
@@ -109,9 +113,3 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
         if isinstance(iterable, named_types) and not cls.__name:
             return ''
         return type(iterable).__name__ + ' '
-
-    @staticmethod
-    def __with_type_of(value: Any):
-        if isinstance(value, named_types):
-            return ''
-        return f' with type {type(value).__name__}'

@@ -18,25 +18,30 @@ class TestJustNdim(ut.TestCase):
 
     def test_error_on_one_ndim_not_convertible_to_int(self):
         err_msg = ('Could not convert given ndim f '
-                   'of type str to required type int!')
+                   'with type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustNdim(array([1, 2]), ndim='foo')
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_of_two_ndims_not_convertible_to_int(self):
         err_msg = ('Could not convert given ndim bar'
-                   ' of type str to required type int!')
+                   ' with type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustNdim(array([1, 2]), ndim=(1, 'bar'))
         self.assertEqual(str(err.exception), err_msg)
 
+    def test_error_on_named_type_ndim_not_convertible_to_int(self):
+        err_msg = ('Could not convert given ndim frozenset({1})'
+                   ' to required type int!')
+        with self.assertRaises(IntError) as err:
+            _ = JustNdim(array([1, 2]), ndim=[frozenset({1})])
+        self.assertEqual(str(err.exception), err_msg)
+
     def test_error_on_unnamed_argument_has_no_attribute_ndim(self):
-        log_msg = ['ERROR:root:Cannot determine the number '
-                   'of dimensions of variable foo with type'
-                   ' str because it has no attribute ndim!']
-        err_msg = ('Cannot determine the number of dimensions'
-                   ' of variable foo with type str because'
-                   ' it has no attribute ndim!')
+        log_msg = ['ERROR:root:Cannot determine the number of dimensions'
+                   ' of str foo because it has no attribute ndim!']
+        err_msg = ('Cannot determine the number of dimensions of'
+                   ' str foo because it has no attribute ndim!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(NdimError) as err:
                 _ = JustNdim('foo', ndim=2)
@@ -44,15 +49,35 @@ class TestJustNdim(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_argument_has_no_attribute_ndim(self):
-        log_msg = ['ERROR:root:Cannot determine the number '
-                   'of dimensions of variable test with type'
-                   ' str because it has no attribute ndim!']
-        err_msg = ('Cannot determine the number of dimensions'
-                   ' of variable test with type str because'
-                   ' it has no attribute ndim!')
+        log_msg = ['ERROR:root:Cannot determine the number of dimensions'
+                   ' of str test because it has no attribute ndim!']
+        err_msg = ('Cannot determine the number of dimensions of'
+                   ' str test because it has no attribute ndim!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(NdimError) as err:
                 _ = JustNdim('foo', 'test', ndim=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_frozenset_has_no_attribute_ndim(self):
+        log_msg = ['ERROR:root:Cannot determine the number of dimensions'
+                   ' of frozenset({1}) because it has no attribute ndim!']
+        err_msg = ('Cannot determine the number of dimensions of'
+                   ' frozenset({1}) because it has no attribute ndim!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(NdimError) as err:
+                _ = JustNdim(frozenset({1}), ndim=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_frozenset_has_no_attribute_ndim(self):
+        log_msg = ['ERROR:root:Cannot determine the number of dimensions'
+                   ' of frozenset test because it has no attribute ndim!']
+        err_msg = ('Cannot determine the number of dimensions of'
+                   ' frozenset test because it has no attribute ndim!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(NdimError) as err:
+                _ = JustNdim(frozenset({1}), 'test', ndim=2)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -109,6 +134,10 @@ class TestJustNdim(ut.TestCase):
                 _ = JustNdim(array([1, 2, 3]), 'test', ndim=(2, 3))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+
+@ut.skipIf(no_numpy, 'Could not import numpy!')
+class TestJustNdimMethods(ut.TestCase):
 
     def test_has_numpy_type_checker_attributes(self):
         for numpy_type in _NUMPY_TYPES:

@@ -51,7 +51,8 @@ class OneOf(CompositionClassMixin):
     """
 
     def __new__(cls, value, name: str = None, *, items=(), **kwargs):
-        cls.__name = ' of '+str(name) if name not in ['', None] else ''
+        cls.__name = str(name) if name is not None else ''
+        cls.__string = cls.__name or str(value)
         cls.__items = items
         try:
             value_not_in_items = value not in items
@@ -67,17 +68,19 @@ class OneOf(CompositionClassMixin):
 
     @classmethod
     def __cant_determine_membership_message_for(cls, value: Any) -> str:
-        with_type, one_of_items = cls.__strings_for(value)
-        return (f'Cannot determine if value {value}{cls.__name}'
-                f'{with_type} is {one_of_items}!')
+        type_of = cls.__type_of(value)
+        one_of_items = cls.__one_of_items()
+        return (f'Cannot determine if {type_of}'
+                f'{cls.__string} is {one_of_items}!')
 
     @classmethod
     def __not_in_items_message_for(cls, value: Any) -> str:
-        with_type, one_of_items = cls.__strings_for(value)
-        return f'Value {value}{cls.__name}{with_type} is not {one_of_items}!'
+        type_of = cls.__type_of(value)
+        one_of_items = cls.__one_of_items()
+        return f'{type_of}{cls.__string} is not {one_of_items}!'
 
     @classmethod
-    def __strings_for(cls, value: Any) -> (str, str):
+    def __one_of_items(cls) -> str:
         try:
             number_of_items = len(cls.__items)
         except TypeError:
@@ -91,8 +94,10 @@ class OneOf(CompositionClassMixin):
             items_string = f'in str {cls.__items}'
         else:
             items_string = f'one of {cls.__items}'
-        if isinstance(value, named_types):
-            type_string = ''
-        else:
-            type_string = ' with type '+type(value).__name__
-        return type_string, items_string
+        return items_string
+
+    @classmethod
+    def __type_of(cls, value: Any) -> str:
+        if isinstance(value, named_types) and not cls.__name:
+            return ''
+        return f'{type(value).__name__ } '

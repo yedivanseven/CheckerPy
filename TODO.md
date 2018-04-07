@@ -1,5 +1,5 @@
 # To Do
-- Continue with review and tests of OneOf!
+- Where do we want to show values and where not?
 - Make sure that type and bounds specification in decorators is UNsmart!
 - Make AllLike weak type checkers and append to validators!
 - Write README for JustSize, Has, AllHave, Like, ...

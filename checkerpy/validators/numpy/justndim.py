@@ -1,7 +1,7 @@
 import logging as log
 from typing import Any
 from numpy import ndarray
-from .registrar import Registrar
+from .registrar import Registrar, named_types
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IntError, NdimError
 
@@ -54,7 +54,7 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
     """
 
     def __new__(cls, array: ndarray, name: str = None, *, ndim=1, **kwargs):
-        name = str(name) if name is not None else ''
+        cls.__name = str(name) if name is not None else ''
         cls.__string = name or str(array)
         cls.__ndims = cls.__valid(ndim)
         try:
@@ -87,17 +87,22 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
         return ndim
 
     @staticmethod
-    def __invalid_ndim_message_for(value: Any) -> str:
-        type_name = type(value).__name__
-        return (f'Could not convert given ndim {value} of'
-                f' type {type_name} to required type int!')
+    def __invalid_ndim_message_for(ndim: Any) -> str:
+        if isinstance(ndim, named_types):
+            with_type = ''
+        else:
+            with_type = f' with type {type(ndim).__name__}'
+        return (f'Could not convert given ndim {ndim}'
+                f'{with_type} to required type int!')
 
     @classmethod
-    def __has_no_ndim_message_for(cls, variable: Any) -> str:
-        variable_type = type(variable).__name__
-        return ('Cannot determine the number of dimensions of variable'
-                f' {cls.__string} with type {variable_type} because it'
-                ' has no attribute ndim!')
+    def __has_no_ndim_message_for(cls, array: Any) -> str:
+        if isinstance(array, named_types) and not cls.__name:
+            type_of = ''
+        else:
+            type_of = type(array).__name__ + ' '
+        return (f'Cannot determine the number of dimensions of {type_of}'
+                f'{cls.__string} because it has no attribute ndim!')
 
     @classmethod
     def __error_message_for(cls, ndim: int) -> str:

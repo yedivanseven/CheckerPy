@@ -1,4 +1,5 @@
 v0.9.9, 04/03/2018 -- Minor Revision
+* Changed error messages of the OneOf validator
 * ...
 
 v0.9.8, 04/02/2018 -- Minor Revision

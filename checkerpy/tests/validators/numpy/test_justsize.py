@@ -18,25 +18,30 @@ class TestJustNdim(ut.TestCase):
 
     def test_error_on_one_size_not_convertible_to_int(self):
         err_msg = ('Could not convert given size f '
-                   'of type str to required type int!')
+                   'with type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustSize(array([1, 2]), size='foo')
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_of_two_sizes_not_convertible_to_int(self):
         err_msg = ('Could not convert given size bar'
-                   ' of type str to required type int!')
+                   ' with type str to required type int!')
         with self.assertRaises(IntError) as err:
             _ = JustSize(array([1, 2]), size=(1, 'bar'))
         self.assertEqual(str(err.exception), err_msg)
 
+    def test_error_on_named_type_ndim_not_convertible_to_int(self):
+        err_msg = ('Could not convert given size frozenset({1})'
+                   ' to required type int!')
+        with self.assertRaises(IntError) as err:
+            _ = JustSize(array([1, 2]), size=[frozenset({1})])
+        self.assertEqual(str(err.exception), err_msg)
+
     def test_error_on_unnamed_argument_has_no_attribute_size(self):
-        log_msg = ['ERROR:root:Cannot determine the number '
-                   'of elements in variable foo with type'
-                   ' str because it has no attribute size!']
-        err_msg = ('Cannot determine the number of elements'
-                   ' in variable foo with type str because'
-                   ' it has no attribute size!')
+        log_msg = ['ERROR:root:Cannot determine the number of elements'
+                   ' in str foo because it has no attribute size!']
+        err_msg = ('Cannot determine the number of elements in str'
+                   ' foo because it has no attribute size!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(SizeError) as err:
                 _ = JustSize('foo', size=2)
@@ -44,15 +49,35 @@ class TestJustNdim(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_argument_has_no_attribute_size(self):
-        log_msg = ['ERROR:root:Cannot determine the number '
-                   'of elements in variable test with type'
-                   ' str because it has no attribute size!']
-        err_msg = ('Cannot determine the number of elements'
-                   ' in variable test with type str because'
-                   ' it has no attribute size!')
+        log_msg = ['ERROR:root:Cannot determine the number of elements'
+                   ' in str test because it has no attribute size!']
+        err_msg = ('Cannot determine the number of elements in '
+                   'str test because it has no attribute size!')
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(SizeError) as err:
                 _ = JustSize('foo', 'test', size=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_frozenset_has_no_attribute_size(self):
+        log_msg = ['ERROR:root:Cannot determine the number of elements'
+                   ' in frozenset({1}) because it has no attribute size!']
+        err_msg = ('Cannot determine the number of elements in'
+                   ' frozenset({1}) because it has no attribute size!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(SizeError) as err:
+                _ = JustSize(frozenset({1}), size=2)
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_frozenset_has_no_attribute_size(self):
+        log_msg = ['ERROR:root:Cannot determine the number of elements '
+                   'in frozenset test because it has no attribute size!']
+        err_msg = ('Cannot determine the number of elements in '
+                   'frozenset test because it has no attribute size!')
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(SizeError) as err:
+                _ = JustSize(frozenset({1}), 'test', size=2)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
@@ -109,6 +134,10 @@ class TestJustNdim(ut.TestCase):
                 _ = JustSize(array([1, 2, 3]), 'test', size=(1, 2))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+
+@ut.skipIf(no_numpy, 'Could not import numpy!')
+class TestJustNdimMethods(ut.TestCase):
 
     def test_has_numpy_type_checker_attributes(self):
         for numpy_type in _NUMPY_TYPES:

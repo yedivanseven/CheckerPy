@@ -58,9 +58,8 @@ class LenGetitem:
 class TestOneOfItems(ut.TestCase):
 
     def test_membership_error_on_item_not_container(self):
-        log_msg = ['ERROR:root:Cannot determine if '
-                   'value 42 with type int is one of 2!']
-        err_msg = 'Cannot determine if value 42 with type int is one of 2!'
+        log_msg = ['ERROR:root:Cannot determine if int 42 is one of 2!']
+        err_msg = 'Cannot determine if int 42 is one of 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(42, items=2)
@@ -75,8 +74,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_NoLenNoGetitem1(self):
         no_len_no_getitem_1 = NoLenNoGetitem(1)
-        log_msg = ['ERROR:root:Value 2 with type int is not one of [0]!']
-        err_msg = 'Value 2 with type int is not one of [0]!'
+        log_msg = ['ERROR:root:int 2 is not one of [0]!']
+        err_msg = 'int 2 is not one of [0]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(2, items=no_len_no_getitem_1)
@@ -91,8 +90,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_NoLenNoGetitem3(self):
         no_len_no_getitem_3 = NoLenNoGetitem(3)
-        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
-        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        log_msg = ['ERROR:root:int 3 is not one of [0, 1, 2]!']
+        err_msg = 'int 3 is not one of [0, 1, 2]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(3, items=no_len_no_getitem_3)
@@ -107,8 +106,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_GetitemNoLen1(self):
         getitem_no_len_1 = GetItemNoLen(1)
-        log_msg = ['ERROR:root:Value 2 with type int is not one of [0]!']
-        err_msg = 'Value 2 with type int is not one of [0]!'
+        log_msg = ['ERROR:root:int 2 is not one of [0]!']
+        err_msg = 'int 2 is not one of [0]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(2, items=getitem_no_len_1)
@@ -123,8 +122,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_GetitemNoLen3(self):
         getitem_no_len_3 = GetItemNoLen(3)
-        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
-        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        log_msg = ['ERROR:root:int 3 is not one of [0, 1, 2]!']
+        err_msg = 'int 3 is not one of [0, 1, 2]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(3, items=getitem_no_len_3)
@@ -139,8 +138,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_LenNoGetItem1(self):
         len_no_getitem_1 = LenNoGetitem(1)
-        log_msg = ['ERROR:root:Value 2 with type int is not one of [0]!']
-        err_msg = 'Value 2 with type int is not one of [0]!'
+        log_msg = ['ERROR:root:int 2 is not one of [0]!']
+        err_msg = 'int 2 is not one of [0]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(2, items=len_no_getitem_1)
@@ -155,8 +154,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_LenNoGetItem3(self):
         len_no_getitem_3 = LenNoGetitem(3)
-        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
-        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        log_msg = ['ERROR:root:int 3 is not one of [0, 1, 2]!']
+        err_msg = 'int 3 is not one of [0, 1, 2]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(3, items=len_no_getitem_3)
@@ -171,8 +170,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_LenGetItem1(self):
         len_getitem_1 = LenGetitem(1)
-        log_msg = ['ERROR:root:Value 2 with type int is not 0!']
-        err_msg = 'Value 2 with type int is not 0!'
+        log_msg = ['ERROR:root:int 2 is not 0!']
+        err_msg = 'int 2 is not 0!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(2, items=len_getitem_1)
@@ -187,8 +186,8 @@ class TestOneOfItems(ut.TestCase):
 
     def test_error_with_items_LenGetItem3(self):
         len_getitem_3 = LenGetitem(3)
-        log_msg = ['ERROR:root:Value 3 with type int is not one of [0, 1, 2]!']
-        err_msg = 'Value 3 with type int is not one of [0, 1, 2]!'
+        log_msg = ['ERROR:root:int 3 is not one of [0, 1, 2]!']
+        err_msg = 'int 3 is not one of [0, 1, 2]!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(3, items=len_getitem_3)
@@ -242,8 +241,8 @@ class TestOneOfItemsAsDict(ut.TestCase):
 class TestOneOfValue(ut.TestCase):
 
     def test_error_on_empty_items(self):
-        log_msg = ['ERROR:root:Value 1 with type int is not one of ()!']
-        err_msg = 'Value 1 with type int is not one of ()!'
+        log_msg = ['ERROR:root:int 1 is not one of ()!']
+        err_msg = 'int 1 is not one of ()!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, items=())
@@ -257,8 +256,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(output, inputs)
 
     def test_error_on_unnamed_value_single_item(self):
-        log_msg = ['ERROR:root:Value 1 with type int is not 2!']
-        err_msg = 'Value 1 with type int is not 2!'
+        log_msg = ['ERROR:root:int 1 is not 2!']
+        err_msg = 'int 1 is not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, items=(2,))
@@ -266,8 +265,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_single_item(self):
-        log_msg = ['ERROR:root:Value 1 of test with type int is not 2!']
-        err_msg = 'Value 1 of test with type int is not 2!'
+        log_msg = ['ERROR:root:int test is not 2!']
+        err_msg = 'int test is not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, 'test', items=(2,))
@@ -281,8 +280,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(output, inputs)
 
     def test_error_on_unnamed_value_multiple_items(self):
-        log_msg = ['ERROR:root:Value 1 with type int is not one of (2, 3)!']
-        err_msg = 'Value 1 with type int is not one of (2, 3)!'
+        log_msg = ['ERROR:root:int 1 is not one of (2, 3)!']
+        err_msg = 'int 1 is not one of (2, 3)!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, items=(2, 3))
@@ -290,9 +289,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_multiple_items(self):
-        log_msg = ['ERROR:root:Value 1 of test with'
-                   ' type int is not one of (2, 3)!']
-        err_msg = 'Value 1 of test with type int is not one of (2, 3)!'
+        log_msg = ['ERROR:root:int test is not one of (2, 3)!']
+        err_msg = 'int test is not one of (2, 3)!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, 'test', items=(2, 3))
@@ -307,8 +305,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(output, inputs)
 
     def test_error_on_unnamed_value_item_as_str(self):
-        log_msg = ['ERROR:root:Value oo with type str is not in str bar!']
-        err_msg = 'Value oo with type str is not in str bar!'
+        log_msg = ['ERROR:root:str oo is not in str bar!']
+        err_msg = 'str oo is not in str bar!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf('oo', items='bar')
@@ -316,9 +314,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_item_as_str(self):
-        log_msg = ['ERROR:root:Value oo of test '
-                   'with type str is not in str bar!']
-        err_msg = 'Value oo of test with type str is not in str bar!'
+        log_msg = ['ERROR:root:str test is not in str bar!']
+        err_msg = 'str test is not in str bar!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf('oo', 'test', items='bar')
@@ -338,13 +335,34 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(output, inputs)
 
 
-class TestOneOfMethodsIncomparable(ut.TestCase):
+class TestOneOfValueNamedTypes(ut.TestCase):
+
+    def test_error_on_unamed_frozenset(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:frozenset({1}) is not 1!']
+        err_msg = 'frozenset({1}) is not 1!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(inp, items=[1])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_amed_frozenset(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:frozenset test is not 1!']
+        err_msg = 'frozenset test is not 1!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(inp, 'test', items=[1])
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+
+class TestOneOfIncomparable(ut.TestCase):
 
     def test_membership_error_named_value_incomparable(self):
-        log_msg = ['ERROR:root:Cannot determine if value 42'
-                   ' of test with type int is in str foo!']
-        err_msg = ('Cannot determine if value 42 of '
-                   'test with type int is in str foo!')
+        log_msg = ['ERROR:root:Cannot determine if int test is in str foo!']
+        err_msg = 'Cannot determine if int test is in str foo!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(42, 'test', items='foo')
@@ -352,12 +370,33 @@ class TestOneOfMethodsIncomparable(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_membership_error_unnamed_value_incomparable(self):
-        log_msg = ['ERROR:root:Cannot determine if '
-                   'value 42 with type int is in str foo!']
-        err_msg = 'Cannot determine if value 42 with type int is in str foo!'
+        log_msg = ['ERROR:root:Cannot determine if int 42 is in str foo!']
+        err_msg = 'Cannot determine if int 42 is in str foo!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(42, items='foo')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_membership_error_named_frozenset_incomparable(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:Cannot determine if '
+                   'frozenset test is in str foo!']
+        err_msg = 'Cannot determine if frozenset test is in str foo!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(inp, 'test', items='foo')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_membership_error_unnamed_frozenset_incomparable(self):
+        inp = frozenset({1})
+        log_msg = ['ERROR:root:Cannot determine if '
+                   'frozenset({1}) is in str foo!']
+        err_msg = 'Cannot determine if frozenset({1}) is in str foo!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(ItemError) as err:
+                _ = OneOf(inp, items='foo')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
