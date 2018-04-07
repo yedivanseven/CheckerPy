@@ -56,9 +56,10 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
     @classmethod
     def __string_for(cls, string: str) -> str:
         if isinstance(string, str):
-            return cls.__name or string
+            with_value = f'Value {string} of str {cls.__name}'
+            return with_value if cls.__name else string
         if isinstance(string, named_types):
-            of_type = f' of type {type(string).__name__}' if cls.__name else ''
+            type_of = f'{type(string).__name__} ' if cls.__name else ''
         else:
-            of_type = f' of type {type(string).__name__}'
-        return (cls.__name or str(string)) + of_type
+            type_of = f'{type(string).__name__} '
+        return type_of + (cls.__name or str(string))

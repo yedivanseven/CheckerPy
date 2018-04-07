@@ -23,8 +23,8 @@ class TestIdentifier(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_str_not_identifier(self):
-        log_msg = ['ERROR:root:test is not a valid identifier!']
-        err_msg = 'test is not a valid identifier!'
+        log_msg = ['ERROR:root:Value 1 of str test is not a valid identifier!']
+        err_msg = 'Value 1 of str test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier('1', 'test')
@@ -32,8 +32,8 @@ class TestIdentifier(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_unnamed_arg_not_str(self):
-        log_msg = ['ERROR:root:1 of type int is not a valid identifier!']
-        err_msg = '1 of type int is not a valid identifier!'
+        log_msg = ['ERROR:root:int 1 is not a valid identifier!']
+        err_msg = 'int 1 is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(1)
@@ -41,8 +41,8 @@ class TestIdentifier(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_arg_not_str(self):
-        log_msg = ['ERROR:root:test of type int is not a valid identifier!']
-        err_msg = 'test of type int is not a valid identifier!'
+        log_msg = ['ERROR:root:int test is not a valid identifier!']
+        err_msg = 'int test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(1, 'test')
@@ -61,9 +61,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_frozenset(self):
         inp = frozenset({1, 2})
-        log_msg = ['ERROR:root:test of type frozenset'
-                   ' is not a valid identifier!']
-        err_msg = 'test of type frozenset is not a valid identifier!'
+        log_msg = ['ERROR:root:frozenset test is not a valid identifier!']
+        err_msg = 'frozenset test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp, 'test')
@@ -82,8 +81,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_deque(self):
         inp = deque([1, 2])
-        log_msg = ['ERROR:root:test of type deque is not a valid identifier!']
-        err_msg = 'test of type deque is not a valid identifier!'
+        log_msg = ['ERROR:root:deque test is not a valid identifier!']
+        err_msg = 'deque test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp, 'test')
@@ -104,9 +103,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_ordereddict(self):
         inp = OrderedDict({1: 'one', 2: 'two'})
-        log_msg = ['ERROR:root:test of type OrderedDict'
-                   ' is not a valid identifier!']
-        err_msg = 'test of type OrderedDict is not a valid identifier!'
+        log_msg = ['ERROR:root:OrderedDict test is not a valid identifier!']
+        err_msg = 'OrderedDict test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp, 'test')
@@ -127,9 +125,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_defaultdict(self):
         inp = defaultdict(str, {1: 'one', 2: 'two'})
-        log_msg = ['ERROR:root:test of type defaultdict'
-                   ' is not a valid identifier!']
-        err_msg = 'test of type defaultdict is not a valid identifier!'
+        log_msg = ['ERROR:root:defaultdict test is not a valid identifier!']
+        err_msg = 'defaultdict test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp, 'test')
@@ -148,9 +145,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_dict_keys(self):
         inp = {1: 'one', 2: 'two'}
-        log_msg = ['ERROR:root:test of type dict_'
-                   'keys is not a valid identifier!']
-        err_msg = 'test of type dict_keys is not a valid identifier!'
+        log_msg = ['ERROR:root:dict_keys test is not a valid identifier!']
+        err_msg = 'dict_keys test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.keys(), 'test')
@@ -169,9 +165,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_ordereddict_keys(self):
         inp = OrderedDict({1: 'one', 2: 'two'})
-        log_msg = ['ERROR:root:test of type odict_'
-                   'keys is not a valid identifier!']
-        err_msg = 'test of type odict_keys is not a valid identifier!'
+        log_msg = ['ERROR:root:odict_keys test is not a valid identifier!']
+        err_msg = 'odict_keys test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.keys(), 'test')
@@ -190,9 +185,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_dict_values(self):
         inp = {'one': 1, 'two': 2}
-        log_msg = ['ERROR:root:test of type dict_'
-                   'values is not a valid identifier!']
-        err_msg = 'test of type dict_values is not a valid identifier!'
+        log_msg = ['ERROR:root:dict_values test is not a valid identifier!']
+        err_msg = 'dict_values test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.values(), 'test')
@@ -212,9 +206,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_ordereddict_values(self):
         inp = OrderedDict({'one': 1, 'two': 2})
-        log_msg = ['ERROR:root:test of type odict_'
-                   'values is not a valid identifier!']
-        err_msg = 'test of type odict_values is not a valid identifier!'
+        log_msg = ['ERROR:root:odict_values test is not a valid identifier!']
+        err_msg = 'odict_values test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.values(), 'test')
@@ -235,9 +228,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_dict_items(self):
         inp = {'one': 1, 'two': 2}
-        log_msg = ['ERROR:root:test of type dict_'
-                   'items is not a valid identifier!']
-        err_msg = 'test of type dict_items is not a valid identifier!'
+        log_msg = ['ERROR:root:dict_items test is not a valid identifier!']
+        err_msg = 'dict_items test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.items(), 'test')
@@ -258,9 +250,8 @@ class TestIdentifier(ut.TestCase):
 
     def test_error_on_named_ordereddict_items(self):
         inp = OrderedDict({'one': 1, 'two': 2})
-        log_msg = ['ERROR:root:test of type odict_'
-                   'items is not a valid identifier!']
-        err_msg = 'test of type odict_items is not a valid identifier!'
+        log_msg = ['ERROR:root:odict_items test is not a valid identifier!']
+        err_msg = 'odict_items test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier(inp.items(), 'test')
@@ -277,8 +268,8 @@ class TestIdentifierMethods(ut.TestCase):
         self.assertIsInstance(Identifier.JustStr, CompositionOf)
 
     def test_value_and_name_are_passed_through_JustStr(self):
-        log_msg = ['ERROR:root:test is not a valid identifier!']
-        err_msg = 'test is not a valid identifier!'
+        log_msg = ['ERROR:root:Value 1 of str test is not a valid identifier!']
+        err_msg = 'Value 1 of str test is not a valid identifier!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(IdentifierError) as err:
                 _ = Identifier.JustStr('1', 'test')

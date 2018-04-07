@@ -68,16 +68,12 @@ class OneOf(CompositionClassMixin):
 
     @classmethod
     def __cant_determine_membership_message_for(cls, value: Any) -> str:
-        type_of = cls.__type_of(value)
-        one_of_items = cls.__one_of_items()
-        return (f'Cannot determine if {type_of}'
-                f'{cls.__string} is {one_of_items}!')
+        return (f'Cannot determine if {cls.__type_of(value)}'
+                f'{cls.__string} is {cls.__one_of_items()}!')
 
     @classmethod
     def __not_in_items_message_for(cls, value: Any) -> str:
-        type_of = cls.__type_of(value)
-        one_of_items = cls.__one_of_items()
-        return f'{type_of}{cls.__string} is not {one_of_items}!'
+        return f'{cls.__value_of(value)} is not {cls.__one_of_items()}!'
 
     @classmethod
     def __one_of_items(cls) -> str:
@@ -101,3 +97,9 @@ class OneOf(CompositionClassMixin):
         if isinstance(value, named_types) and not cls.__name:
             return ''
         return f'{type(value).__name__ } '
+
+    @classmethod
+    def __value_of(cls, value: Any) -> str:
+        if not isinstance(value, named_types) and cls.__name:
+            return f'Value {value} of {cls.__type_of(value)}{cls.__string}'
+        return f'{cls.__type_of(value)}{cls.__string}'

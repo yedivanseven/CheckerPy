@@ -265,8 +265,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_single_item(self):
-        log_msg = ['ERROR:root:int test is not 2!']
-        err_msg = 'int test is not 2!'
+        log_msg = ['ERROR:root:Value 1 of int test is not 2!']
+        err_msg = 'Value 1 of int test is not 2!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, 'test', items=(2,))
@@ -289,8 +289,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_multiple_items(self):
-        log_msg = ['ERROR:root:int test is not one of (2, 3)!']
-        err_msg = 'int test is not one of (2, 3)!'
+        log_msg = ['ERROR:root:Value 1 of int test is not one of (2, 3)!']
+        err_msg = 'Value 1 of int test is not one of (2, 3)!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf(1, 'test', items=(2, 3))
@@ -314,8 +314,8 @@ class TestOneOfValue(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_value_item_as_str(self):
-        log_msg = ['ERROR:root:str test is not in str bar!']
-        err_msg = 'str test is not in str bar!'
+        log_msg = ['ERROR:root:Value oo of str test is not in str bar!']
+        err_msg = 'Value oo of str test is not in str bar!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(ItemError) as err:
                 _ = OneOf('oo', 'test', items='bar')
@@ -347,7 +347,7 @@ class TestOneOfValueNamedTypes(ut.TestCase):
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
-    def test_error_on_amed_frozenset(self):
+    def test_error_on_named_frozenset(self):
         inp = frozenset({1})
         log_msg = ['ERROR:root:frozenset test is not 1!']
         err_msg = 'frozenset test is not 1!'
