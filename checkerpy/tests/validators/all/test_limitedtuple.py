@@ -8,16 +8,28 @@ from ....types.all import _ALL_COMPARABLES, TypedDict
 
 class TestLimitedTupleLimits(ut.TestCase):
 
-    def test_error_on_limits_no_length(self):
-        err_msg = 'Type of limits argument must be tuple, not int like 1!'
+    def test_error_on_limits_not_tuple(self):
+        err_msg = 'Type of limits must be tuple, not int like 1!'
         with self.assertRaises(TypeError) as err:
             _ = LimitedTuple((1, 3, 4), limits=1)
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_error_on_limits_named_type(self):
+        err_msg = 'Type of limits must be tuple, not frozenset!'
+        with self.assertRaises(TypeError) as err:
+            _ = LimitedTuple((1, 3, 4), limits=frozenset({2}))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_limit_not_tuple(self):
         err_msg = 'Type of limits on argument 1 must be tuple, not int like 2!'
         with self.assertRaises(TypeError) as err:
             _ = LimitedTuple((1, 2), limits=((0, 3), 2))
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_error_on_limit_named_type(self):
+        err_msg = 'Type of limits on argument 1 must be tuple, not frozenset!'
+        with self.assertRaises(TypeError) as err:
+            _ = LimitedTuple((1, 2), limits=((0, 3), frozenset({2})))
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_limit_length_not_2(self):

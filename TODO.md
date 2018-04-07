@@ -1,7 +1,7 @@
 # To Do
-- Make sure that type and bounds specification in decorators is UNsmart!
 - Make AllLike weak type checkers and append to validators!
 - Write README for JustSize, Has, AllHave, Like, ...
+- Check all!
 
 # To Consider
 - Add decorator for weak types?

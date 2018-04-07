@@ -12,6 +12,7 @@ odict_items = type(OrderedDict({}).items())
 named_types = (frozenset, deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
+
 Types = Tuple[type, ...]
 
 

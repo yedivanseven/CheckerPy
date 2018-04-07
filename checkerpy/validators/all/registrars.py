@@ -1,10 +1,21 @@
 import logging as log
 from typing import Tuple, Any
+from collections import deque, defaultdict, OrderedDict
 from ...types.one import _ITERABLES
 from ...types.all import _ALL_ITERABLES, _ALL_COMPARABLES
 from ...functional import CompositionOf
 from ...exceptions import IterError
 from ..one import NonEmpty, JustLen
+
+dict_keys = type({}.keys())
+odict_keys = type(OrderedDict({}).keys())
+dict_values = type({}.values())
+odict_values = type(OrderedDict({}).values())
+dict_items = type({}.items())
+odict_items = type(OrderedDict({}).items())
+named_types = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items,
+               odict_keys, odict_values, odict_items)
 
 Types = Tuple[type, ...]
 Enumerated = Tuple[Tuple[int, Any], ...]
@@ -13,7 +24,7 @@ Enumerated = Tuple[Tuple[int, Any], ...]
 class IterableRegistrar(type):
     """Sets compositions of class and iterable type checkers as attributes."""
     def __init__(cls, class_name: str, bases: Types, attributes: dict) -> None:
-        super().__init__(class_name, (), attributes)
+        super().__init__(class_name, bases, attributes)
         for iterable in _ITERABLES:
             setattr(cls, iterable.__name__, CompositionOf(cls, iterable))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
@@ -48,7 +59,7 @@ class AllIterableRegistrar(IterableRegistrar):
 class AllComparableRegistrar(IterableRegistrar):
     """Set compositions of class and all-comparable type checkers as attr's."""
     def __init__(cls, class_name: str, bases: Types, attributes: dict) -> None:
-        super().__init__(class_name, (), attributes)
+        super().__init__(class_name, bases, attributes)
         for comparable in _ALL_COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
 

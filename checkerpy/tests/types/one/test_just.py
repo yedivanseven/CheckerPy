@@ -160,12 +160,21 @@ class TestJust(ut.TestCase):
 
     def test_error_on_wrong_named_variable_with_one_type(self):
         JustInt = Just(int)
-        log_msg = ['ERROR:root:Type of test must'
-                   ' be int, not str like bar!']
+        log_msg = ['ERROR:root:Type of test must be int, not str like bar!']
         err_msg = 'Type of test must be int, not str like bar!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(WrongTypeError) as err:
                 _ = JustInt('bar', 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_wrong_named_type_variable(self):
+        JustInt = Just(int)
+        log_msg = ['ERROR:root:Type of test must be int, not frozenset!']
+        err_msg = 'Type of test must be int, not frozenset!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(WrongTypeError) as err:
+                _ = JustInt(frozenset({1}), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

@@ -17,10 +17,25 @@ class TestLikeInstantiation(ut.TestCase):
     def test_works_with_one_valid_attribute(self):
         _ = Like('__init__')
 
+    def test_works_with_one_valid_attribute_given_as_list(self):
+        _ = Like(['__init__'], 1)
+
+    def test_works_with_two_valid_attributes(self):
+        _ = Like('__init__', '__new__')
+
+    def test_works_with_two_valid_attributes_given_as_list(self):
+        _ = Like(['__init__', '__new__'], 2)
+
     def test_error_on_one_attribute_not_identifier(self):
         err_msg = 'Attribute name 1 is not a valid identifier!'
         with self.assertRaises(ValueError) as err:
             _ = Like(1)
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_error_on_one_attribute_in_a_list_not_identifier(self):
+        err_msg = 'Attribute name 1 is not a valid identifier!'
+        with self.assertRaises(ValueError) as err:
+            _ = Like([1])
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_one_of_two_attributes_not_identifier(self):
@@ -29,10 +44,22 @@ class TestLikeInstantiation(ut.TestCase):
             _ = Like('__init__', 2)
         self.assertEqual(str(err.exception), err_msg)
 
+    def test_error_on_one_of_two_attributes_in_a_list_not_identifier(self):
+        err_msg = 'Attribute name 2 is not a valid identifier!'
+        with self.assertRaises(ValueError) as err:
+            _ = Like(['__init__', 2])
+        self.assertEqual(str(err.exception), err_msg)
+
     def test_error_on_two_attributes_not_identifier(self):
         err_msg = 'Attribute name 1 is not a valid identifier!'
         with self.assertRaises(ValueError) as err:
             _ = Like(1, 2)
+        self.assertEqual(str(err.exception), err_msg)
+
+    def test_error_on_two_attributes_in_a_list_not_identifier(self):
+        err_msg = 'Attribute name 1 is not a valid identifier!'
+        with self.assertRaises(ValueError) as err:
+            _ = Like([1, 2])
         self.assertEqual(str(err.exception), err_msg)
 
     def test_error_on_wrong_identifier(self):

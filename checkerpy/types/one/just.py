@@ -1,10 +1,21 @@
 import logging as log
 from typing import Tuple, Union, Sequence, Iterable, Any
+from collections import defaultdict, deque, OrderedDict
 from ...functional.mixins import CompositionMixin
 from ...exceptions import WrongTypeError
 from .docstring import DOC_HEADER, DOC_BODY
 
-Types = Union[type, Iterable[type]]
+dict_keys = type({}.keys())
+odict_keys = type(OrderedDict({}).keys())
+dict_values = type({}.values())
+odict_values = type(OrderedDict({}).values())
+dict_items = type({}.items())
+odict_items = type(OrderedDict({}).items())
+named_types = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items,
+               odict_keys, odict_values, odict_items)
+
+TypesT = Union[type, Iterable[type]]
 
 
 class Just(CompositionMixin):
@@ -32,7 +43,7 @@ class Just(CompositionMixin):
 
     """
 
-    def __init__(self, *types: Types, identifier: str = 'Just') -> None:
+    def __init__(self, *types: TypesT, identifier: str = 'Just') -> None:
         self.__name = None
         self.__types = self.__registered(types)
         self.__name__ = self.__identified(identifier)
@@ -43,19 +54,22 @@ class Just(CompositionMixin):
         return self.__types
 
     def __call__(self, value: Any, name: str = None, **kwargs):
-        value_type = type(value)
         self.__name = str(name) if name is not None else ''
-        if value_type not in self.__types:
-            message = self.__error_message_for(value, value_type.__name__)
+        if type(value) not in self.__types:
+            message = self.__error_message_for(value)
             log.error(message)
             raise WrongTypeError(message)
         return value
 
-    def __error_message_for(self, value: Any, value_type: str) -> str:
+    def __error_message_for(self, value: Any) -> str:
+        if isinstance(value, named_types):
+            value_type = type(value).__name__
+        else:
+            value_type = type(value).__name__ + f' like {value}'
         name = ' of '+self.__name if self.__name else ''
         types = tuple(type_.__name__ for type_ in self.__types)
         of_type = types[0] if len(types) == 1 else f'one of {types}'
-        return f'Type{name} must be {of_type}, not {value_type} like {value}!'
+        return f'Type{name} must be {of_type}, not {value_type}!'
 
     @staticmethod
     def __identified(identifier: str) -> str:
@@ -65,7 +79,7 @@ class Just(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __registered(self, types: Sequence[Types]) -> Tuple[type, ...]:
+    def __registered(self, types: Sequence[TypesT]) -> Tuple[type, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
         try:

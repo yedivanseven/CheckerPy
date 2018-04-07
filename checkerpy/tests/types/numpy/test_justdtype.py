@@ -174,23 +174,41 @@ class TestJustDtype(ut.TestCase):
 
     def test_error_on_unnamed_variable_no_dtype(self):
         JustInt16 = JustDtype(int16)
-        log_msg = ['ERROR:root:Variable foo of type'
-                   ' str has no attribute dtype!']
-        err_msg = 'Variable foo of type str has no attribute dtype!'
+        log_msg = ['ERROR:root:int 1 has no attribute dtype!']
+        err_msg = 'int 1 has no attribute dtype!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(DtypeError) as err:
-                _ = JustInt16('foo')
+                _ = JustInt16(1)
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 
     def test_error_on_named_variable_no_dtype(self):
         JustInt16 = JustDtype(int16)
-        log_msg = ['ERROR:root:Variable test of type'
-                   ' str has no attribute dtype!']
-        err_msg = 'Variable test of type str has no attribute dtype!'
+        log_msg = ['ERROR:root:int test has no attribute dtype!']
+        err_msg = 'int test has no attribute dtype!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(DtypeError) as err:
-                _ = JustInt16('bar', 'test')
+                _ = JustInt16(1, 'test')
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_unnamed_named_type_variable_no_dtype(self):
+        JustInt16 = JustDtype(int16)
+        log_msg = ['ERROR:root:frozenset({1}) has no attribute dtype!']
+        err_msg = 'frozenset({1}) has no attribute dtype!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(DtypeError) as err:
+                _ = JustInt16(frozenset({1}))
+        self.assertEqual(str(err.exception), err_msg)
+        self.assertEqual(log.output, log_msg)
+
+    def test_error_on_named_named_type_variable_no_dtype(self):
+        JustInt16 = JustDtype(int16)
+        log_msg = ['ERROR:root:frozenset test has no attribute dtype!']
+        err_msg = 'frozenset test has no attribute dtype!'
+        with self.assertLogs(level=logging.ERROR) as log:
+            with self.assertRaises(DtypeError) as err:
+                _ = JustInt16(frozenset({1}), 'test')
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
 

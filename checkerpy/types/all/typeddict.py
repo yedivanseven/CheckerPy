@@ -8,7 +8,7 @@ from ..all import All
 class Registrar(type):
     """Sets compositions of class with JustLen and NonEmpty as attributes."""
     def __init__(cls, class_name: str, bases, attributes: dict) -> None:
-        super().__init__(class_name, (), attributes)
+        super().__init__(class_name, bases, attributes)
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
 

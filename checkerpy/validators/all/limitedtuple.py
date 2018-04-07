@@ -1,6 +1,6 @@
 from typing import Tuple, Any, Sequence
 from collections import deque
-from .registrars import CustomRegistrar
+from .registrars import CustomRegistrar, named_types
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, Limited
 
@@ -75,14 +75,14 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
     @classmethod
     def __valid(cls, limits: Limits) -> Tuple[Limits, int]:
         if type(limits) not in (tuple, list, deque):
-            message = cls.__wrong_type_message_for(limits)
+            message = f'Type of limits {cls.__is_wrong(limits)}!'
             raise TypeError(message)
         limits = [(..., ...) if limit is ... else limit for limit in limits]
         for index, limit in enumerate(limits):
             type_of_limit = type(limit)
             if type_of_limit is not tuple:
-                message = (f'Type of limits on argument {index} must be tuple,'
-                           f' not {type_of_limit.__name__} like {limit}!')
+                is_wrong = cls.__is_wrong(limit)
+                message = f'Type of limits on argument {index} {is_wrong}!'
                 raise TypeError(message)
             length_of_limit = len(limit)
             if length_of_limit != 2:
@@ -92,7 +92,9 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
         return tuple(limits), len(limits)
 
     @staticmethod
-    def __wrong_type_message_for(limits: Limits) -> str:
-        type_name = type(limits).__name__
-        return ('Type of limits argument must be tuple,'
-                f' not {type_name} like {limits}!')
+    def __is_wrong(limits: Limits) -> str:
+        if isinstance(limits, named_types):
+            of_type = type(limits).__name__
+        else:
+            of_type = type(limits).__name__ + f' like {limits}'
+        return f'must be tuple, not {of_type}'

@@ -1,5 +1,6 @@
 import logging as log
 from typing import Tuple, Union, Iterable, Sequence, Any
+from collections import defaultdict, deque, OrderedDict
 from numpy import dtype
 from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
@@ -7,7 +8,17 @@ from ...exceptions import WrongTypeError, DtypeError
 from .docstring import DOC_HEADER, DOC_BODY
 from .justndarray import JustNdarray
 
-Types = Union[type, Iterable[type]]
+dict_keys = type({}.keys())
+odict_keys = type(OrderedDict({}).keys())
+dict_values = type({}.values())
+odict_values = type(OrderedDict({}).values())
+dict_items = type({}.items())
+odict_items = type(OrderedDict({}).items())
+named_types = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items,
+               odict_keys, odict_values, odict_items)
+
+TypesT = Union[type, Iterable[type]]
 
 
 class JustDtype(CompositionMixin):
@@ -39,7 +50,7 @@ class JustDtype(CompositionMixin):
 
     """
 
-    def __init__(self, *types: Types, identifier: str = 'JustD') -> None:
+    def __init__(self, *types: TypesT, identifier: str = 'JustD') -> None:
         self.__name = None
         self.__dtypes = self.__registered(types)
         self.__name__ = self.__identified(identifier)
@@ -65,10 +76,11 @@ class JustDtype(CompositionMixin):
         return value
 
     def __has_no_dtype_message_for(self, value: Any) -> str:
-        value_name = self.__name or str(value)
-        value_type = type(value).__name__
-        return (f'Variable {value_name} of type '
-                f'{value_type} has no attribute dtype!')
+        if isinstance(value, named_types) and not self.__name:
+            variable = str(value)
+        else:
+            variable = f'{type(value).__name__} {self.__name or value}'
+        return f'{variable} has no attribute dtype!'
 
     def __error_message_for(self, value: Any, value_type: str) -> str:
         name = ' of '+self.__name if self.__name else ''
@@ -84,7 +96,7 @@ class JustDtype(CompositionMixin):
                              f' is not a valid identifier!')
         return identifier
 
-    def __registered(self, types: Sequence[Types]) -> Tuple[dtype, ...]:
+    def __registered(self, types: Sequence[TypesT]) -> Tuple[dtype, ...]:
         if not types:
             raise AttributeError('Found no types to check for!')
         try:
