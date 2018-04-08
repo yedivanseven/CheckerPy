@@ -1,7 +1,7 @@
 import logging as log
 from typing import Any
 from numpy import ndarray
-from .registrar import Registrar, named_types
+from .registrar import Registrar, NAMED_TYPES
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IntError, SizeError
 
@@ -88,7 +88,7 @@ class JustSize(CompositionClassMixin, metaclass=Registrar):
 
     @staticmethod
     def __invalid_size_message_for(size: Any) -> str:
-        if isinstance(size, named_types):
+        if isinstance(size, NAMED_TYPES):
             with_type = ''
         else:
             with_type = f' with type {type(size).__name__}'
@@ -97,7 +97,7 @@ class JustSize(CompositionClassMixin, metaclass=Registrar):
 
     @classmethod
     def __has_no_size_message_for(cls, array: Any) -> str:
-        if isinstance(array, named_types) and not cls.__name:
+        if isinstance(array, NAMED_TYPES) and not cls.__name:
             type_of = ''
         else:
             type_of = type(array).__name__ + ' '

@@ -1,7 +1,7 @@
 import logging as log
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import IdentifierError
-from .registrars import StrRegistrar, named_types
+from .registrars import StrRegistrar, NAMED_TYPES
 
 
 class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
@@ -58,7 +58,7 @@ class Identifier(CompositionClassMixin, metaclass=StrRegistrar):
         if isinstance(string, str):
             with_value = f'Value {string} of str {cls.__name}'
             return with_value if cls.__name else string
-        if isinstance(string, named_types):
+        if isinstance(string, NAMED_TYPES):
             type_of = f'{type(string).__name__} ' if cls.__name else ''
         else:
             type_of = f'{type(string).__name__} '

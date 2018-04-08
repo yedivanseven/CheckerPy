@@ -1,7 +1,7 @@
 from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ..one import Has
-from .registrars import IterableRegistrar
+from .registrars import IterableRegistrar, DICT_PARTS
 
 
 class AllHave(CompositionClassMixin, metaclass=IterableRegistrar):
@@ -67,11 +67,7 @@ class AllHave(CompositionClassMixin, metaclass=IterableRegistrar):
         named = f'{cls._itertype} {cls.__name}' if cls.__name else cls._string
         if cls._itertype == 'dict':
             return f'{value} in keys to dict {cls._string}'
-        elif cls._itertype in ('dict_keys', 'odict_keys'):
-            return f'{value} in {named}'
-        elif cls._itertype in ('dict_values', 'odict_values'):
-            return f'{value} in {named}'
-        elif cls._itertype in ('dict_items', 'odict_items'):
+        elif cls._itertype in DICT_PARTS:
             return f'{value} in {named}'
         elif cls._itertype in ('OrderedDict', 'defaultdict'):
             return f'{value} in keys to {named}'

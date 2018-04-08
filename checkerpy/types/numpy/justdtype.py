@@ -14,7 +14,7 @@ dict_values = type({}.values())
 odict_values = type(OrderedDict({}).values())
 dict_items = type({}.items())
 odict_items = type(OrderedDict({}).items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
+NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
 
@@ -76,7 +76,7 @@ class JustDtype(CompositionMixin):
         return value
 
     def __has_no_dtype_message_for(self, value: Any) -> str:
-        if isinstance(value, named_types) and not self.__name:
+        if isinstance(value, NAMED_TYPES) and not self.__name:
             variable = str(value)
         else:
             variable = f'{type(value).__name__} {self.__name or value}'

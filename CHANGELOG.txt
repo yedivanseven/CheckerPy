@@ -1,6 +1,7 @@
-v0.9.9, 04/03/2018 -- Minor Revision
+v0.9.9, 04/08/2018 -- Minor Revision
+* Added validator AllContain
 * Refined error messages
-* ...
+* Many more small tweaks under the hood ...
 
 v0.9.8, 04/02/2018 -- Minor Revision
 * Added numpy validator JustSize

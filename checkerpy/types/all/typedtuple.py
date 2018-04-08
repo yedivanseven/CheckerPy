@@ -1,10 +1,20 @@
 from typing import Tuple, Union, Any, Sequence
-from collections import deque
+from collections import deque, defaultdict, OrderedDict
 from ...validators.one import JustLen
 from ...functional.mixins import CompositionClassMixin
 from ..one import Just
 
-Types = Union[type, Sequence[type]]
+dict_keys = type({}.keys())
+odict_keys = type(OrderedDict({}).keys())
+dict_values = type({}.values())
+odict_values = type(OrderedDict({}).values())
+dict_items = type({}.items())
+odict_items = type(OrderedDict({}).items())
+NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
+               dict_keys, dict_values, dict_items,
+               odict_keys, odict_values, odict_items)
+
+TypesT = Union[type, Sequence[type]]
 
 
 class TypedTuple(CompositionClassMixin):
@@ -65,7 +75,7 @@ class TypedTuple(CompositionClassMixin):
         return value
 
     @classmethod
-    def __valid(cls, types: Sequence[Types]) -> Tuple[Types, int]:
+    def __valid(cls, types: Sequence[TypesT]) -> Tuple[TypesT, int]:
         if type(types) not in (tuple, list, deque):
             message = cls.__wrong_type_message_for(types)
             raise TypeError(message)
@@ -74,11 +84,14 @@ class TypedTuple(CompositionClassMixin):
     @staticmethod
     def __wrong_type_message_for(types: Any) -> str:
         type_name = type(types).__name__
-        return ('Type of types argument must be tuple,'
-                f' not {type_name} like {types}!')
+        if isinstance(types, NAMED_TYPES):
+            of_type = type_name
+        else:
+            of_type = f'{type_name} like {types}'
+        return f'Type of types argument must be tuple, not {of_type}!'
 
     @staticmethod
-    def __is_or_contains_ellipsis(types: Types) -> bool:
+    def __is_or_contains_ellipsis(types: TypesT) -> bool:
         is_ellipsis = types is ...
         try:
             contains_ellipsis = ... in types

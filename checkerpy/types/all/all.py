@@ -7,8 +7,8 @@ from ...functional import CompositionOf
 from ...functional.mixins import CompositionMixin
 from ...exceptions import IterError
 
-Types = Union[type, Iterable[type]]
-Enumerated = Tuple[Tuple[int, Any], ...]
+TypesT = Union[type, Iterable[type]]
+EnumeratedT = Tuple[Tuple[int, Any], ...]
 
 
 class All(CompositionMixin):
@@ -40,12 +40,11 @@ class All(CompositionMixin):
 
     """
 
-    def __init__(self, *types: Types, identifier: str = 'All') -> None:
+    def __init__(self, *types: TypesT, identifier: str = 'All') -> None:
         self.__just = Just(*types)
         self.__types = self.__just.types
         self.__name__ = self.__identified(identifier)
         self.__doc__ = self.__doc_string()
-
         for iterable in _ITERABLES:
             setattr(self, iterable.__name__, CompositionOf(self, iterable))
         setattr(self, 'NonEmpty', CompositionOf(self, NonEmpty))
@@ -63,7 +62,7 @@ class All(CompositionMixin):
             _ = self.__just(value, name=self.__name_from(index))
         return iterable
 
-    def __enumerate(self, iterable: Any) -> Enumerated:
+    def __enumerate(self, iterable: Any) -> EnumeratedT:
         try:
             if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
                 enumerated = tuple(enumerate(iterable))

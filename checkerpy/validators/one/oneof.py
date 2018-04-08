@@ -2,7 +2,7 @@ import logging as log
 from typing import Any
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError
-from .registrars import named_types
+from .registrars import NAMED_TYPES
 
 
 class OneOf(CompositionClassMixin):
@@ -94,12 +94,12 @@ class OneOf(CompositionClassMixin):
 
     @classmethod
     def __type_of(cls, value: Any) -> str:
-        if isinstance(value, named_types) and not cls.__name:
+        if isinstance(value, NAMED_TYPES) and not cls.__name:
             return ''
         return f'{type(value).__name__ } '
 
     @classmethod
     def __value_of(cls, value: Any) -> str:
-        if not isinstance(value, named_types) and cls.__name:
+        if not isinstance(value, NAMED_TYPES) and cls.__name:
             return f'Value {value} of {cls.__type_of(value)}{cls.__string}'
         return f'{cls.__type_of(value)}{cls.__string}'

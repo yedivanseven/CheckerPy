@@ -108,10 +108,8 @@ class TestHasAttributeSpecification(ut.TestCase):
 class TestHas(ut.TestCase):
 
     def test_error_unnamed_object_one_attr(self):
-        log_msg = ['ERROR:root:Object [1, 2, 3] of type list'
-                   ' does not have required attribute test!']
-        err_msg = ('Object [1, 2, 3] of type list does'
-                   ' not have required attribute test!')
+        log_msg = ['ERROR:root:list does not have required attribute test!']
+        err_msg = 'list does not have required attribute test!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
                 _ = Has([1, 2, 3], attr='test')
@@ -130,10 +128,8 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_object_two_attrs(self):
-        log_msg = ['ERROR:root:Object [1, 2, 3] of type list'
-                   ' does not have required attribute test!']
-        err_msg = ('Object [1, 2, 3] of type list does'
-                   ' not have required attribute test!')
+        log_msg = ['ERROR:root:list does not have required attribute test!']
+        err_msg = 'list does not have required attribute test!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
                 _ = Has([1, 2, 3], attr=('test', 'bar'))
@@ -152,10 +148,8 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_deque_one_attr(self):
-        log_msg = ['ERROR:root:Object deque([1, 2, 3])'
-                   ' does not have required attribute test!']
-        err_msg = ('Object deque([1, 2, 3]) does'
-                   ' not have required attribute test!')
+        log_msg = ['ERROR:root:deque does not have required attribute test!']
+        err_msg = 'deque does not have required attribute test!'
         inp = deque([1, 2, 3])
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -176,10 +170,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_frozenset_one_attr(self):
-        log_msg = ['ERROR:root:Object frozenset({1, 2, 3})'
-                   ' does not have required attribute test!']
-        err_msg = ('Object frozenset({1, 2, 3}) does'
-                   ' not have required attribute test!')
+        log_msg = ['ERROR:root:frozenset does not '
+                   'have required attribute test!']
+        err_msg = 'frozenset does not have required attribute test!'
         inp = frozenset({1, 2, 3})
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -200,10 +193,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_ordereddict_one_attr(self):
-        log_msg = ["ERROR:root:Object OrderedDict([(1, 'one'), (2, 'two')])"
-                   " does not have required attribute test!"]
-        err_msg = ("Object OrderedDict([(1, 'one'), (2, 'two')])"
-                   " does not have required attribute test!")
+        log_msg = ['ERROR:root:OrderedDict does not'
+                   ' have required attribute test!']
+        err_msg = 'OrderedDict does not have required attribute test!'
         inp = OrderedDict({1: 'one', 2: 'two'})
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -224,10 +216,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_defaultdict_one_attr(self):
-        log_msg = ["ERROR:root:Object defaultdict(<class 'str'>, {1: 'one',"
-                   " 2: 'two'}) does not have required attribute test!"]
-        err_msg = ("Object defaultdict(<class 'str'>, {1: 'one',"
-                   " 2: 'two'}) does not have required attribute test!")
+        log_msg = ['ERROR:root:defaultdict does not'
+                   ' have required attribute test!']
+        err_msg = 'defaultdict does not have required attribute test!'
         inp = defaultdict(str, {1: 'one', 2: 'two'})
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -248,10 +239,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_dict_keys_one_attr(self):
-        log_msg = ['ERROR:root:Object dict_keys([1, 2]) '
-                   'does not have required attribute test!']
-        err_msg = ('Object dict_keys([1, 2]) does not'
-                   ' have required attribute test!')
+        log_msg = ['ERROR:root:dict_keys does not '
+                   'have required attribute test!']
+        err_msg = 'dict_keys does not have required attribute test!'
         inp = {1: 'one', 2: 'two'}.keys()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -272,10 +262,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_ordereddict_keys_one_attr(self):
-        log_msg = ['ERROR:root:Object odict_keys([1, 2]) '
-                   'does not have required attribute test!']
-        err_msg = ('Object odict_keys([1, 2]) does not'
-                   ' have required attribute test!')
+        log_msg = ['ERROR:root:odict_keys does not'
+                   ' have required attribute test!']
+        err_msg = 'odict_keys does not have required attribute test!'
         inp = OrderedDict({1: 'one', 2: 'two'}).keys()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -296,10 +285,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_dict_values_one_attr(self):
-        log_msg = ['ERROR:root:Object dict_values([1, 2]) '
-                   'does not have required attribute test!']
-        err_msg = ('Object dict_values([1, 2]) does not'
-                   ' have required attribute test!')
+        log_msg = ['ERROR:root:dict_values does not'
+                   ' have required attribute test!']
+        err_msg = 'dict_values does not have required attribute test!'
         inp = {'one': 1, 'two': 2}.values()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -320,10 +308,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_ordereddict_values_one_attr(self):
-        log_msg = ['ERROR:root:Object odict_values([1, 2]) '
-                   'does not have required attribute test!']
-        err_msg = ('Object odict_values([1, 2]) does not'
-                   ' have required attribute test!')
+        log_msg = ['ERROR:root:odict_values does not'
+                   ' have required attribute test!']
+        err_msg = 'odict_values does not have required attribute test!'
         inp = OrderedDict({'one': 1, 'two': 2}).values()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -344,10 +331,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_dict_items_one_attr(self):
-        log_msg = ["ERROR:root:Object dict_items([('one', 1), ('two', 2)])"
-                   " does not have required attribute test!"]
-        err_msg = ("Object dict_items([('one', 1), ('two', 2)])"
-                   " does not have required attribute test!")
+        log_msg = ['ERROR:root:dict_items does not'
+                   ' have required attribute test!']
+        err_msg = 'dict_items does not have required attribute test!'
         inp = {'one': 1, 'two': 2}.items()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
@@ -368,10 +354,9 @@ class TestHas(ut.TestCase):
         self.assertEqual(log.output, log_msg)
 
     def test_error_unnamed_ordereddict_items_one_attr(self):
-        log_msg = ["ERROR:root:Object odict_items([('one', 1), ('two', 2)])"
-                   " does not have required attribute test!"]
-        err_msg = ("Object odict_items([('one', 1), ('two', 2)])"
-                   " does not have required attribute test!")
+        log_msg = ['ERROR:root:odict_items does not'
+                   ' have required attribute test!']
+        err_msg = 'odict_items does not have required attribute test!'
         inp = OrderedDict({'one': 1, 'two': 2}).items()
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:

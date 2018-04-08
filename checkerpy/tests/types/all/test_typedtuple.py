@@ -17,6 +17,12 @@ class TestTypedTuple(ut.TestCase):
             _ = TypedTuple((1,), types=2)
         self.assertEqual(str(err.exception), err_msg)
 
+    def test_error_on_wrong_type_spec_named_type(self):
+        err_msg = "Type of types argument must be tuple, not frozenset!"
+        with self.assertRaises(TypeError) as err:
+            _ = TypedTuple((1,), types=frozenset({2}))
+        self.assertEqual(str(err.exception), err_msg)
+
     def test_error_on_type_spec_wrong_type(self):
         err_msg = 'Type of type specifier 2 must be type, not int!'
         with self.assertRaises(TypeError) as err:
@@ -138,6 +144,9 @@ class TestTypedTuple(ut.TestCase):
                 _ = TypedTuple(inp, 'test', types=(..., (int, float), bool))
         self.assertEqual(str(err.exception), err_msg)
         self.assertEqual(log.output, log_msg)
+
+
+class TestTypedTupleMethods(ut.TestCase):
 
     def test_has_attribute_o(self):
         self.assertTrue(hasattr(TypedTuple, 'o'))

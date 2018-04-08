@@ -13,12 +13,13 @@ dict_values = type({}.values())
 odict_values = type(OrderedDict({}).values())
 dict_items = type({}.items())
 odict_items = type(OrderedDict({}).items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
+NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
-
+DICT_PARTS = ('dict_keys', 'dict_values', 'dict_items',
+              'odict_items', 'odict_keys', 'odict_values')
 Types = Tuple[type, ...]
-Enumerated = Tuple[Tuple[int, Any], ...]
+EnumeratedT = Tuple[Tuple[int, Any], ...]
 
 
 class IterableRegistrar(type):
@@ -34,7 +35,7 @@ class IterableRegistrar(type):
         return (f'Variable {cls._string} with type {cls._itertype} does'
                 ' not seem to be an iterable with elements to inspect!')
 
-    def _enumerate(cls, iterable: Any) -> Enumerated:
+    def _enumerate(cls, iterable: Any) -> EnumeratedT:
         try:
             if hasattr(iterable, 'index') and hasattr(iterable, 'count'):
                 enumerated = tuple(enumerate(iterable))

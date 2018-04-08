@@ -2,7 +2,7 @@ import logging as log
 from typing import Collection, Tuple, Union
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import ItemError, IterError
-from .registrars import ContainerRegistrar, named_types
+from .registrars import ContainerRegistrar, NAMED_TYPES
 
 ItemsT = Union[Collection, Tuple[str, ...]]
 
@@ -115,6 +115,6 @@ class Contains(CompositionClassMixin, metaclass=ContainerRegistrar):
     @classmethod
     def __string_for(cls, iterable) -> str:
         type_name = type(iterable).__name__
-        if isinstance(iterable, named_types):
+        if isinstance(iterable, NAMED_TYPES):
             return type_name+' '+cls.__name if cls.__name else str(iterable)
         return type_name + ' ' + (cls.__name or str(iterable))

@@ -2,7 +2,7 @@ import logging as log
 from typing import Callable
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import CallableError
-from .registrars import named_types
+from .registrars import NAMED_TYPES
 
 
 class JustCall(CompositionClassMixin):
@@ -53,7 +53,7 @@ class JustCall(CompositionClassMixin):
 
     @classmethod
     def __not_callable_message_for(cls, callbl: Callable) -> str:
-        if isinstance(callbl, named_types):
+        if isinstance(callbl, NAMED_TYPES):
             of_type = f' of type {type(callbl).__name__}' if cls.__name else ''
         else:
             of_type = f' of type {type(callbl).__name__}'

@@ -6,7 +6,7 @@ from ...types.weak import _LIKE_COMPARABLES
 from ...exceptions import LimitError, WrongTypeError
 from .nonempty import NonEmpty
 from .justlen import JustLen
-from .registrars import named_types
+from .registrars import NAMED_TYPES
 
 
 class ComparableRegistrar(type):
@@ -87,7 +87,7 @@ class Limited(CompositionClassMixin, metaclass=ComparableRegistrar):
         lo_type = type(lo).__name__
         hi_type = type(hi).__name__
         value_name = cls.__name or str(value)
-        if isinstance(value, named_types) and not cls.__name:
+        if isinstance(value, NAMED_TYPES) and not cls.__name:
             type_of = ''
         else:
             type_of = f'type {type(value).__name__} of '

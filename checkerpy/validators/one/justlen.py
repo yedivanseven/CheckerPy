@@ -2,7 +2,7 @@ import logging as log
 from typing import Any, Sized
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import LenError, IntError
-from .registrars import SizedRegistrar, named_types
+from .registrars import SizedRegistrar, NAMED_TYPES
 
 
 class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
@@ -85,7 +85,7 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
 
     @classmethod
     def __invalid_length_message_for(cls, length: Any) -> str:
-        if isinstance(length, named_types):
+        if isinstance(length, NAMED_TYPES):
             with_type = ''
         else:
             with_type = f' with type {type(length).__name__}'
@@ -110,6 +110,6 @@ class JustLen(CompositionClassMixin, metaclass=SizedRegistrar):
 
     @classmethod
     def __type_name_of(cls, iterable: Sized) -> str:
-        if isinstance(iterable, named_types) and not cls.__name:
+        if isinstance(iterable, NAMED_TYPES) and not cls.__name:
             return ''
         return type(iterable).__name__ + ' '

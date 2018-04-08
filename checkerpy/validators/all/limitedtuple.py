@@ -1,6 +1,6 @@
 from typing import Tuple, Any, Sequence
 from collections import deque
-from .registrars import CustomRegistrar, named_types
+from .registrars import CustomRegistrar, NAMED_TYPES
 from ...functional.mixins import CompositionClassMixin
 from ...validators.one import JustLen, Limited
 
@@ -93,7 +93,7 @@ class LimitedTuple(CompositionClassMixin, metaclass=CustomRegistrar):
 
     @staticmethod
     def __is_wrong(limits: Limits) -> str:
-        if isinstance(limits, named_types):
+        if isinstance(limits, NAMED_TYPES):
             of_type = type(limits).__name__
         else:
             of_type = type(limits).__name__ + f' like {limits}'

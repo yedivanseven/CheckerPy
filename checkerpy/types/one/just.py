@@ -11,7 +11,7 @@ dict_values = type({}.values())
 odict_values = type(OrderedDict({}).values())
 dict_items = type({}.items())
 odict_items = type(OrderedDict({}).items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
+NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
 
@@ -62,7 +62,7 @@ class Just(CompositionMixin):
         return value
 
     def __error_message_for(self, value: Any) -> str:
-        if isinstance(value, named_types):
+        if isinstance(value, NAMED_TYPES):
             value_type = type(value).__name__
         else:
             value_type = type(value).__name__ + f' like {value}'

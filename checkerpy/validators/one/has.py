@@ -1,18 +1,7 @@
 import logging as log
 from typing import Any, Tuple
-from collections import defaultdict, deque, OrderedDict
 from ...functional.mixins import CompositionClassMixin
 from ...exceptions import MissingAttrError, IdentifierError
-
-dict_keys = type({}.keys())
-odict_keys = type(OrderedDict({}).keys())
-dict_values = type({}.values())
-odict_values = type(OrderedDict({}).values())
-dict_items = type({}.items())
-odict_items = type(OrderedDict({}).items())
-named_types = (frozenset, deque, defaultdict, OrderedDict,
-               dict_keys, dict_values, dict_items,
-               odict_keys, odict_values, odict_items)
 
 
 class Has(CompositionClassMixin):
@@ -58,12 +47,11 @@ class Has(CompositionClassMixin):
 
     def __new__(cls, obj, name: str = None, *, attr='__new__', **kwargs):
         cls.__name = str(name) if name is not None else ''
-        cls.__string = cls.__string_for(obj)
         cls.__attrs = cls.__valid(attr)
         for attr in cls.__attrs:
             if not hasattr(obj, attr):
-                message = (f'Object {cls.__string} does not '
-                           f'have required attribute {attr}!')
+                message = (f'{cls.__string_for(obj)} does not'
+                           f' have required attribute {attr}!')
                 log.error(message)
                 raise MissingAttrError(message)
         return obj
@@ -90,8 +78,7 @@ class Has(CompositionClassMixin):
 
     @classmethod
     def __string_for(cls, obj) -> str:
-        if isinstance(obj, named_types):
-            of_type = ' of type ' + type(obj).__name__ if cls.__name else ''
-        else:
-            of_type = ' of type ' + type(obj).__name__
-        return (cls.__name or str(obj)) + of_type
+        type_name = type(obj).__name__
+        if cls.__name:
+            return f'Object {cls.__name} of type {type_name}'
+        return type_name

@@ -198,10 +198,8 @@ class TestLike(ut.TestCase):
 
     def test_error_on_wrong_unnamed_variable_with_one_attr(self):
         LikeFoo = Like('foo')
-        log_msg = ['ERROR:root:Object test of type str does'
-                   ' not have required attribute foo!']
-        err_msg = ('Object test of type str does not'
-                   ' have required attribute foo!')
+        log_msg = ['ERROR:root:str does not have required attribute foo!']
+        err_msg = 'str does not have required attribute foo!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
                 _ = LikeFoo('test')
@@ -222,10 +220,8 @@ class TestLike(ut.TestCase):
 
     def test_error_on_wrong_unnamed_variable_with_two_attrs(self):
         LikeInitBar = Like('__init__', 'bar')
-        log_msg = ['ERROR:root:Object test of type str does'
-                   ' not have required attribute bar!']
-        err_msg = ('Object test of type str does not'
-                   ' have required attribute bar!')
+        log_msg = ['ERROR:root:str does not have required attribute bar!']
+        err_msg = 'str does not have required attribute bar!'
         with self.assertLogs(level=logging.ERROR) as log:
             with self.assertRaises(MissingAttrError) as err:
                 _ = LikeInitBar('test')
