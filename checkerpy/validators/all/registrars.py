@@ -1,8 +1,9 @@
 import logging as log
 from typing import Tuple, Any
 from collections import deque, defaultdict, OrderedDict
-from ...types.one import _ITERABLES
+from ...types.one import _REDUCED_ITER, JustStr
 from ...types.all import _ALL_ITERABLES, _ALL_COMPARABLES
+from ...types.weak import _LIKE_ITERABLES
 from ...functional import CompositionOf
 from ...exceptions import IterError
 from ..one import NonEmpty, JustLen
@@ -13,7 +14,8 @@ dict_values = type({}.values())
 odict_values = type(OrderedDict({}).values())
 dict_items = type({}.items())
 odict_items = type(OrderedDict({}).items())
-NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
+NAMED_TYPES = (frozenset, slice, range,
+               deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
 DICT_PARTS = ('dict_keys', 'dict_values', 'dict_items',
@@ -26,7 +28,9 @@ class IterableRegistrar(type):
     """Sets compositions of class and iterable type checkers as attributes."""
     def __init__(cls, class_name: str, bases: Types, attributes: dict) -> None:
         super().__init__(class_name, bases, attributes)
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
+            setattr(cls, iterable.__name__, CompositionOf(cls, iterable))
+        for iterable in _LIKE_ITERABLES:
             setattr(cls, iterable.__name__, CompositionOf(cls, iterable))
         setattr(cls, 'NonEmpty', CompositionOf(cls, NonEmpty))
         setattr(cls, 'JustLen', CompositionOf(cls, JustLen))
@@ -61,6 +65,7 @@ class AllComparableRegistrar(IterableRegistrar):
     """Set compositions of class and all-comparable type checkers as attr's."""
     def __init__(cls, class_name: str, bases: Types, attributes: dict) -> None:
         super().__init__(class_name, bases, attributes)
+        setattr(cls, 'JustStr', CompositionOf(cls, JustStr))
         for comparable in _ALL_COMPARABLES:
             setattr(cls, comparable.__name__, CompositionOf(cls, comparable))
 

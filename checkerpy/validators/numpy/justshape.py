@@ -62,7 +62,7 @@ class JustShape(CompositionClassMixin, metaclass=Registrar):
 
     See Also
     --------
-    JustNdim, CompositionOf
+    JustNdim, JustSize, CompositionOf
 
     """
 

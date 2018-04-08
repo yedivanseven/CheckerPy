@@ -10,7 +10,8 @@ dict_values = type({}.values())
 odict_values = type(OrderedDict({}).values())
 dict_items = type({}.items())
 odict_items = type(OrderedDict({}).items())
-NAMED_TYPES = (frozenset, deque, defaultdict, OrderedDict,
+NAMED_TYPES = (frozenset, slice, range,
+               deque, defaultdict, OrderedDict,
                dict_keys, dict_values, dict_items,
                odict_keys, odict_values, odict_items)
 

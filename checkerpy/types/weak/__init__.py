@@ -174,14 +174,9 @@ LikeMutableMapping = Like(
     identifier='LikeMutableMapping'
 )
 
-_LIKE_CONTAINERS = (
-    LikeContainer,
+_LIKE_ITERABLES = (
     LikeIterable,
-    LikeIterator,
-    LikeReversible
-)
-
-_LIKE_ITERABLES =(
+    LikeReversible,
     LikeCollection,
     LikeTuple,
     LikeSequence,

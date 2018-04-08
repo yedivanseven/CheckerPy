@@ -3,7 +3,7 @@ import unittest as ut
 from collections import defaultdict, deque, OrderedDict
 from ....functional import CompositionOf
 from ....types.all import All
-from ....types.one import _ITERABLES
+from ....types.one import _REDUCED_ITER
 from ....exceptions import WrongTypeError, IterError, CallableError
 
 
@@ -672,13 +672,13 @@ class TestAllMethods(ut.TestCase):
 
     def test_has_iterable_type_checker_attributes(self):
         AllNum = All(int, float)
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
             self.assertTrue(hasattr(AllNum, iterable.__name__))
         self.assertTrue(hasattr(AllNum, 'NonEmpty'))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
         AllNum = All(int, float)
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
             type_checker = getattr(AllNum, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
         self.assertIsInstance(AllNum.NonEmpty, CompositionOf)

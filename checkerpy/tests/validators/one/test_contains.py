@@ -5,7 +5,7 @@ from ....validators.one import Contains
 from ....exceptions import ItemError, IterError, CallableError
 from ....functional import CompositionOf
 from ....types.one import _ITERABLES
-from ....types.weak import _LIKE_ITERABLES, _LIKE_CONTAINERS
+from ....types.weak import _LIKE_ITERABLES, LikeContainer
 
 
 class TestContainsParameterSpecification(ut.TestCase):
@@ -81,8 +81,7 @@ class TestContainsGeneral(ut.TestCase):
             self.assertTrue(hasattr(Contains, iterable.__name__))
         for iterable in _LIKE_ITERABLES:
             self.assertTrue(hasattr(Contains, iterable.__name__))
-        for container in _LIKE_CONTAINERS:
-            self.assertTrue(hasattr(Contains, container.__name__))
+        self.assertTrue(hasattr(Contains,'LikeContainer'))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
         for iterable in _ITERABLES:
@@ -91,9 +90,8 @@ class TestContainsGeneral(ut.TestCase):
         for iterable in _LIKE_ITERABLES:
             type_checker = getattr(Contains, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
-        for container in _LIKE_CONTAINERS:
-            type_checker = getattr(Contains, container.__name__)
-            self.assertIsInstance(type_checker, CompositionOf)
+        type_checker = getattr(Contains, 'LikeContainer')
+        self.assertIsInstance(type_checker, CompositionOf)
 
     def test_some_is_passed_through_to_contains(self):
         err_msg = 'Int 5 is not in tuple (1, 2, 3)!'

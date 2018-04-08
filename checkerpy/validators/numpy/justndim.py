@@ -49,7 +49,7 @@ class JustNdim(CompositionClassMixin, metaclass=Registrar):
 
     See Also
     --------
-    CompositionOf
+    JustShape, CompositionOf
 
     """
 

@@ -3,7 +3,8 @@ import unittest as ut
 from collections import deque, defaultdict, OrderedDict
 from ....validators.all import AllHave
 from ....exceptions import MissingAttrError, CallableError, IterError
-from ....types.one import _ITERABLES
+from ....types.one import _REDUCED_ITER
+from ....types.weak import _LIKE_ITERABLES
 from ....functional import CompositionOf
 
 
@@ -487,11 +488,16 @@ class TestAllHave(ut.TestCase):
 class TestAllHaveMethods(ut.TestCase):
 
     def test_has_iterable_type_checker_attributes(self):
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
+            self.assertTrue(hasattr(AllHave, iterable.__name__))
+        for iterable in _LIKE_ITERABLES:
             self.assertTrue(hasattr(AllHave, iterable.__name__))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
+            type_checker = getattr(AllHave, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+        for iterable in _LIKE_ITERABLES:
             type_checker = getattr(AllHave, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
 

@@ -3,7 +3,8 @@ import unittest as ut
 from collections import deque, defaultdict, OrderedDict
 from ....validators.all import AllLimited
 from ....exceptions import LimitError, IterError, CallableError
-from ....types.one import _ITERABLES
+from ....types.one import _REDUCED_ITER, JustStr
+from ....types.weak import _LIKE_ITERABLES
 from ....types.all import _ALL_COMPARABLES
 from ....functional import CompositionOf
 
@@ -553,13 +554,24 @@ class TestAllLimited(ut.TestCase):
 class TestAllLimitedMethods(ut.TestCase):
 
     def test_has_iterable_type_checker_attributes(self):
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
+            self.assertTrue(hasattr(AllLimited, iterable.__name__))
+        for iterable in _LIKE_ITERABLES:
             self.assertTrue(hasattr(AllLimited, iterable.__name__))
 
     def test_iterable_type_checkers_are_type_CompositionOf(self):
-        for iterable in _ITERABLES:
+        for iterable in _REDUCED_ITER:
             type_checker = getattr(AllLimited, iterable.__name__)
             self.assertIsInstance(type_checker, CompositionOf)
+        for iterable in _LIKE_ITERABLES:
+            type_checker = getattr(AllLimited, iterable.__name__)
+            self.assertIsInstance(type_checker, CompositionOf)
+
+    def test_has_attribute_JustStr(self):
+        self.assertTrue(hasattr(AllLimited, 'JustStr'))
+
+    def test_attribute_NonEmpty_is_type_CompositionOf(self):
+        self.assertIsInstance(AllLimited.JustStr, CompositionOf)
 
     def test_has_attribute_NonEmpty(self):
         self.assertTrue(hasattr(AllLimited, 'NonEmpty'))

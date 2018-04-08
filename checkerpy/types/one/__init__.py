@@ -41,3 +41,10 @@ _ITERABLES = (
     JustSequence, JustIter, JustLists, JustSets,
     JustDicts, JustKeys, JustValues, JustItems
 )
+
+_REDUCED_ITER = (
+    JustTuple, JustList, JustSet, JustFrozen,
+    JustDict, JustKey, JustValue, JustItem,
+    JustSequence, JustIter, JustLists, JustSets,
+    JustDicts, JustKeys, JustValues, JustItems
+)

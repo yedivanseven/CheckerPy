@@ -49,7 +49,7 @@ class JustSize(CompositionClassMixin, metaclass=Registrar):
 
     See Also
     --------
-    CompositionOf
+    JustShape, CompositionOf
 
     """
 
