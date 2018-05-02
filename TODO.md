@@ -1,5 +1,6 @@
 # To Do
-- Check All for handling named types
+- Write docstrings for Exceptions!
+- Check All for handling named types!
 - Check everything to handle also slice and range!
 - Write docstring and test AllContain!
 - Write docstring and test AllIdentifier!
